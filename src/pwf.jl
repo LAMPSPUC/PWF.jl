@@ -52,3 +52,119 @@ const _mnemonic_dcte = (filter(x -> x[1]%12 == 1, [i:i+3 for i in 1:68]),
 const _mnemonic_pairs = Dict("DOPC" =>  _mnemonic_dopc,
     "DCTE" => _mnemonic_dcte
 )
+
+"""
+    _split_sections(io)
+
+Internal function. Parses a pwf file into an array where each
+element corresponds to a section, divided by the delimiter 99999.
+"""
+function _split_sections(io::IO)
+    lines = readlines(io)
+    sections = Vector{String}[]
+
+    titles = findall(x -> x == "TITU", lines)
+    if length(titles) > 0
+        last_title = titles[end]:titles[end] + 1
+        push!(sections, lines[last_title])
+    end
+    idx_remove_titles = vcat(titles, titles .+ 1)
+    lines = lines[setdiff(1:length(lines), idx_remove_titles)]
+
+    section_delim = vcat(0, findall(x -> x == "99999", lines), findlast(x -> x == "FIM", lines))
+    for i in 1:length(section_delim) - 1
+        idx, next_idx = section_delim[i], section_delim[i + 1]
+        push!(sections, lines[idx + 1:next_idx - 1])
+    end
+    return sections[1:end - 1]
+end
+
+"""
+    _parse_line_element!(data, line, section)
+
+Internal function. Parses a single line of data elements from a PWF file
+and saves it into `data::Dict`.
+"""
+function _parse_line_element!(data::Dict, line::String, section::AbstractString)
+
+    for (field, dtype, cols) in _pwf_dtypes[section]
+        element = line[cols]
+
+        try
+            data[field] = parse(dtype, element)
+        catch
+            data[field] = element
+        end
+        
+    end
+
+end
+
+function _parse_line_element!(data::Dict, lines::Vector{String}, section::AbstractString)
+
+    mn_keys, mn_values, mn_type = _mnemonic_pairs[section]
+
+    for line in lines
+        for i in 1:length(mn_keys)
+            k, v = mn_keys[i], mn_values[i]
+            if v[end] <= length(line)
+                try
+                    data[line[k]] = parse(mn_type, line[v])
+                catch
+                    data[line[k]] = line[v]
+                end    
+            end
+        end
+    end
+end
+
+"""
+    _parse_section(data, section_lines)
+
+Internal function. Receives an array of lines corresponding to a PWF section,
+transforms it into a Dict and saves it into `data::Dict`.
+"""
+function _parse_section!(data::Dict, section_lines::Vector{String})
+    section = split(section_lines[1], " ")[1]
+
+    if section == "TITU"
+        section_data = section_lines[end]
+
+    elseif section in keys(_mnemonic_pairs)
+        section_data = Dict{String, Any}()
+        _parse_line_element!(section_data, section_lines[3:end], section)
+
+    elseif section in keys(_pwf_dtypes)
+        section_data = Dict{String, Any}[]
+
+        for line in section_lines[3:end]
+
+            line_data = Dict{String, Any}()
+            _parse_line_element!(line_data, line, section)
+
+            push!(section_data, line_data)        
+            
+        end
+    else
+        @warn "Currently there is no support for $section parsing"
+        section_data = nothing
+    end
+
+    data[section] = section_data
+end
+
+"""
+    _parse_pwf_data(data_io)
+
+Internal function. Receives a pwf file as an IOStream and parses into a Dict.
+"""
+function _parse_pwf_data(data_io::IO)
+
+    sections = _split_sections(data_io)
+    pwf_data = Dict{String, Any}()
+    for section in sections
+        _parse_section!(pwf_data, section)
+    end
+    
+    return pwf_data
+end
