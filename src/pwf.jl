@@ -49,6 +49,10 @@ const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
 const _mnemonic_dcte = (filter(x -> x[1]%12 == 1, [i:i+3 for i in 1:68]),
                         filter(x -> x[1]%12 == 6, [i:i+5 for i in 1:66]), Float64)
 
+"""
+Sections which contains pairs that set values to some contants (DCTE)
+and specify some execution control options (DOPC). 
+"""
 const _mnemonic_pairs = Dict("DOPC" =>  _mnemonic_dopc,
     "DCTE" => _mnemonic_dcte
 )
@@ -106,14 +110,19 @@ end
 Internal function. Parses a single line of data elements from a PWF file
 and saves it into `data::Dict`.
 """
-function _parse_line_element!(data::Dict, line::String, section::AbstractString)
+function _parse_line_element!(data::Dict{String, Any}, line::String, section::AbstractString)
 
     for (field, dtype, cols) in _pwf_dtypes[section]
         element = line[cols]
 
         try
-            data[field] = parse(dtype, element)
+            if dtype != String && dtype != Char
+                data[field] = parse(dtype, element)
+            else
+                data[field] = element
+            end
         catch
+            @warn "Could not parse $element to $dtype, setting it as a String"
             data[field] = element
         end
         
@@ -121,7 +130,7 @@ function _parse_line_element!(data::Dict, line::String, section::AbstractString)
 
 end
 
-function _parse_line_element!(data::Dict, lines::Vector{String}, section::AbstractString)
+function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, section::AbstractString)
 
     mn_keys, mn_values, mn_type = _mnemonic_pairs[section]
 
@@ -129,23 +138,47 @@ function _parse_line_element!(data::Dict, lines::Vector{String}, section::Abstra
         for i in 1:length(mn_keys)
             k, v = mn_keys[i], mn_values[i]
             if v[end] <= length(line)
+
                 try
-                    data[line[k]] = parse(mn_type, line[v])
+                    if mn_type != String &&  mn_type != Char
+                        data[line[k]] = parse(mn_type, line[v])
+                    else
+                        data[line[k]] = line[v]
+                    end
                 catch
+                    @warn "Could not parse $(line[v]) to $mn_type, setting it as a String"
                     data[line[k]] = line[v]
-                end    
+                end
+        
             end
         end
     end
 end
 
 """
+    _parse_section_element(data, section_lines, section)
+Internal function. Parses a section containing a system component.
+Returns a Vector of Dict, where each entry corresponds to a single element.
+"""
+function _parse_section_element(data::Vector{Dict{String, Any}}, section_lines::Vector{String}, section::AbstractString)
+
+    for line in section_lines[3:end]
+
+        line_data = Dict{String, Any}()
+        _parse_line_element!(line_data, line, section)
+
+        push!(data, line_data)        
+        
+    end
+
+end
+"""
     _parse_section(data, section_lines)
 
 Internal function. Receives an array of lines corresponding to a PWF section,
 transforms it into a Dict and saves it into `data::Dict`.
 """
-function _parse_section!(data::Dict, section_lines::Vector{String})
+function _parse_section!(data::Dict{String, Any}, section_lines::Vector{String})
     section = split(section_lines[1], " ")[1]
 
     if section == title_identifier
@@ -157,15 +190,8 @@ function _parse_section!(data::Dict, section_lines::Vector{String})
 
     elseif section in keys(_pwf_dtypes)
         section_data = Dict{String, Any}[]
+        _parse_section_element(section_data, section_lines[3:end], section)
 
-        for line in section_lines[3:end]
-
-            line_data = Dict{String, Any}()
-            _parse_line_element!(line_data, line, section)
-
-            push!(section_data, line_data)        
-            
-        end
     else
         @warn "Currently there is no support for $section parsing"
         section_data = nothing
