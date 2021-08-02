@@ -53,6 +53,17 @@ const _mnemonic_pairs = Dict("DOPC" =>  _mnemonic_dopc,
     "DCTE" => _mnemonic_dcte
 )
 
+
+const title_identifier = "TITU"
+const end_section_identifier = "99999"
+
+function _remove_titles_from_file_lines(file_lines::Vector{String}, section_titles_idx::Vector{Int64})
+    remove_titles_idx = vcat(section_titles_idx, section_titles_idx .+ 1)
+    file_lines_without_titles_idx = setdiff(1:length(file_lines), remove_titles_idx)
+    file_lines = file_lines[file_lines_without_titles_idx]
+    return file_lines
+end
+
 """
     _split_sections(io)
 
@@ -60,23 +71,33 @@ Internal function. Parses a pwf file into an array where each
 element corresponds to a section, divided by the delimiter 99999.
 """
 function _split_sections(io::IO)
-    lines = readlines(io)
+    file_lines = readlines(io)
     sections = Vector{String}[]
 
-    titles = findall(x -> x == "TITU", lines)
-    if length(titles) > 0
-        last_title = titles[end]:titles[end] + 1
-        push!(sections, lines[last_title])
+    section_titles_idx = findall(line -> line == title_identifier, file_lines)
+    if !isempty(section_titles_idx)
+        last_section_title_idx = section_titles_idx[end]:section_titles_idx[end] + 1
+        push!(sections, file_lines[last_section_title_idx])
     end
-    idx_remove_titles = vcat(titles, titles .+ 1)
-    lines = lines[setdiff(1:length(lines), idx_remove_titles)]
 
-    section_delim = vcat(0, findall(x -> x == "99999", lines), findlast(x -> x == "FIM", lines))
-    for i in 1:length(section_delim) - 1
-        idx, next_idx = section_delim[i], section_delim[i + 1]
-        push!(sections, lines[idx + 1:next_idx - 1])
+    file_lines = _remove_titles_from_file_lines(
+        file_lines, section_titles_idx
+    )
+
+    section_delim = vcat(
+        0, 
+        findall(x -> x == end_section_identifier, file_lines)
+    )
+
+    num_sections = length(section_delim) - 1
+
+    for i in 1:num_sections
+        section_begin_idx = section_delim[i] + 1
+        section_end_idx   = section_delim[i + 1] - 1
+        push!(sections, file_lines[section_begin_idx:section_end_idx])
     end
-    return sections[1:end - 1]
+
+    return sections
 end
 
 """
@@ -127,7 +148,7 @@ transforms it into a Dict and saves it into `data::Dict`.
 function _parse_section!(data::Dict, section_lines::Vector{String})
     section = split(section_lines[1], " ")[1]
 
-    if section == "TITU"
+    if section == title_identifier
         section_data = section_lines[end]
 
     elseif section in keys(_mnemonic_pairs)
