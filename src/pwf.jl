@@ -215,3 +215,94 @@ function _parse_pwf_data(data_io::IO)
     
     return pwf_data
 end
+
+
+function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict) #, import_all::Bool)
+
+    pm_data["bus"] = Dict{String, Any}()
+    if haskey(pwf_data, "DBAR")
+        for bus in pwf_data["DBAR"]
+            sub_data = Dict{String,Any}()
+
+            sub_data["bus_i"] = bus["NUMBER"]
+            sub_data["bus_type"] = pop!(bus, "TYPE")
+            sub_data["area"] = pop!(bus, "AREA")
+            sub_data["vm"] = pop!(bus, "VOLTAGE")
+            sub_data["va"] = pop!(bus, "ANGLE")
+            sub_data["zone"] = 1
+            sub_data["name"] = pop!(bus, "NAME")
+
+            sub_data["source_id"] = ["bus", "$(bus["NUMBER"])"]
+            sub_data["index"] = pop!(bus, "NUMBER")
+
+            sub_data["base_kv"] = 1.0
+            if haskey(pwf_data, "DGBT")
+                sub_data["base_kv"] = pwf_data["DGBT"][4:8]
+            end
+
+            sub_data["vmin"] = 0.8
+            sub_data["vmax"] = 1.2
+            if haskey(pwf_data, "DGLT")
+                sub_data["vmin"] = pwf_data["DGLT"][4:8]
+                sub_data["vmax"] = pwf_data["DGLT"][10:14]
+            end
+
+            # if import_all
+            #     _import_remaining_keys!(sub_data, bus)
+            # end
+
+            idx = string(sub_data["index"])
+            pm_data["bus"][idx] = sub_data
+        end
+    end
+
+    
+end
+
+function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict) #, import_all::Bool)
+
+    pm_data["branch"] = Dict{String, Any}()
+    if haskey(pwf_data, "DLIN")
+        for (i, branch) in enumerate(pwf_data["DLIN"])
+            sub_data = Dict{String,Any}()
+
+            sub_data["f_bus"] = pop!(branch, "FROM BUS")
+            sub_data["t_bus"] = pop!(branch, "TO BUS")
+            sub_data["br_r"] = pop!(branch, "RESISTANCE") / 100
+            sub_data["br_x"] = pop!(branch, "REACTANCE") / 100
+            sub_data["g_fr"] = 0.0
+            sub_data["b_fr"] = branch["SHUNT SUSCEPTANCE"] / 2.0
+            sub_data["g_to"] = 0.0
+            sub_data["b_to"] = branch["SHUNT SUSCEPTANCE"] / 2.0
+            # sub_data["rate_a"] = 10000
+            # sub_data["rate_b"] = 10000
+            # sub_data["rate_c"] = 10000
+            sub_data["tap"] = pop!(branch, "TAP")
+            sub_data["shift"] = pop!(branch, "LAG")
+            sub_data["br_status"] = 1
+            sub_data["angmin"] = 0.0
+            sub_data["angmax"] = 0.0
+            sub_data["transformer"] = false
+
+            sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "1 "]
+            sub_data["index"] = i
+
+            # if import_all
+            #     _import_remaining_keys!(sub_data, branch; exclude=["B", "BI", "BJ"])
+            # end
+
+            # if sub_data["rate_a"] == 0.0
+            #     delete!(sub_data, "rate_a")
+            # end
+            # if sub_data["rate_b"] == 0.0
+            #     delete!(sub_data, "rate_b")
+            # end
+            # if sub_data["rate_c"] == 0.0
+            #     delete!(sub_data, "rate_c")
+            # end
+
+            idx = string(sub_data["index"])
+            pm_data["branch"][idx] = sub_data
+        end
+    end
+end
