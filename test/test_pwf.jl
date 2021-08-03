@@ -1,29 +1,28 @@
-path = pwd()
-
 @testset "Intermediary functions" begin
-    file = open(path*"/test/sistema_teste_radial.pwf")
+    file = open(joinpath(@__DIR__,"data/sistema_teste_radial.pwf"))
 
-    sections = _split_sections(file)
+    sections = ParsePWF._split_sections(file)
     @test isa(sections, Vector{Vector{String}})
     @test length(sections) == 5
     @test sections[1][1] == "TITU"
 
     data = Dict{String, Any}()
-    _parse_section!(data, sections[1])
+    ParsePWF._parse_section!(data, sections[1])
     @test haskey(data, "TITU")
-    _parse_section!(data, sections[2])
+    ParsePWF._parse_section!(data, sections[2])
     @test haskey(data, "DOPC")
-    _parse_section!(data, sections[3])
+    ParsePWF._parse_section!(data, sections[3])
     @test haskey(data, "DCTE")
-    _parse_section!(data, sections[4])
+    ParsePWF._parse_section!(data, sections[4])
     @test haskey(data, "DBAR")
-    _parse_section!(data, sections[5])
+    ParsePWF._parse_section!(data, sections[5])
     @test haskey(data, "DLIN")
 end
 
+
 @testset "Resulting Dict" begin
-    file = open(path*"/test/sistema_teste_radial.pwf")
-    dict = parse_pwf_data(file)
+    file = open(joinpath(@__DIR__,"data/sistema_teste_radial.pwf"))
+    dict = ParsePWF._parse_pwf_data(file)
 
     @testset "Keys" begin
         @test haskey(dict, "TITU")
@@ -42,19 +41,19 @@ end
     end
 
     @testset "Lengths" begin
-        @test length(dict["DOPC"] == 13)
-        @test length(dict["DCTE"] == 67)
-        @test length(dict["DBAR"] == 9)
-        @test length(dict["DLIN"] == 7)
+        @test length(dict["DOPC"]) == 13
+        @test length(dict["DCTE"]) == 67
+        @test length(dict["DBAR"]) == 9
+        @test length(dict["DLIN"]) == 7
 
-        @test length(dict["DBAR"][1] == 30)
-        @test length(dict["DLIN"][1] == 30)
+        @test length(dict["DBAR"][1]) == 30
+        @test length(dict["DLIN"][1]) == 30
     end
 
     @testset "DBAR" begin
-        @test isa(dict["DBAR"][1]["ANGLE"], Int)
-        @test isa(dict["DBAR"][1]["MINIMUM REACTIVE GENERATION"], Int)
-        @test isa(dict["DBAR"][1]["MAXIMUM REACTIVE GENERATION"], Int)
+        @test isa(dict["DBAR"][1]["ANGLE"], Float64)
+        @test isa(dict["DBAR"][1]["MINIMUM REACTIVE GENERATION"], Float64)
+        @test isa(dict["DBAR"][1]["MAXIMUM REACTIVE GENERATION"], Float64)
         @test isa(dict["DBAR"][1]["REACTIVE GENERATION"], Float64)
         @test isa(dict["DBAR"][1]["ACTIVE GENERATION"], Float64)
         @test isa(dict["DBAR"][1]["AREA"], Int)

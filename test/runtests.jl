@@ -1,5 +1,7 @@
 using Test
 
+include("src/ParsePWF.jl")
+
 @testset "Test functions" begin
-    include("test_pwf.jl")
+    include("test/test_pwf.jl")
 end
