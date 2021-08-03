@@ -139,17 +139,17 @@ function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, se
             k, v = mn_keys[i], mn_values[i]
             if v[end] <= length(line)
 
+            if mn_type != String && mn_type != Char
                 try
-                    if mn_type != String &&  mn_type != Char
-                        data[line[k]] = parse(mn_type, line[v])
-                    else
-                        data[line[k]] = line[v]
-                    end
+                     data[line[k]] = parse(mn_type, line[v])
                 catch
                     @warn "Could not parse $(line[v]) to $mn_type, setting it as a String"
                     data[line[k]] = line[v]
                 end
-        
+            else
+                data[line[k]] = line[v]
+            end
+                    
             end
         end
     end
