@@ -57,6 +57,42 @@ const _mnemonic_pairs = Dict("DOPC" =>  _mnemonic_dopc,
     "DCTE" => _mnemonic_dcte
 )
 
+const _default_dbar = Dict("NUMBER" => nothing, "OPERATION" => 'A', "STATUS" => 'L',
+    "TYPE" => 0, "BASE VOLTAGE GROUP" => 0, "NAME" => nothing, "VOLTAGE LIMIT GROUP" => 0,
+    "VOLTAGE" => 1.0, "ANGLE" => 0.0, "ACTIVE GENERATION" => 0.0,
+    "REACTIVE GENERATION" => 0.0, "MINIMUM REACTIVE GENERATION" => 0.0,
+    "MAXIMUM REACTIVE GENERATION" => 0.0, "CONTROLLED BUS" => nothing,
+    "ACTIVE CHARGE" => 0.0, "REACTIVE CHARGE" => 0.0, "TOTAL REACTIVE POWER" => 0.0,
+    "AREA" => 1, "CHARGE DEFINITION VOLTAGE" => 1.0, "VISUALIZATION" => 0,
+    "AGGREGATOR 1" => nothing, "AGGREGATOR 2" => nothing, "AGGREGATOR 3" => nothing, 
+    "AGGREGATOR 4" => nothing, "AGGREGATOR 5" => nothing, "AGGREGATOR 6" => nothing, 
+    "AGGREGATOR 7" => nothing, "AGGREGATOR 8" => nothing, "AGGREGATOR 9" => nothing, 
+    "AGGREGATOR 10" => nothing)
+
+const _default_dlin = Dict("FROM BUS" => nothing, "OPENING FROM BUS", "OPERATION" => 'A',
+    "OPENING TO BUS" => 'L', "TO BUS" => nothing, "CIRCUIT" => nothing, "STATUS" => 'L',
+    "OWNER" => 'F', "RESISTANCE" => 0.0, "REACTANCE" => nothing, "SHUNT SUSCEPTANCE" => 0.0,
+    "TAP" => nothing, "MINIMUM TAP" => nothing, "MAXIMUM TAP" => nothing, "LAG" => 0.0,
+    "CONTROLLED BUS" => nothing, "NORMAL CAPACITY" => Inf, "EMERGENCY CAPACITY" => Inf,
+    "NUMBER OF TAPS" => 33, "EQUIPAMENT CAPACITY" => Inf, "AGGREGATOR 1" => nothing,
+    "AGGREGATOR 2" => nothing, "AGGREGATOR 3" => nothing, "AGGREGATOR 4" => nothing, 
+    "AGGREGATOR 5" => nothing, "AGGREGATOR 6" => nothing, "AGGREGATOR 7" => nothing,
+    "AGGREGATOR 8" => nothing, "AGGREGATOR 9" => nothing, "AGGREGATOR 10" => nothing)
+
+const _default_dcte = Dict("TEPA" => 0.1, "TEPR" => 0.1, "TLPR" => 0.1, "TLVC" => .5,
+    "TLTC" => 0.01, "TETP" => 5.0, "TBPA" => 5.0, "TSFR" => 0.01, "TUDC" => 0.001,
+    "TADC" => 0.01, "BASE" => 100.0, "DASE" => 100.0, "ZMAX" => 500.0, "ACIT" => 30,
+    "LPIT" => 50, "LFLP" => 10, "LFIT" => 10, "DCIT" => 10, "VSIT" => 10, "LCRT" => 23,
+    "LPRT" => 60, "LFCV" => 1, "TPST" => 0.2, "QLST" => 0.2, "EXST" => 0.4, "TLPP" => 1.0,
+    "TSBZ" => 0.01, "TSBA" => 5.0, "PGER" => 30.0, "VDVN" => 40.0, "VDVM" => 200.0,
+    "ASTP" => 0.05, "VSTP" => 5.0, "CSTP" => 5.0, "VFLD" => 70, "HIST" => 0, "ZMIN" => 0.001
+    "PDIT" => 10, "ICIT" => 50, "FDIV" => 2.0, "DMAX" => 5, "ICMN" => 0.05, "VART" => 5.0,
+    "TSTP" => 33, "TSDC" => 0.02, "ASDC" => 1, "ICMV" => 0.5, "APAS" => 90, "CPAR" => 70,
+    "VAVT" => 2.0, "VAVF" => 5.0, "VMVF" => 15.0, "VPVT" => 2.0, "VPVF" => 5.0,
+    "VPMF" => 10.0, "VSVF" => 20.0, "VINF" => 1.0, "VSUP" => 1.0, "TLSI" => 0.0)
+
+const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DCTE" => _default_dcte)
+
 
 const title_identifier = "TITU"
 const end_section_identifier = "99999"
