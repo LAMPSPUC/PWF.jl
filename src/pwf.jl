@@ -72,7 +72,7 @@ const _default_dbar = Dict("NUMBER" => nothing, "OPERATION" => 'A', "STATUS" => 
 const _default_dlin = Dict("FROM BUS" => nothing, "OPENING FROM BUS" => 'L',
     "OPERATION" => 'A', "OPENING TO BUS" => 'L', "TO BUS" => nothing, "CIRCUIT" => nothing,
     "STATUS" => 'L', "OWNER" => 'F', "RESISTANCE" => 0.0, "REACTANCE" => nothing,
-    "SHUNT SUSCEPTANCE" => 0.0, "TAP" => nothing, "MINIMUM TAP" => nothing,
+    "SHUNT SUSCEPTANCE" => 0.0, "TAP" => 1.0, "MINIMUM TAP" => nothing,
     "MAXIMUM TAP" => nothing, "LAG" => 0.0, "CONTROLLED BUS" => nothing,
     "NORMAL CAPACITY" => Inf, "EMERGENCY CAPACITY" => Inf, "NUMBER OF TAPS" => 33,
     "EQUIPAMENT CAPACITY" => Inf, "AGGREGATOR 1" => nothing, "AGGREGATOR 2" => nothing,
@@ -287,7 +287,7 @@ function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::Strin
     end
 end
 
-function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::String, section_data::String)
+function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::String, section_data::AbstractString)
     # Filename indicator, does not need a default
 end
 """
