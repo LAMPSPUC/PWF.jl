@@ -209,10 +209,11 @@ function _parse_pwf_data(data_io::IO)
 
     sections = _split_sections(data_io)
     pwf_data = Dict{String, Any}()
+    pwf_data["name"] = match(r"^\<file\s[\/\\]*(?:.*[\/\\])*(.*)\.pwf\>$", lowercase(data_io.name)).captures[1]
     for section in sections
         _parse_section!(pwf_data, section)
     end
-    
+
     return pwf_data
 end
 
@@ -305,4 +306,31 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict) #, import_all::Bool)
             pm_data["branch"][idx] = sub_data
         end
     end
+end
+
+function _pwf_to_powermodels!(pwf_data::Dict)
+    pm_data = Dict{String,Any}()
+
+    pm_data["per_unit"] = false
+    pm_data["source_type"] = "pwf"
+    pm_data["source_version"] = "09"
+    pm_data["name"] = pwf_data["name"]
+
+    pm_data["baseMVA"] = 100.0
+    if haskey(pwf_data, "DCTE")
+        if haskey(pwf_data["DCTE"], "BASE")
+            pm_data["baseMVA"] = pwf_data["DCTE"]["BASE"]
+        end
+    end
+
+
+    # if import_all
+    #     _import_remaining_keys!(pm_data, pti_data["CASE IDENTIFICATION"][1])
+    # end
+
+    _pwf2pm_bus!(pm_data, pwf_data)
+    _pwf2pm_branch!(pm_data, pwf_data)
+
+    
+    return pm_data
 end
