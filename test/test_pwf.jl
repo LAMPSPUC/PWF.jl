@@ -33,6 +33,7 @@ end
     end
 
     @testset "Types" begin
+        @test isa(dict, Dict)
         @test isa(dict["TITU"], String)
         @test isa(dict["DOPC"], Dict)
         @test isa(dict["DCTE"], Dict)
@@ -46,32 +47,40 @@ end
         @test length(dict["DBAR"]) == 9
         @test length(dict["DLIN"]) == 7
 
-        @test length(dict["DBAR"][1]) == 30
-        @test length(dict["DLIN"][1]) == 30
+        for item in dict["DBAR"]
+            @test length(item) == 30
+        end
+        for item in dict["DLIN"]
+            @test length(item) == 30
+        end
     end
 
     @testset "DBAR" begin
-        @test isa(dict["DBAR"][1]["ANGLE"], Float64)
-        @test isa(dict["DBAR"][1]["MINIMUM REACTIVE GENERATION"], Float64)
-        @test isa(dict["DBAR"][1]["MAXIMUM REACTIVE GENERATION"], Float64)
-        @test isa(dict["DBAR"][1]["REACTIVE GENERATION"], Float64)
-        @test isa(dict["DBAR"][1]["ACTIVE GENERATION"], Float64)
-        @test isa(dict["DBAR"][1]["AREA"], Int)
-        @test isa(dict["DBAR"][1]["NUMBER"], Int)
-        @test isa(dict["DBAR"][1]["STATUS"], Char)
-        @test isa(dict["DBAR"][1]["VOLTAGE"], Float64)
-        @test isa(dict["DBAR"][1]["TYPE"], Int)
-        @test isa(dict["DBAR"][1]["CHARGE DEFINITION VOLTAGE"], Float64)
+        for item in dict["DBAR"]
+            @test isa(item["ANGLE"], Float64)
+            @test isa(item["MINIMUM REACTIVE GENERATION"], Float64)
+            @test isa(item["MAXIMUM REACTIVE GENERATION"], Float64)
+            @test isa(item["REACTIVE GENERATION"], Float64)
+            @test isa(item["ACTIVE GENERATION"], Float64)
+            @test isa(item["AREA"], Int)
+            @test isa(item["NUMBER"], Int)
+            @test isa(item["STATUS"], Char)
+            @test isa(item["VOLTAGE"], Float64)
+            @test isa(item["TYPE"], Int)
+            @test isa(item["CHARGE DEFINITION VOLTAGE"], Float64)
+        end
     end
 
     @testset "DLIN" begin
-        @test isa(dict["DLIN"][1]["EMERGENCY CAPACITY"], Float64)
-        @test isa(dict["DLIN"][1]["EQUIPAMENT CAPACITY"], Float64)
-        @test isa(dict["DLIN"][1]["NORMAL CAPACITY"], Float64)
-        @test isa(dict["DLIN"][1]["CIRCUIT"], Int)
-        @test isa(dict["DLIN"][1]["FROM BUS"], Int)
-        @test isa(dict["DLIN"][1]["TO BUS"], Int)
-        @test isa(dict["DLIN"][1]["REACTANCE"], Float64)
-        @test isa(dict["DLIN"][1]["TAP"], Float64)
+        for item in dict["DLIN"]
+            @test isa(item["EMERGENCY CAPACITY"], Float64)
+            @test isa(item["EQUIPAMENT CAPACITY"], Float64)
+            @test isa(item["NORMAL CAPACITY"], Float64)
+            @test isa(item["CIRCUIT"], Int)
+            @test isa(item["FROM BUS"], Int)
+            @test isa(item["TO BUS"], Int)
+            @test isa(item["REACTANCE"], Float64)
+            @test isa(item["TAP"], Float64)
+        end
     end
 end
