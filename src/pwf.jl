@@ -144,10 +144,10 @@ function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, se
                      data[line[k]] = parse(mn_type, line[v])
                 catch
                     @warn "Could not parse $(line[v]) to $mn_type, setting it as a String"
-                    data[line[k]] = line[v]
+                    !needs_default(line[k]) ? data[line[k]] = line[v] : nothing
                 end
             else
-                data[line[k]] = line[v]
+                !needs_default(line[k]) ? data[line[k]] = line[v] : nothing
             end
                     
             end

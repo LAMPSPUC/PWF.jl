@@ -1,4 +1,4 @@
-@testset "Intermediary functions" begin
+@testset "PWF to Dict" begin
     file = open(joinpath(@__DIR__,"data/sistema_teste_radial.pwf"))
 
     sections = ParsePWF._split_sections(file)
@@ -57,30 +57,68 @@ end
 
     @testset "DBAR" begin
         for item in dict["DBAR"]
+            @test isa(item["NUMBER"], Int)
+            @test isa(item["OPERATION"], Char)
+            @test isa(item["STATUS"], Char)
+            @test isa(item["TYPE"], Int)
+            @test isa(item["BASE VOLTAGE GROUP"], String)
+            @test isa(item["NAME"], String)
+            @test isa(item["VOLTAGE LIMIT GROUP"], String)
+            @test isa(item["VOLTAGE"], Float64)
             @test isa(item["ANGLE"], Float64)
+            @test isa(item["ACTIVE GENERATION"], Float64)
+            @test isa(item["REACTIVE GENERATION"], Float64)
             @test isa(item["MINIMUM REACTIVE GENERATION"], Float64)
             @test isa(item["MAXIMUM REACTIVE GENERATION"], Float64)
-            @test isa(item["REACTIVE GENERATION"], Float64)
-            @test isa(item["ACTIVE GENERATION"], Float64)
+            #@test isa(item["CONTROLLED BUS"], Int)
+            @test isa(item["ACTIVE CHARGE"], Float64)
+            @test isa(item["REACTIVE CHARGE"], Float64)
+            @test isa(item["TOTAL REACTIVE POWER"], Float64)
             @test isa(item["AREA"], Int)
-            @test isa(item["NUMBER"], Int)
-            @test isa(item["STATUS"], Char)
-            @test isa(item["VOLTAGE"], Float64)
-            @test isa(item["TYPE"], Int)
             @test isa(item["CHARGE DEFINITION VOLTAGE"], Float64)
+            @test isa(item["VISUALIZATION"], Int)
+            @test isa(item["REACTIVE CHARGE"], Float64)
         end
     end
 
     @testset "DLIN" begin
         for item in dict["DLIN"]
-            @test isa(item["EMERGENCY CAPACITY"], Float64)
-            @test isa(item["EQUIPAMENT CAPACITY"], Float64)
-            @test isa(item["NORMAL CAPACITY"], Float64)
-            @test isa(item["CIRCUIT"], Int)
             @test isa(item["FROM BUS"], Int)
+            @test isa(item["OPENING FROM BUS"], Char)
+            @test isa(item["OPERATION"], Char)
+            @test isa(item["OPENING TO BUS"], Char)
             @test isa(item["TO BUS"], Int)
+            @test isa(item["CIRCUIT"], Int)
+            @test isa(item["STATUS"], Char)
+            @test isa(item["OWNER"], Char)
+            @test isa(item["RESISTANCE"], Float64)
             @test isa(item["REACTANCE"], Float64)
-            @test isa(item["TAP"], Float64)
+            @test isa(item["SHUNT SUSCEPTANCE"], Float64)
+            @test isa(item["TAP"], Nothing) || isa(item["TAP"], Float64)
+            @test isa(item["MINIMUM TAP"], Nothing)
+            @test isa(item["MAXIMUM TAP"], Nothing)
+            @test isa(item["LAG"], Float64)
+            #@test isa(item["CONTROLLED BUS"], Int)
+            @test isa(item["NORMAL CAPACITY"], Float64)
+            @test isa(item["EMERGENCY CAPACITY"], Float64)
+            @test isa(item["NUMBER OF TAPS"], Int)
+            @test isa(item["EQUIPAMENT CAPACITY"], Float64)
+        end
+    end
+
+    @testset "DCTE" begin
+        for (key, value) in dict["DCTE"]
+            @test isa(key, String)
+            @test isa(value, Float64)
+            @test length(key) == 4
+        end
+    end
+
+    @testset "DOPC" begin
+        for (key, value) in dict["DOPC"]
+            @test isa(key, String)
+            @test isa(value, Char)
+            @test length(key) == 4
         end
     end
 end
