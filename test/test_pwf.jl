@@ -213,7 +213,59 @@ end
     end
 
     @testset "Resulting Dict" begin
-        
+        file = open(joinpath(@__DIR__,"data/sistema_teste_radial.pwf"))
+        pwf_data = ParsePWF._parse_pwf_data(file)
+        pm_data = ParsePWF._pwf_to_powermodels!(pwf_data)
+
+        @testset "PowerModels Dict" begin
+            @test isa(pm_data, Dict)
+
+            @test haskey(pm_data, "name")
+            @test haskey(pm_data, "source_version")
+            @test haskey(pm_data, "baseMVA")
+            @test haskey(pm_data, "branch")
+            @test haskey(pm_data, "bus")
+            @test haskey(pm_data, "per_unit")
+            @test haskey(pm_data, "source_type")
+
+            @test isa(pm_data["name"], AbstractString)
+            @test isa(pm_data["source_version"], String)
+            @test isa(pm_data["baseMVA"], Float64)
+            @test isa(pm_data["branch"], Dict)
+            @test isa(pm_data["bus"], Dict)
+            @test isa(pm_data["per_unit"], Bool)
+            @test isa(pm_data["source_type"], String)
+        end
+
+        @testset "Power Flow" begin
+            pm_data["dcline"] = Dict{String,Any}()
+            pm_data["gen"] = Dict{String,Any}()
+            pm_data["storage"] = Dict{String,Any}()
+            pm_data["switch"] = Dict{String,Any}()
+            pm_data["shunt"] = Dict{String,Any}()
+            pm_data["load"] = Dict{String,Any}()
+
+            pm = instantiate_model(pm_data, ACPPowerModel, PowerModels.build_pf);
+            result = optimize_model!(pm, optimizer=Ipopt.Optimizer)
+
+            @testset "Status" begin
+                @test result["termination_status"] == LOCALLY_SOLVED
+                @test result["dual_status"]        == FEASIBLE_POINT
+                @test result["primal_status"]      == FEASIBLE_POINT
+            end
+
+            @testset "Result" begin
+                solution = result["solution"]
+
+                @test solution["baseMVA"]             == 100.0
+                @test solution["multiinfrastructure"] == false
+                @test solution["multinetwork"]        == false
+                @test solution["per_unit"]            == false
+                @test length(solution["bus"])         == 9
+            end
+
+        end
+
     end
 
 end
