@@ -166,7 +166,9 @@ function _parse_line_element!(data::Dict{String, Any}, line::String, section::Ab
                 data[field] = element
             end
         catch
-            @warn "Could not parse $element to $dtype, setting it as a String"
+            if !needs_default(element)
+                @warn "Could not parse $element to $dtype, setting it as a String"
+            end
             data[field] = element
         end
         
@@ -187,7 +189,9 @@ function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, se
                 try
                      data[line[k]] = parse(mn_type, line[v])
                 catch
-                    @warn "Could not parse $(line[v]) to $mn_type, setting it as a String"
+                    if !needs_default(line[v])
+                        @warn "Could not parse $(line[v]) to $mn_type, setting it as a String"
+                    end
                     data[line[k]] = line[v]
                 end
             else
