@@ -57,6 +57,50 @@ const _mnemonic_pairs = Dict("DOPC" =>  _mnemonic_dopc,
     "DCTE" => _mnemonic_dcte
 )
 
+const _default_dbar = Dict("NUMBER" => nothing, "OPERATION" => 'A', "STATUS" => 'L',
+    "TYPE" => 0, "BASE VOLTAGE GROUP" => 0, "NAME" => nothing, "VOLTAGE LIMIT GROUP" => 0,
+    "VOLTAGE" => 1.0, "ANGLE" => 0.0, "ACTIVE GENERATION" => 0.0,
+    "REACTIVE GENERATION" => 0.0, "MINIMUM REACTIVE GENERATION" => 0.0,
+    "MAXIMUM REACTIVE GENERATION" => 0.0, "CONTROLLED BUS" => nothing,
+    "ACTIVE CHARGE" => 0.0, "REACTIVE CHARGE" => 0.0, "TOTAL REACTIVE POWER" => 0.0,
+    "AREA" => 1, "CHARGE DEFINITION VOLTAGE" => 1.0, "VISUALIZATION" => 0,
+    "AGGREGATOR 1" => nothing, "AGGREGATOR 2" => nothing, "AGGREGATOR 3" => nothing, 
+    "AGGREGATOR 4" => nothing, "AGGREGATOR 5" => nothing, "AGGREGATOR 6" => nothing, 
+    "AGGREGATOR 7" => nothing, "AGGREGATOR 8" => nothing, "AGGREGATOR 9" => nothing, 
+    "AGGREGATOR 10" => nothing)
+
+const _default_dlin = Dict("FROM BUS" => nothing, "OPENING FROM BUS" => 'L',
+    "OPERATION" => 'A', "OPENING TO BUS" => 'L', "TO BUS" => nothing, "CIRCUIT" => nothing,
+    "STATUS" => 'L', "OWNER" => 'F', "RESISTANCE" => 0.0, "REACTANCE" => nothing,
+    "SHUNT SUSCEPTANCE" => 0.0, "TAP" => 1.0, "MINIMUM TAP" => nothing,
+    "MAXIMUM TAP" => nothing, "LAG" => 0.0, "CONTROLLED BUS" => nothing,
+    "NORMAL CAPACITY" => Inf, "EMERGENCY CAPACITY" => Inf, "NUMBER OF TAPS" => 33,
+    "EQUIPAMENT CAPACITY" => Inf, "AGGREGATOR 1" => nothing, "AGGREGATOR 2" => nothing,
+    "AGGREGATOR 3" => nothing, "AGGREGATOR 4" => nothing, "AGGREGATOR 5" => nothing,
+    "AGGREGATOR 6" => nothing, "AGGREGATOR 7" => nothing, "AGGREGATOR 8" => nothing,
+    "AGGREGATOR 9" => nothing, "AGGREGATOR 10" => nothing)
+
+const _default_dopc = Dict()
+
+const _default_dcte = Dict("TEPA" => 0.1, "TEPR" => 0.1, "TLPR" => 0.1, "TLVC" => .5,
+    "TLTC" => 0.01, "TETP" => 5.0, "TBPA" => 5.0, "TSFR" => 0.01, "TUDC" => 0.001,
+    "TADC" => 0.01, "BASE" => 100.0, "DASE" => 100.0, "ZMAX" => 500.0, "ACIT" => 30,
+    "LPIT" => 50, "LFLP" => 10, "LFIT" => 10, "DCIT" => 10, "VSIT" => 10, "LCRT" => 23,
+    "LPRT" => 60, "LFCV" => 1, "TPST" => 0.2, "QLST" => 0.2, "EXST" => 0.4, "TLPP" => 1.0,
+    "TSBZ" => 0.01, "TSBA" => 5.0, "PGER" => 30.0, "VDVN" => 40.0, "VDVM" => 200.0,
+    "ASTP" => 0.05, "VSTP" => 5.0, "CSTP" => 5.0, "VFLD" => 70, "HIST" => 0, "ZMIN" => 0.001,
+    "PDIT" => 10, "ICIT" => 50, "FDIV" => 2.0, "DMAX" => 5, "ICMN" => 0.05, "VART" => 5.0,
+    "TSTP" => 33, "TSDC" => 0.02, "ASDC" => 1, "ICMV" => 0.5, "APAS" => 90, "CPAR" => 70,
+    "VAVT" => 2.0, "VAVF" => 5.0, "VMVF" => 15.0, "VPVT" => 2.0, "VPVF" => 5.0,
+    "VPMF" => 10.0, "VSVF" => 20.0, "VINF" => 1.0, "VSUP" => 1.0, "TLSI" => 0.0)
+
+const _default_titu = ""
+
+const _default_name = ""
+
+const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DCTE" => _default_dcte,
+    "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name)
+
 
 const title_identifier = "TITU"
 const end_section_identifier = "99999"
@@ -122,7 +166,9 @@ function _parse_line_element!(data::Dict{String, Any}, line::String, section::Ab
                 data[field] = element
             end
         catch
-            @warn "Could not parse $element to $dtype, setting it as a String"
+            if !needs_default(element)
+                @warn "Could not parse $element to $dtype, setting it as a String"
+            end
             data[field] = element
         end
         
@@ -143,7 +189,9 @@ function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, se
                 try
                      data[line[k]] = parse(mn_type, line[v])
                 catch
-                    @warn "Could not parse $(line[v]) to $mn_type, setting it as a String"
+                    if !needs_default(line[v])
+                        @warn "Could not parse $(line[v]) to $mn_type, setting it as a String"
+                    end
                     data[line[k]] = line[v]
                 end
             else
@@ -200,6 +248,60 @@ function _parse_section!(data::Dict{String, Any}, section_lines::Vector{String})
     data[section] = section_data
 end
 
+needs_default(str::String) = unique(str) == [' ']
+needs_default(ch::Char) = ch == ' '
+
+function _populate_defaults!(pwf_data::Dict{String, Any})
+
+    for (section, section_data) in pwf_data
+        if !haskey(_pwf_defaults, section)
+            @warn "Parser don't have default values for section $(section)."
+        else
+            _populate_section_defaults!(pwf_data, section, section_data)
+        end
+    end
+
+end
+
+function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::String, section_data::Vector{Dict{String, Any}})
+    component_defaults = _pwf_defaults[section]
+
+    for (i, element) in enumerate(section_data)
+        for (component, default) in component_defaults
+            if haskey(element, component)
+                component_value = element[component]
+                if isa(component_value, String) || isa(component_value, Char)
+                    if needs_default(component_value)
+                        pwf_data[section][i][component] = default
+                    end
+                end
+            else
+                pwf_data[section][i][component] = default
+            end
+        end
+    end
+end
+
+function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::String, section_data::Dict{String, Any})
+    component_defaults = _pwf_defaults[section]
+
+    for (component, default) in component_defaults
+        if haskey(section_data, component)
+            component_value = section_data[component]
+            if isa(component_value, String) || isa(component_value, Char)
+                if needs_default(component_value)
+                    pwf_data[section][component] = default
+                end
+            end
+        else
+            pwf_data[section][component] = default
+        end
+    end
+end
+
+function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::String, section_data::AbstractString)
+    # Filename indicator, does not need a default
+end
 """
     _parse_pwf_data(data_io)
 
@@ -212,6 +314,8 @@ function _parse_pwf_data(data_io::IO)
     for section in sections
         _parse_section!(pwf_data, section)
     end
+
+    _populate_defaults!(pwf_data)
     
     return pwf_data
 end
