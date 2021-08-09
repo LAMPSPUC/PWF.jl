@@ -94,8 +94,12 @@ const _default_dcte = Dict("TEPA" => 0.1, "TEPR" => 0.1, "TLPR" => 0.1, "TLVC" =
     "VAVT" => 2.0, "VAVF" => 5.0, "VMVF" => 15.0, "VPVT" => 2.0, "VPVF" => 5.0,
     "VPMF" => 10.0, "VSVF" => 20.0, "VINF" => 1.0, "VSUP" => 1.0, "TLSI" => 0.0)
 
+const _default_titu = ""
+
+const _default_name = ""
+
 const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DCTE" => _default_dcte,
-    "DOPC" => _default_dopc)
+    "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name)
 
 
 const title_identifier = "TITU"
@@ -246,7 +250,11 @@ needs_default(ch::Char) = ch == ' '
 function _populate_defaults!(pwf_data::Dict{String, Any})
 
     for (section, section_data) in pwf_data
-        _populate_section_defaults!(pwf_data, section, section_data)
+        if !haskey(_pwf_defaults, section)
+            @warn "Parser don't have default values for section $(section)."
+        else
+            _populate_section_defaults!(pwf_data, section, section_data)
+        end
     end
 
 end
