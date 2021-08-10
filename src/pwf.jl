@@ -217,8 +217,11 @@ function _parse_pwf_data(data_io::IO)
     return pwf_data
 end
 
+_handle_base_kv(pwf_data::Dict) = haskey(pwf_data, "DGBT") ? pwf_data["DGBT"][4:8] : 1.0 # Default value for this field in .pwf
+_handle_vmin(pwf_data::Dict) = haskey(pwf_data, "DGLT") ? pwf_data["DGLT"][4:8] : 0.8 # Default value for this field in .pwf
+_handle_vmax(pwf_data::Dict) = haskey(pwf_data, "DGLT") ? pwf_data["DGLT"][10:14] : 1.2 # Default value for this field in .pwf
 
-function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict) #, import_all::Bool)
+function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
 
     pm_data["bus"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
@@ -236,21 +239,9 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict) #, import_all::Bool)
             sub_data["source_id"] = ["bus", "$(bus["NUMBER"])"]
             sub_data["index"] = pop!(bus, "NUMBER")
 
-            sub_data["base_kv"] = 1.0
-            if haskey(pwf_data, "DGBT")
-                sub_data["base_kv"] = pwf_data["DGBT"][4:8]
-            end
-
-            sub_data["vmin"] = 0.8
-            sub_data["vmax"] = 1.2
-            if haskey(pwf_data, "DGLT")
-                sub_data["vmin"] = pwf_data["DGLT"][4:8]
-                sub_data["vmax"] = pwf_data["DGLT"][10:14]
-            end
-
-            # if import_all
-            #     _import_remaining_keys!(sub_data, bus)
-            # end
+            sub_data["base_kv"] = _handle_base_kv(pwf_data)
+            sub_data["vmin"] = _handle_vmin(pwf_data)
+            sub_data["vmax"] = _handle_vmax(pwf_data)
 
             idx = string(sub_data["index"])
             pm_data["bus"][idx] = sub_data
@@ -260,7 +251,10 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict) #, import_all::Bool)
     
 end
 
-function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict) #, import_all::Bool)
+#ToDo
+#_handle_rates(pwf_data) = 10000, 10000, 10000
+
+function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
 
     pm_data["branch"] = Dict{String, Any}()
     if haskey(pwf_data, "DLIN")
@@ -275,37 +269,35 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict) #, import_all::Bool)
             sub_data["b_fr"] = branch["SHUNT SUSCEPTANCE"] / 2.0
             sub_data["g_to"] = 0.0
             sub_data["b_to"] = branch["SHUNT SUSCEPTANCE"] / 2.0
-            # sub_data["rate_a"] = 10000
-            # sub_data["rate_b"] = 10000
-            # sub_data["rate_c"] = 10000
             sub_data["tap"] = pop!(branch, "TAP")
             sub_data["shift"] = pop!(branch, "LAG")
             sub_data["br_status"] = 1
-            sub_data["angmin"] = 0.0
-            sub_data["angmax"] = 0.0
+            sub_data["angmin"] = -360.0 # No limit
+            sub_data["angmax"] = 360.0 # No limit
             sub_data["transformer"] = false
 
             sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "1 "]
             sub_data["index"] = i
 
-            # if import_all
-            #     _import_remaining_keys!(sub_data, branch; exclude=["B", "BI", "BJ"])
-            # end
-
-            # if sub_data["rate_a"] == 0.0
-            #     delete!(sub_data, "rate_a")
-            # end
-            # if sub_data["rate_b"] == 0.0
-            #     delete!(sub_data, "rate_b")
-            # end
-            # if sub_data["rate_c"] == 0.0
-            #     delete!(sub_data, "rate_c")
-            # end
+            #ToDo
+            #sub_data["rate_a"] = _handle_rates(pwf_data)[1]
+            #sub_data["rate_b"] = _handle_rates(pwf_data)[2]
+            #sub_data["rate_c"] = _handle_rates(pwf_data)[3]
 
             idx = string(sub_data["index"])
             pm_data["branch"][idx] = sub_data
         end
     end
+end
+
+function _handle_base_mva(pwf_data::Dict)
+    baseMVA = 100.0 # Default value for this field in .pwf
+    if haskey(pwf_data, "DCTE")
+        if haskey(pwf_data["DCTE"], "BASE")
+            baseMVA = pwf_data["DCTE"]["BASE"]
+        end
+    end
+    return baseMVA
 end
 
 function _pwf_to_powermodels!(pwf_data::Dict)
@@ -316,17 +308,7 @@ function _pwf_to_powermodels!(pwf_data::Dict)
     pm_data["source_version"] = "09"
     pm_data["name"] = pwf_data["name"]
 
-    pm_data["baseMVA"] = 100.0
-    if haskey(pwf_data, "DCTE")
-        if haskey(pwf_data["DCTE"], "BASE")
-            pm_data["baseMVA"] = pwf_data["DCTE"]["BASE"]
-        end
-    end
-
-
-    # if import_all
-    #     _import_remaining_keys!(pm_data, pti_data["CASE IDENTIFICATION"][1])
-    # end
+    pm_data["baseMVA"] = _handle_base_mva(pwf_data)
 
     _pwf2pm_bus!(pm_data, pwf_data)
     _pwf2pm_branch!(pm_data, pwf_data)
