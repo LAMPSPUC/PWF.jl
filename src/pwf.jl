@@ -322,26 +322,34 @@ function _parse_pwf_data(data_io::IO)
 end
 
 _handle_base_kv(pwf_data::Dict) = haskey(pwf_data, "DGBT") ? pwf_data["DGBT"][4:8] : 1.0 # Default value for this field in .pwf
-_handle_vmin(pwf_data::Dict) = haskey(pwf_data, "DGLT") ? pwf_data["DGLT"][4:8] : 0.8 # Default value for this field in .pwf
-_handle_vmax(pwf_data::Dict) = haskey(pwf_data, "DGLT") ? pwf_data["DGLT"][10:14] : 1.2 # Default value for this field in .pwf
+_handle_vmin(pwf_data::Dict) = haskey(pwf_data, "DGLT") ? pwf_data["DGLT"][4:8] : 0.9 # # Default value given in the PSS(R)E specification
+_handle_vmax(pwf_data::Dict) = haskey(pwf_data, "DGLT") ? pwf_data["DGLT"][10:14] : 1.1 # Default value given in the PSS(R)E specification
+function _handle_bus_type(bus::Dict)
+    bus_type = pop!(bus, "TYPE")
+    dict_bus_type = Dict(0 => 1, 3 => 1, # PQ
+    1 => 2, # PV
+    2 => 3 # Referência
+    )
+    return dict_bus_type[bus_type]
+end
 
 function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
 
     pm_data["bus"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
-        for bus in pwf_data["DBAR"]
+        for (i,bus) in enumerate(pwf_data["DBAR"])
             sub_data = Dict{String,Any}()
 
             sub_data["bus_i"] = bus["NUMBER"]
-            sub_data["bus_type"] = pop!(bus, "TYPE")
+            sub_data["bus_type"] = _handle_bus_type(bus)
             sub_data["area"] = pop!(bus, "AREA")
-            sub_data["vm"] = pop!(bus, "VOLTAGE")
-            sub_data["va"] = pop!(bus, "ANGLE")
+            sub_data["vm"] = pop!(bus, "VOLTAGE")/1000 # Implicit decimal point ignored
+            sub_data["va"] = pop!(bus, "ANGLE")*pi/180 # Degrees to radians
             sub_data["zone"] = 1
             sub_data["name"] = pop!(bus, "NAME")
 
             sub_data["source_id"] = ["bus", "$(bus["NUMBER"])"]
-            sub_data["index"] = pop!(bus, "NUMBER")
+            sub_data["index"] = i
 
             sub_data["base_kv"] = _handle_base_kv(pwf_data)
             sub_data["vmin"] = _handle_vmin(pwf_data)
@@ -380,7 +388,7 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
             sub_data["angmax"] = 360.0 # No limit
             sub_data["transformer"] = false
 
-            sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "1 "]
+            sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
             sub_data["index"] = i
 
             #ToDo
@@ -390,6 +398,68 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
 
             idx = string(sub_data["index"])
             pm_data["branch"][idx] = sub_data
+        end
+    end
+end
+
+function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict)
+
+    pm_data["load"] = Dict{String, Any}()
+    if haskey(pwf_data, "DBAR")
+        for bus in pwf_data["DBAR"]
+            if bus["REACTIVE CHARGE"] > 0.0 || bus["ACTIVE CHARGE"] > 0.0
+                sub_data = Dict{String,Any}()
+
+                sub_data["load_bus"] = bus["NUMBER"]
+                sub_data["pd"] = pop!(bus, "ACTIVE CHARGE") / 100
+                sub_data["qd"] = pop!(bus, "REACTIVE CHARGE") / 100
+                sub_data["status"] = 1
+
+                sub_data["source_id"] = ["load", sub_data["load_bus"], "1 "]
+                sub_data["index"] = length(pm_data["load"]) + 1
+            
+                idx = string(sub_data["index"])
+                pm_data["load"][idx] = sub_data
+            end
+        end
+    end
+end
+
+_handle_pmin(pwf_data::Dict, bus_i::Int) = haskey(pwf_data, "DGER") ? pwf_data["DGER"][bus_i][9:14] : 0.0 # Default value for this field in pwf
+_handle_pmax(pwf_data::Dict, bus_i::Int) = haskey(pwf_data, "DGER") ? pwf_data["DGER"][bus_i][16:21] : 99999.0 # Default value for this field in pwf
+
+function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
+
+    pm_data["gen"] = Dict{String, Any}()
+    if haskey(pwf_data, "DBAR")
+        for bus in pwf_data["DBAR"]
+            if bus["REACTIVE GENERATION"] > 0.0 || bus["ACTIVE GENERATION"] > 0.0
+                sub_data = Dict{String,Any}()
+
+                sub_data["gen_bus"] = bus["NUMBER"]
+                sub_data["gen_status"] = 1
+                sub_data["pg"] = pop!(bus, "ACTIVE GENERATION")
+                sub_data["qg"] = pop!(bus, "REACTIVE GENERATION")
+                sub_data["vg"] = pm_data["bus"]["$(bus["NUMBER"])"]["vm"]
+                sub_data["mbase"] = _handle_base_mva(pwf_data)
+                sub_data["pmin"] = _handle_pmin(pwf_data, bus["NUMBER"])
+                sub_data["pmax"] = _handle_pmax(pwf_data, bus["NUMBER"])
+                sub_data["qmin"] = pop!(bus, "MINIMUM REACTIVE GENERATION") / 100
+                sub_data["qmax"] = pop!(bus, "MAXIMUM REACTIVE GENERATION") / 100
+    
+                # Default Cost functions
+                sub_data["model"] = 2
+                sub_data["startup"] = 0.0
+                sub_data["shutdown"] = 0.0
+                sub_data["ncost"] = 2
+                sub_data["cost"] = [1.0, 0.0]
+    
+                sub_data["source_id"] = ["generator", sub_data["gen_bus"], "1 "]
+                sub_data["index"] = length(pm_data["gen"]) + 1
+                
+                idx = string(sub_data["index"])
+                pm_data["gen"][idx] = sub_data
+            end
         end
     end
 end
@@ -416,6 +486,8 @@ function _pwf_to_powermodels!(pwf_data::Dict)
 
     _pwf2pm_bus!(pm_data, pwf_data)
     _pwf2pm_branch!(pm_data, pwf_data)
+    _pwf2pm_load!(pm_data, pwf_data)
+    _pwf2pm_generator!(pm_data, pwf_data)
 
     
     return pm_data
