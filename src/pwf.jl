@@ -8,8 +8,8 @@
 A list of data file sections in the order that they appear in a PWF file
 """
 const _dbar_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Int64, 6), 
-    ("STATUS", Char, 7), ("TYPE", Int64, 8), ("BASE VOLTAGE GROUP", Int64, 9:10),
-    ("NAME", String, 11:22), ("VOLTAGE LIMIT GROUP", Int64, 23:24),
+    ("STATUS", Char, 7), ("TYPE", Int64, 8), ("BASE VOLTAGE GROUP", String, 9:10),
+    ("NAME", String, 11:22), ("VOLTAGE LIMIT GROUP", String, 23:24),
     ("VOLTAGE", Float64, 25:28), ("ANGLE", Float64, 29:32),
     ("ACTIVE GENERATION", Float64, 33:37), ("REACTIVE GENERATION", Float64, 38:42),
     ("MINIMUM REACTIVE GENERATION", Float64, 43:47),
@@ -38,10 +38,23 @@ const _dlin_dtypes = [("FROM BUS", Int64, 1:5), ("OPENING FROM BUS", Char, 6),
     ("AGGREGATOR 7", Int64, 97:99), ("AGGREGATOR 8", Int64, 100:102),
     ("AGGREGATOR 9", Int64, 103:105), ("AGGREGATOR 10", Int64, 106:108)]
 
+const _dgbt_dtypes = [("GROUP", String, 1:2), ("VOLTAGE", Float64, 4:8)]
 
-const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes,
-    "DLIN" => _dlin_dtypes
-)
+const _dglt_dtypes = [("GROUP", String, 1:2), ("LOWER BOUND", Float64, 4:8),
+    ("UPPER BOUND", Float64, 10:14), ("LOWER EMERGENCY BOUND", Float64, 16:20),
+    ("UPPER EMERGENCY BOUND", Float64, 22:26)]
+
+const _dger_dtypes = [("NUMBER", Int, 1:5), ("OPERATION", Char, 7),
+    ("MAXIMUM ACTIVE GENERATION", Float64, 9:14),
+    ("MINIMUM ACTIVE GENERATION", Float64, 16:21),
+    ("PARTICIPATION FACTOR", Float64, 23:27),
+    ("REMOTE CONTROL PARTICIPATION FACTOR", Float64, 29:33),
+    ("NOMINAL POWER FACTOR", Float64, 35:39), ("ARMATURE SERVICE FACTOR", Float64, 41:44),
+    ("ROTOR SERVICE FACTOR", Float64, 46:49)]
+
+const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes,
+    "DGBT" => _dgbt_dtypes, "DGLT" => _dglt_dtypes,
+    "DGER" => _dger_dtypes)
 
 const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
                         filter(x -> x%7 == 6, 1:69), Char)
@@ -321,9 +334,39 @@ function _parse_pwf_data(data_io::IO)
     return pwf_data
 end
 
-_handle_base_kv(pwf_data::Dict) = haskey(pwf_data, "DGBT") ? pwf_data["DGBT"][4:8] : 1.0 # Default value for this field in .pwf
-_handle_vmin(pwf_data::Dict) = haskey(pwf_data, "DGLT") ? pwf_data["DGLT"][4:8] : 0.9 # # Default value given in the PSS(R)E specification
-_handle_vmax(pwf_data::Dict) = haskey(pwf_data, "DGLT") ? pwf_data["DGLT"][10:14] : 1.1 # Default value given in the PSS(R)E specification
+function _handle_base_kv(pwf_data::Dict, bus::Dict)
+    group_identifier = bus["BASE VOLTAGE GROUP"]
+    if haskey(pwf_data, "DGBT")
+        group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGBT"])
+        @assert length(group) == 1
+        return group[1]["VOLTAGE"]
+    else
+        return 1.0 # Default value for this field in .pwf
+    end
+end
+
+function _handle_vmin(pwf_data::Dict, bus::Dict)
+    group_identifier = bus["VOLTAGE LIMIT GROUP"]
+    if haskey(pwf_data, "DGLT")
+        group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGLT"])
+        @assert length(group) == 1
+        return group[1]["LOWER BOUND"]
+    else
+        return 0.9 # Default value given in the PSS(R)E specification
+    end    
+end
+
+function _handle_vmax(pwf_data::Dict, bus::Dict)
+    group_identifier = bus["VOLTAGE LIMIT GROUP"]
+    if haskey(pwf_data, "DGLT")
+        group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGLT"])
+        @assert length(group) == 1
+        return group[1]["UPPER BOUND"]
+    else
+        return 1.1 # Default value given in the PSS(R)E specification
+    end    
+end
+
 function _handle_bus_type(bus::Dict)
     bus_type = pop!(bus, "TYPE")
     dict_bus_type = Dict(0 => 1, 3 => 1, # PQ
@@ -351,9 +394,9 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
             sub_data["source_id"] = ["bus", "$(bus["NUMBER"])"]
             sub_data["index"] = i
 
-            sub_data["base_kv"] = _handle_base_kv(pwf_data)
-            sub_data["vmin"] = _handle_vmin(pwf_data)
-            sub_data["vmax"] = _handle_vmax(pwf_data)
+            sub_data["base_kv"] = _handle_base_kv(pwf_data, bus)
+            sub_data["vmin"] = _handle_vmin(pwf_data, bus)
+            sub_data["vmax"] = _handle_vmax(pwf_data, bus)
 
             idx = string(sub_data["index"])
             pm_data["bus"][idx] = sub_data
@@ -425,8 +468,25 @@ function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict)
     end
 end
 
-_handle_pmin(pwf_data::Dict, bus_i::Int) = haskey(pwf_data, "DGER") ? pwf_data["DGER"][bus_i][9:14] : 0.0 # Default value for this field in pwf
-_handle_pmax(pwf_data::Dict, bus_i::Int) = haskey(pwf_data, "DGER") ? pwf_data["DGER"][bus_i][16:21] : 99999.0 # Default value for this field in pwf
+function _handle_pmin(pwf_data::Dict, bus_i::Int)
+    if haskey(pwf_data, "DGER")
+        bus = filter(x -> x["NUMBER"] == bus_i, pwf_data["DGER"])
+        @assert length(bus) == 1
+        return bus[1]["MINIMUM ACTIVE GENERATION"]
+    else
+        return 0.0 # Default value for this field in pwf
+    end    
+end
+
+function _handle_pmax(pwf_data::Dict, bus_i::Int)
+    if haskey(pwf_data, "DGER")
+        bus = filter(x -> x["NUMBER"] == bus_i, pwf_data["DGER"])
+        @assert length(bus) == 1
+        return bus[1]["MAXIMUM ACTIVE GENERATION"]
+    else
+        return 99999.0 # Default value for this field in pwf
+    end    
+end
 
 function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
 
