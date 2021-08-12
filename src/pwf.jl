@@ -50,7 +50,8 @@ const _dger_dtypes = [("NUMBER", Int, 1:5), ("OPERATION", Char, 7),
     ("PARTICIPATION FACTOR", Float64, 23:27),
     ("REMOTE CONTROL PARTICIPATION FACTOR", Float64, 29:33),
     ("NOMINAL POWER FACTOR", Float64, 35:39), ("ARMATURE SERVICE FACTOR", Float64, 41:44),
-    ("ROTOR SERVICE FACTOR", Float64, 46:49)]
+    ("ROTOR SERVICE FACTOR", Float64, 46:49), ("CHARGE ANGLE", Float64, 51:54),
+    ("MACHINE REACTANCE", Float64, 56:60), ("NOMINAL APPARENT POWER", Float64, 62:66)]
 
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes,
     "DGBT" => _dgbt_dtypes, "DGLT" => _dglt_dtypes,
