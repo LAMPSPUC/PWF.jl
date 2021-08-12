@@ -170,6 +170,12 @@ and saves it into `data::Dict`.
 """
 function _parse_line_element!(data::Dict{String, Any}, line::String, section::AbstractString)
 
+    line_length = _pwf_dtypes[section][end][3][end]
+    if length(line) < line_length
+        extra_characters_needed = line_length - length(line)
+        line = line * repeat(" ", extra_characters_needed)
+    end
+
     for (field, dtype, cols) in _pwf_dtypes[section]
         element = line[cols]
 
