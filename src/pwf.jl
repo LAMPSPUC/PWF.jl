@@ -255,7 +255,7 @@ function _populate_defaults!(pwf_data::Dict{String, Any})
 
     for (section, section_data) in pwf_data
         if !haskey(_pwf_defaults, section)
-            @warn "Parser don't have default values for section $(section)."
+            @warn "Parser doesn't have default values for section $(section)."
         else
             _populate_section_defaults!(pwf_data, section, section_data)
         end
@@ -378,9 +378,9 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
             sub_data["br_r"] = pop!(branch, "RESISTANCE") / 100
             sub_data["br_x"] = pop!(branch, "REACTANCE") / 100
             sub_data["g_fr"] = 0.0
-            sub_data["b_fr"] = branch["SHUNT SUSCEPTANCE"] / 2.0
+            sub_data["b_fr"] = branch["SHUNT SUSCEPTANCE"] / 200.0
             sub_data["g_to"] = 0.0
-            sub_data["b_to"] = branch["SHUNT SUSCEPTANCE"] / 2.0
+            sub_data["b_to"] = branch["SHUNT SUSCEPTANCE"] / 200.0
             sub_data["tap"] = pop!(branch, "TAP")
             sub_data["shift"] = pop!(branch, "LAG")
             sub_data["br_status"] = 1
