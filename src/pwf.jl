@@ -349,7 +349,7 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
             sub_data["name"] = pop!(bus, "NAME")
 
             sub_data["source_id"] = ["bus", "$(bus["NUMBER"])"]
-            sub_data["index"] = i
+            sub_data["index"] = bus["NUMBER"]
 
             sub_data["base_kv"] = _handle_base_kv(pwf_data)
             sub_data["vmin"] = _handle_vmin(pwf_data)
