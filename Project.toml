@@ -2,6 +2,8 @@ name = "ParserPWF"
 uuid = ""
 version = ""
 
+[deps]
+PowerModels = "c36e90e8-916a-50a6-bd94-075b64ef4655"
 
 [extra]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

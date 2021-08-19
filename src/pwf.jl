@@ -474,7 +474,7 @@ function _handle_base_mva(pwf_data::Dict)
     return baseMVA
 end
 
-function _pwf_to_powermodels!(pwf_data::Dict)
+function _pwf_to_powermodels!(pwf_data::Dict, validate::Bool)
     pm_data = Dict{String,Any}()
 
     pm_data["per_unit"] = false
@@ -489,6 +489,16 @@ function _pwf_to_powermodels!(pwf_data::Dict)
     _pwf2pm_load!(pm_data, pwf_data)
     _pwf2pm_generator!(pm_data, pwf_data)
 
+    # ToDo: fields not yet contemplated by the parser
+
+    pm_data["dcline"] = Dict{String,Any}()
+    pm_data["storage"] = Dict{String,Any}()
+    pm_data["switch"] = Dict{String,Any}()
+    pm_data["shunt"] = Dict{String,Any}()
+
+    if validate
+        PowerModels.correct_network_data!(pm_data)
+    end
     
     return pm_data
 end
