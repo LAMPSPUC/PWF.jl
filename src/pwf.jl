@@ -108,19 +108,25 @@ const _default_dcte = Dict("TEPA" => 0.1, "TEPR" => 0.1, "TLPR" => 0.1, "TLVC" =
     "VAVT" => 2.0, "VAVF" => 5.0, "VMVF" => 15.0, "VPVT" => 2.0, "VPVF" => 5.0,
     "VPMF" => 10.0, "VSVF" => 20.0, "VINF" => 1.0, "VSUP" => 1.0, "TLSI" => 0.0)
 
-const _default_dger = ["NUMBER" => nothing, "OPERATION" => 'A',
+const _default_dger = Dict("NUMBER" => nothing, "OPERATION" => 'A',
     "MINIMUM ACTIVE GENERATION" => 0.0, "MAXIMUM ACTIVE GENERATION" => 99999.0,
     "PARTICIPATION FACTOR" => 0.0, "REMOTE CONTROL PARTICIPATION FACTOR" => 100.0,
     "NOMINAL POWER FACTOR" => nothing, "ARMATURE SERVICE FACTOR" => nothing,
     "ROTOR SERVICE FACTOR" => nothing, "CHARGE ANGLE" => nothing,
-    "MACHINE REACTANCE" => nothing, "NOMINAL APPARENT POWER" => nothing]
+    "MACHINE REACTANCE" => nothing, "NOMINAL APPARENT POWER" => nothing)
+
+const _default_dgbt = Dict("GROUP" => 0, "VOLTAGE" => 1.0)
+
+const _default_dglt = Dict("GROUP" => nothing,  "LOWER BOUND" => 0.8, "UPPER BOUND" => 1.2,
+    "LOWER EMERGENCY BOUND" => 0.8, "UPPER EMERGENCY BOUND" => 1.2)
 
 const _default_titu = ""
 
 const _default_name = ""
 
 const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DCTE" => _default_dcte,
-    "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name, "DGER" => _default_dger)
+    "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name, "DGER" => _default_dger,
+    "DGBT" => _default_dgbt, "DGLT" => _default_dglt)
 
 
 const title_identifier = "TITU"
