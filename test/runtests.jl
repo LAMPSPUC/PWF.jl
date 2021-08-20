@@ -1,5 +1,5 @@
 using Test
 
-@testset " " begin
+@testset "Default" begin
     @test true
 end

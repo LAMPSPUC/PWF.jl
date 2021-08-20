@@ -1,11 +1,11 @@
 name = "ParserPWF"
-uuid = ""
-version = ""
+uuid = "0f4c3beb-4231-4c4d-93e1-709cb40a89e6"
+version = "0.1.0"
 
 [deps]
 PowerModels = "c36e90e8-916a-50a6-bd94-075b64ef4655"
 
-[extra]
+[extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
