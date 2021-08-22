@@ -271,7 +271,7 @@ function _parse_section!(data::Dict{String, Any}, section_lines::Vector{String})
 
     elseif section in keys(_pwf_dtypes)
         section_data = Dict{String, Any}[]
-        _parse_section_element(section_data, section_lines[3:end], section)
+        _parse_section_element(section_data, section_lines, section)
 
     else
         @warn "Currently there is no support for $section parsing"

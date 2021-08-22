@@ -10,9 +10,9 @@ proper types.
 """
 function parse_pwf(io::IO)
     # Open file, read it and parse to a Dict 
-    pwf_data = parse_pwf_data(io)
+    pwf_data = _parse_pwf_data(io)
     # Parse Dict to a Power Models format
-    pm = pwf_to_powermodels!(pwf_data)
+    pm = _pwf_to_powermodels!(pwf_data)
     return pm
 end
 
