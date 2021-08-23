@@ -228,7 +228,7 @@ function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, se
                     data[line[k]] = line[v]
                 end
             else
-                data[line[k]] = line[v]
+                !needs_default(line[k]) ? data[line[k]] = line[v] : nothing
             end
                     
             end
@@ -425,7 +425,7 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
 
     pm_data["bus"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
-        for (i,bus) in enumerate(pwf_data["DBAR"])
+        for bus in pwf_data["DBAR"]
             sub_data = Dict{String,Any}()
 
             sub_data["bus_i"] = bus["NUMBER"]
@@ -437,7 +437,7 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
             sub_data["name"] = pop!(bus, "NAME")
 
             sub_data["source_id"] = ["bus", "$(bus["NUMBER"])"]
-            sub_data["index"] = i
+            sub_data["index"] = bus["NUMBER"]
 
             sub_data["base_kv"] = _handle_base_kv(pwf_data, bus)
             sub_data["vmin"] = _handle_vmin(pwf_data, bus)
