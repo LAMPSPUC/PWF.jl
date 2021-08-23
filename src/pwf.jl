@@ -432,7 +432,7 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
             sub_data["bus_type"] = _handle_bus_type(bus)
             sub_data["area"] = pop!(bus, "AREA")
             sub_data["vm"] = pop!(bus, "VOLTAGE")/1000 # Implicit decimal point ignored
-            sub_data["va"] = pop!(bus, "ANGLE")*pi/180 # Degrees to radians
+            sub_data["va"] = pop!(bus, "ANGLE")
             sub_data["zone"] = 1
             sub_data["name"] = pop!(bus, "NAME")
 
@@ -466,9 +466,9 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
             sub_data["br_r"] = pop!(branch, "RESISTANCE") / 100
             sub_data["br_x"] = pop!(branch, "REACTANCE") / 100
             sub_data["g_fr"] = 0.0
-            sub_data["b_fr"] = branch["SHUNT SUSCEPTANCE"] / 2.0
+            sub_data["b_fr"] = branch["SHUNT SUSCEPTANCE"] / 200.0
             sub_data["g_to"] = 0.0
-            sub_data["b_to"] = branch["SHUNT SUSCEPTANCE"] / 2.0
+            sub_data["b_to"] = branch["SHUNT SUSCEPTANCE"] / 200.0
             sub_data["tap"] = pop!(branch, "TAP")
             sub_data["shift"] = pop!(branch, "LAG")
             sub_data["br_status"] = 1
@@ -499,8 +499,8 @@ function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict)
                 sub_data = Dict{String,Any}()
 
                 sub_data["load_bus"] = bus["NUMBER"]
-                sub_data["pd"] = pop!(bus, "ACTIVE CHARGE") / 100
-                sub_data["qd"] = pop!(bus, "REACTIVE CHARGE") / 100
+                sub_data["pd"] = pop!(bus, "ACTIVE CHARGE")
+                sub_data["qd"] = pop!(bus, "REACTIVE CHARGE")
                 sub_data["status"] = 1
 
                 sub_data["source_id"] = ["load", sub_data["load_bus"], "1 "]
@@ -538,7 +538,7 @@ function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
     pm_data["gen"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
         for bus in pwf_data["DBAR"]
-            if bus["REACTIVE GENERATION"] > 0.0 || bus["ACTIVE GENERATION"] > 0.0
+            if bus["REACTIVE GENERATION"] != 0.0 || bus["ACTIVE GENERATION"] != 0.0
                 sub_data = Dict{String,Any}()
 
                 sub_data["gen_bus"] = bus["NUMBER"]
@@ -549,8 +549,8 @@ function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
                 sub_data["mbase"] = _handle_base_mva(pwf_data)
                 sub_data["pmin"] = _handle_pmin(pwf_data, bus["NUMBER"])
                 sub_data["pmax"] = _handle_pmax(pwf_data, bus["NUMBER"])
-                sub_data["qmin"] = pop!(bus, "MINIMUM REACTIVE GENERATION") / 100
-                sub_data["qmax"] = pop!(bus, "MAXIMUM REACTIVE GENERATION") / 100
+                sub_data["qmin"] = pop!(bus, "MINIMUM REACTIVE GENERATION")
+                sub_data["qmax"] = pop!(bus, "MAXIMUM REACTIVE GENERATION")
     
                 # Default Cost functions
                 sub_data["model"] = 2
@@ -579,7 +579,7 @@ function _handle_base_mva(pwf_data::Dict)
     return baseMVA
 end
 
-function _pwf_to_powermodels!(pwf_data::Dict)
+function _pwf_to_powermodels!(pwf_data::Dict, validate::Bool)
     pm_data = Dict{String,Any}()
 
     pm_data["per_unit"] = false
@@ -594,6 +594,16 @@ function _pwf_to_powermodels!(pwf_data::Dict)
     _pwf2pm_load!(pm_data, pwf_data)
     _pwf2pm_generator!(pm_data, pwf_data)
 
+    # ToDo: fields not yet contemplated by the parser
+
+    pm_data["dcline"] = Dict{String,Any}()
+    pm_data["storage"] = Dict{String,Any}()
+    pm_data["switch"] = Dict{String,Any}()
+    pm_data["shunt"] = Dict{String,Any}()
+
+    if validate
+        PowerModels.correct_network_data!(pm_data)
+    end
     
     return pm_data
 end
