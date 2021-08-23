@@ -236,6 +236,15 @@ function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, se
     end
 end
 
+function _first_data_line(section_lines::Vector{String})
+    section_name = section_lines[1]
+    if section_name == "DGER" # Sections which don't have a column index
+        return 2
+    else
+        return 3
+    end
+end
+
 """
     _parse_section_element(data, section_lines, section)
 Internal function. Parses a section containing a system component.
@@ -243,7 +252,8 @@ Returns a Vector of Dict, where each entry corresponds to a single element.
 """
 function _parse_section_element(data::Vector{Dict{String, Any}}, section_lines::Vector{String}, section::AbstractString)
 
-    for line in section_lines[3:end]
+    first_line = _first_data_line(section_lines)
+    for line in section_lines[first_line:end]
 
         line_data = Dict{String, Any}()
         _parse_line_element!(line_data, line, section)
@@ -357,9 +367,13 @@ end
 function _handle_base_kv(pwf_data::Dict, bus::Dict)
     group_identifier = bus["BASE VOLTAGE GROUP"]
     if haskey(pwf_data, "DGBT")
-        group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGBT"])
-        @assert length(group) == 1
-        return group[1]["VOLTAGE"]
+        if length(pwf_data["DGBT"]) == 1 && pwf_data["DGBT"][1]["GROUP"] != group_identifier
+            @warn "Only one base voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGBT"][1]["GROUP"])"
+        else
+            group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGBT"])
+            @assert length(group) == 1
+            return group[1]["VOLTAGE"]
+        end
     else
         return 1.0 # Default value for this field in .pwf
     end
@@ -368,9 +382,13 @@ end
 function _handle_vmin(pwf_data::Dict, bus::Dict)
     group_identifier = bus["VOLTAGE LIMIT GROUP"]
     if haskey(pwf_data, "DGLT")
-        group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGLT"])
-        @assert length(group) == 1
-        return group[1]["LOWER BOUND"]
+        if length(pwf_data["DGLT"]) == 1 && pwf_data["DGLT"][1]["GROUP"] != group_identifier
+            @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"][1]["GROUP"])"
+        else
+            group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGLT"])
+            @assert length(group) == 1
+            return group[1]["LOWER BOUND"]
+        end
     else
         return 0.9 # Default value given in the PSS(R)E specification
     end    
@@ -379,9 +397,13 @@ end
 function _handle_vmax(pwf_data::Dict, bus::Dict)
     group_identifier = bus["VOLTAGE LIMIT GROUP"]
     if haskey(pwf_data, "DGLT")
-        group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGLT"])
-        @assert length(group) == 1
-        return group[1]["UPPER BOUND"]
+        if length(pwf_data["DGLT"]) == 1 && pwf_data["DGLT"][1]["GROUP"] != group_identifier
+            @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"][1]["GROUP"])"
+        else
+            group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGLT"])
+            @assert length(group) == 1
+            return group[1]["UPPER BOUND"]
+        end
     else
         return 1.1 # Default value given in the PSS(R)E specification
     end    
@@ -491,21 +513,21 @@ end
 function _handle_pmin(pwf_data::Dict, bus_i::Int)
     if haskey(pwf_data, "DGER")
         bus = filter(x -> x["NUMBER"] == bus_i, pwf_data["DGER"])
-        @assert length(bus) == 1
-        return bus[1]["MINIMUM ACTIVE GENERATION"]
-    else
-        return 0.0 # Default value for this field in pwf
+        if length(bus) == 1
+            return bus[1]["MINIMUM ACTIVE GENERATION"]
+        end
     end    
+    return 0.0 # Default value for this field in pwf
 end
 
 function _handle_pmax(pwf_data::Dict, bus_i::Int)
     if haskey(pwf_data, "DGER")
         bus = filter(x -> x["NUMBER"] == bus_i, pwf_data["DGER"])
-        @assert length(bus) == 1
-        return bus[1]["MAXIMUM ACTIVE GENERATION"]
-    else
-        return 99999.0 # Default value for this field in pwf
-    end    
+        if length(bus) == 1
+            return bus[1]["MAXIMUM ACTIVE GENERATION"]
+        end
+    end
+    return 99999.0 # Default value for this field in pwf
 end
 
 function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
