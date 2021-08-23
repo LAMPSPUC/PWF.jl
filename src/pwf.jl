@@ -316,10 +316,12 @@ function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::Strin
                 if isa(component_value, String) || isa(component_value, Char)
                     if needs_default(component_value)
                         pwf_data[section][i][component] = default
+                        _handle_special_defaults!(pwf_data, section, i, component)
                     end
                 end
             else
                 pwf_data[section][i][component] = default
+                _handle_special_defaults!(pwf_data, section, i, component)
             end
         end
     end
@@ -345,6 +347,24 @@ end
 function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::String, section_data::AbstractString)
     # Filename indicator, does not need a default
 end
+
+function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String, i::Int, component::String)
+    
+    if section == "DBAR" && component == "MINIMUM REACTIVE GENERATION"
+        bus_type = pwf_data[section][i]["TYPE"]
+        if bus_type == 2
+            pwf_data[section][i][component] = -9999.0
+        end
+    end
+    if section == "DBAR" && component == "MAXIMUM REACTIVE GENERATION"
+        bus_type = pwf_data[section][i]["TYPE"]
+        if bus_type == 2
+            pwf_data[section][i][component] = 99999.0
+        end
+    end
+
+end
+
 """
     _parse_pwf_data(data_io)
 
