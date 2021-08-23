@@ -369,6 +369,7 @@ function _handle_base_kv(pwf_data::Dict, bus::Dict)
     if haskey(pwf_data, "DGBT")
         if length(pwf_data["DGBT"]) == 1 && pwf_data["DGBT"][1]["GROUP"] != group_identifier
             @warn "Only one base voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGBT"][1]["GROUP"])"
+            return pwf_data["DGBT"][1]["VOLTAGE"]
         else
             group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGBT"])
             @assert length(group) == 1
@@ -384,6 +385,7 @@ function _handle_vmin(pwf_data::Dict, bus::Dict)
     if haskey(pwf_data, "DGLT")
         if length(pwf_data["DGLT"]) == 1 && pwf_data["DGLT"][1]["GROUP"] != group_identifier
             @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"][1]["GROUP"])"
+            return pwf_data["DGLT"][1]["LOWER BOUND"]
         else
             group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGLT"])
             @assert length(group) == 1
@@ -399,6 +401,7 @@ function _handle_vmax(pwf_data::Dict, bus::Dict)
     if haskey(pwf_data, "DGLT")
         if length(pwf_data["DGLT"]) == 1 && pwf_data["DGLT"][1]["GROUP"] != group_identifier
             @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"][1]["GROUP"])"
+            return pwf_data["DGLT"][1]["UPPER BOUND"]
         else
             group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGLT"])
             @assert length(group) == 1
