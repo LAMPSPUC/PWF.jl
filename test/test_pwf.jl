@@ -1,3 +1,47 @@
+function check_same_dict(dict1::Dict, dict2::Dict, key; atol = 1e-3)
+    @assert keys(dict1) == keys(dict2)
+    v1, v2 = dict1[key], dict2[key]
+    if isa(v1, Dict)
+        if isa(v2, Dict)
+            return check_same_dict(v1,v2)
+        else
+            println("$v2 is not a dict")
+            return false
+        end
+    elseif isa(v1, Real)
+        if isa(v2, Real)
+            if !isapprox(v1, v2, atol=atol)
+                println("$v1 != $v2")
+                return false
+            end
+        else
+            println("$v2 is not a number")
+            return false
+        end
+    else
+        if v1 != v2
+            println("$v1 != $v2")
+            return false
+        end
+    end
+    return true
+end
+
+function check_same_dict(dict1::Dict, dict2::Dict; atol = 1e-3, ignore = ["source_version", "source_type", "name"])
+    @assert keys(dict1) == keys(dict2)
+    bools = Bool[]
+    for (k,v1) in dict1
+        if !(k in ignore)
+            res = check_same_dict(dict1, dict2, k)
+            push!(bools, res)
+            if res
+            else
+            end
+        end
+    end
+    return !(false in bools)
+end
+
 @testset "PWF to Dict" begin
     @testset "Intermediary functions" begin
         file = open(joinpath(@__DIR__,"data/sistema_teste_radial.pwf"))
@@ -238,7 +282,7 @@ end
 
         @testset "Power Flow" begin
 
-            pm = instantiate_model(pm_data, ACPPowerModel, PowerModels.build_pf);
+            pm = instantiate_model(pm_data, ACPPowerModel, PowerModels.build_pf)
             result = optimize_model!(pm, optimizer=Ipopt.Optimizer)
 
             @testset "Status" begin
@@ -259,6 +303,21 @@ end
 
         end
 
+    end
+
+    @testset "Power Flow results" begin
+        file_raw = joinpath(@__DIR__,"data/teste_3barras_2ref_mod_volt.raw")
+        file_pwf = open(joinpath(@__DIR__,"data/sistema_teste_new_3barras_mod.pwf"))
+    
+        pwf_data = ParsePWF.parse_pwf(file_pwf)
+        pm = instantiate_model(pwf_data, ACPPowerModel, PowerModels.build_pf)
+        result_pwf = optimize_model!(pm, optimizer=Ipopt.Optimizer)
+    
+        raw_data = PowerModels.parse_file(file_raw)
+        result_raw = PowerModels.run_ac_pf(raw_data, Ipopt.Optimizer)
+    
+        @test check_same_dict(result_pwf["solution"], result_raw["solution"], atol = 10e-9)
+    
     end
 
 end
