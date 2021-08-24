@@ -8,8 +8,8 @@
 A list of data file sections in the order that they appear in a PWF file
 """
 const _dbar_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Int64, 6), 
-    ("STATUS", Char, 7), ("TYPE", Int64, 8), ("BASE VOLTAGE GROUP", Int64, 9:10),
-    ("NAME", String, 11:22), ("VOLTAGE LIMIT GROUP", Int64, 23:24),
+    ("STATUS", Char, 7), ("TYPE", Int64, 8), ("BASE VOLTAGE GROUP", String, 9:10),
+    ("NAME", String, 11:22), ("VOLTAGE LIMIT GROUP", String, 23:24),
     ("VOLTAGE", Float64, 25:28), ("ANGLE", Float64, 29:32),
     ("ACTIVE GENERATION", Float64, 33:37), ("REACTIVE GENERATION", Float64, 38:42),
     ("MINIMUM REACTIVE GENERATION", Float64, 43:47),
@@ -38,10 +38,24 @@ const _dlin_dtypes = [("FROM BUS", Int64, 1:5), ("OPENING FROM BUS", Char, 6),
     ("AGGREGATOR 7", Int64, 97:99), ("AGGREGATOR 8", Int64, 100:102),
     ("AGGREGATOR 9", Int64, 103:105), ("AGGREGATOR 10", Int64, 106:108)]
 
+const _dgbt_dtypes = [("GROUP", String, 1:2), ("VOLTAGE", Float64, 4:8)]
 
-const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes,
-    "DLIN" => _dlin_dtypes
-)
+const _dglt_dtypes = [("GROUP", String, 1:2), ("LOWER BOUND", Float64, 4:8),
+    ("UPPER BOUND", Float64, 10:14), ("LOWER EMERGENCY BOUND", Float64, 16:20),
+    ("UPPER EMERGENCY BOUND", Float64, 22:26)]
+
+const _dger_dtypes = [("NUMBER", Int, 1:5), ("OPERATION", Char, 7),
+    ("MINIMUM ACTIVE GENERATION", Float64, 9:14),
+    ("MAXIMUM ACTIVE GENERATION", Float64, 16:21),
+    ("PARTICIPATION FACTOR", Float64, 23:27),
+    ("REMOTE CONTROL PARTICIPATION FACTOR", Float64, 29:33),
+    ("NOMINAL POWER FACTOR", Float64, 35:39), ("ARMATURE SERVICE FACTOR", Float64, 41:44),
+    ("ROTOR SERVICE FACTOR", Float64, 46:49), ("CHARGE ANGLE", Float64, 51:54),
+    ("MACHINE REACTANCE", Float64, 56:60), ("NOMINAL APPARENT POWER", Float64, 62:66)]
+
+const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes,
+    "DGBT" => _dgbt_dtypes, "DGLT" => _dglt_dtypes,
+    "DGER" => _dger_dtypes)
 
 const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
                         filter(x -> x%7 == 6, 1:69), Char)
@@ -94,12 +108,25 @@ const _default_dcte = Dict("TEPA" => 0.1, "TEPR" => 0.1, "TLPR" => 0.1, "TLVC" =
     "VAVT" => 2.0, "VAVF" => 5.0, "VMVF" => 15.0, "VPVT" => 2.0, "VPVF" => 5.0,
     "VPMF" => 10.0, "VSVF" => 20.0, "VINF" => 1.0, "VSUP" => 1.0, "TLSI" => 0.0)
 
+const _default_dger = Dict("NUMBER" => nothing, "OPERATION" => 'A',
+    "MINIMUM ACTIVE GENERATION" => 0.0, "MAXIMUM ACTIVE GENERATION" => 99999.0,
+    "PARTICIPATION FACTOR" => 0.0, "REMOTE CONTROL PARTICIPATION FACTOR" => 100.0,
+    "NOMINAL POWER FACTOR" => nothing, "ARMATURE SERVICE FACTOR" => nothing,
+    "ROTOR SERVICE FACTOR" => nothing, "CHARGE ANGLE" => nothing,
+    "MACHINE REACTANCE" => nothing, "NOMINAL APPARENT POWER" => nothing)
+
+const _default_dgbt = Dict("GROUP" => 0, "VOLTAGE" => 1.0)
+
+const _default_dglt = Dict("GROUP" => nothing,  "LOWER BOUND" => 0.8, "UPPER BOUND" => 1.2,
+    "LOWER EMERGENCY BOUND" => 0.8, "UPPER EMERGENCY BOUND" => 1.2)
+
 const _default_titu = ""
 
 const _default_name = ""
 
 const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DCTE" => _default_dcte,
-    "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name)
+    "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name, "DGER" => _default_dger,
+    "DGBT" => _default_dgbt, "DGLT" => _default_dglt)
 
 
 const title_identifier = "TITU"
@@ -156,6 +183,12 @@ and saves it into `data::Dict`.
 """
 function _parse_line_element!(data::Dict{String, Any}, line::String, section::AbstractString)
 
+    line_length = _pwf_dtypes[section][end][3][end]
+    if length(line) < line_length
+        extra_characters_needed = line_length - length(line)
+        line = line * repeat(" ", extra_characters_needed)
+    end
+
     for (field, dtype, cols) in _pwf_dtypes[section]
         element = line[cols]
 
@@ -195,11 +228,20 @@ function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, se
                     data[line[k]] = line[v]
                 end
             else
-                data[line[k]] = line[v]
+                !needs_default(line[k]) ? data[line[k]] = line[v] : nothing
             end
                     
             end
         end
+    end
+end
+
+function _first_data_line(section_lines::Vector{String})
+    section_name = section_lines[1]
+    if section_name == "DGER" # Sections which don't have a column index
+        return 2
+    else
+        return 3
     end
 end
 
@@ -210,7 +252,8 @@ Returns a Vector of Dict, where each entry corresponds to a single element.
 """
 function _parse_section_element(data::Vector{Dict{String, Any}}, section_lines::Vector{String}, section::AbstractString)
 
-    for line in section_lines[3:end]
+    first_line = _first_data_line(section_lines)
+    for line in section_lines[first_line:end]
 
         line_data = Dict{String, Any}()
         _parse_line_element!(line_data, line, section)
@@ -238,7 +281,7 @@ function _parse_section!(data::Dict{String, Any}, section_lines::Vector{String})
 
     elseif section in keys(_pwf_dtypes)
         section_data = Dict{String, Any}[]
-        _parse_section_element(section_data, section_lines[3:end], section)
+        _parse_section_element(section_data, section_lines, section)
 
     else
         @warn "Currently there is no support for $section parsing"
@@ -273,10 +316,12 @@ function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::Strin
                 if isa(component_value, String) || isa(component_value, Char)
                     if needs_default(component_value)
                         pwf_data[section][i][component] = default
+                        _handle_special_defaults!(pwf_data, section, i, component)
                     end
                 end
             else
                 pwf_data[section][i][component] = default
+                _handle_special_defaults!(pwf_data, section, i, component)
             end
         end
     end
@@ -302,6 +347,24 @@ end
 function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::String, section_data::AbstractString)
     # Filename indicator, does not need a default
 end
+
+function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String, i::Int, component::String)
+    
+    if section == "DBAR" && component == "MINIMUM REACTIVE GENERATION"
+        bus_type = pwf_data[section][i]["TYPE"]
+        if bus_type == 2
+            pwf_data[section][i][component] = -9999.0
+        end
+    end
+    if section == "DBAR" && component == "MAXIMUM REACTIVE GENERATION"
+        bus_type = pwf_data[section][i]["TYPE"]
+        if bus_type == 2
+            pwf_data[section][i][component] = 99999.0
+        end
+    end
+
+end
+
 """
     _parse_pwf_data(data_io)
 
@@ -321,9 +384,54 @@ function _parse_pwf_data(data_io::IO)
     return pwf_data
 end
 
-_handle_base_kv(pwf_data::Dict) = haskey(pwf_data, "DGBT") ? pwf_data["DGBT"][4:8] : 1.0 # Default value for this field in .pwf
-_handle_vmin(pwf_data::Dict) = haskey(pwf_data, "DGLT") ? pwf_data["DGLT"][4:8] : 0.9 # # Default value given in the PSS(R)E specification
-_handle_vmax(pwf_data::Dict) = haskey(pwf_data, "DGLT") ? pwf_data["DGLT"][10:14] : 1.1 # Default value given in the PSS(R)E specification
+function _handle_base_kv(pwf_data::Dict, bus::Dict)
+    group_identifier = bus["BASE VOLTAGE GROUP"]
+    if haskey(pwf_data, "DGBT")
+        if length(pwf_data["DGBT"]) == 1 && pwf_data["DGBT"][1]["GROUP"] != group_identifier
+            @warn "Only one base voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGBT"][1]["GROUP"])"
+            return pwf_data["DGBT"][1]["VOLTAGE"]
+        else
+            group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGBT"])
+            @assert length(group) == 1
+            return group[1]["VOLTAGE"]
+        end
+    else
+        return 1.0 # Default value for this field in .pwf
+    end
+end
+
+function _handle_vmin(pwf_data::Dict, bus::Dict)
+    group_identifier = bus["VOLTAGE LIMIT GROUP"]
+    if haskey(pwf_data, "DGLT")
+        if length(pwf_data["DGLT"]) == 1 && pwf_data["DGLT"][1]["GROUP"] != group_identifier
+            @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"][1]["GROUP"])"
+            return pwf_data["DGLT"][1]["LOWER BOUND"]
+        else
+            group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGLT"])
+            @assert length(group) == 1
+            return group[1]["LOWER BOUND"]
+        end
+    else
+        return 0.9 # Default value given in the PSS(R)E specification
+    end    
+end
+
+function _handle_vmax(pwf_data::Dict, bus::Dict)
+    group_identifier = bus["VOLTAGE LIMIT GROUP"]
+    if haskey(pwf_data, "DGLT")
+        if length(pwf_data["DGLT"]) == 1 && pwf_data["DGLT"][1]["GROUP"] != group_identifier
+            @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"][1]["GROUP"])"
+            return pwf_data["DGLT"][1]["UPPER BOUND"]
+        else
+            group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGLT"])
+            @assert length(group) == 1
+            return group[1]["UPPER BOUND"]
+        end
+    else
+        return 1.1 # Default value given in the PSS(R)E specification
+    end    
+end
+
 function _handle_bus_type(bus::Dict)
     bus_type = pop!(bus, "TYPE")
     dict_bus_type = Dict(0 => 1, 3 => 1, # PQ
@@ -337,23 +445,23 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
 
     pm_data["bus"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
-        for (i,bus) in enumerate(pwf_data["DBAR"])
+        for bus in pwf_data["DBAR"]
             sub_data = Dict{String,Any}()
 
             sub_data["bus_i"] = bus["NUMBER"]
             sub_data["bus_type"] = _handle_bus_type(bus)
             sub_data["area"] = pop!(bus, "AREA")
             sub_data["vm"] = pop!(bus, "VOLTAGE")/1000 # Implicit decimal point ignored
-            sub_data["va"] = pop!(bus, "ANGLE")*pi/180 # Degrees to radians
+            sub_data["va"] = pop!(bus, "ANGLE")
             sub_data["zone"] = 1
             sub_data["name"] = pop!(bus, "NAME")
 
             sub_data["source_id"] = ["bus", "$(bus["NUMBER"])"]
-            sub_data["index"] = i
+            sub_data["index"] = bus["NUMBER"]
 
-            sub_data["base_kv"] = _handle_base_kv(pwf_data)
-            sub_data["vmin"] = _handle_vmin(pwf_data)
-            sub_data["vmax"] = _handle_vmax(pwf_data)
+            sub_data["base_kv"] = _handle_base_kv(pwf_data, bus)
+            sub_data["vmin"] = _handle_vmin(pwf_data, bus)
+            sub_data["vmax"] = _handle_vmax(pwf_data, bus)
 
             idx = string(sub_data["index"])
             pm_data["bus"][idx] = sub_data
@@ -411,8 +519,8 @@ function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict)
                 sub_data = Dict{String,Any}()
 
                 sub_data["load_bus"] = bus["NUMBER"]
-                sub_data["pd"] = pop!(bus, "ACTIVE CHARGE") / 100
-                sub_data["qd"] = pop!(bus, "REACTIVE CHARGE") / 100
+                sub_data["pd"] = pop!(bus, "ACTIVE CHARGE")
+                sub_data["qd"] = pop!(bus, "REACTIVE CHARGE")
                 sub_data["status"] = 1
 
                 sub_data["source_id"] = ["load", sub_data["load_bus"], "1 "]
@@ -425,15 +533,32 @@ function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict)
     end
 end
 
-_handle_pmin(pwf_data::Dict, bus_i::Int) = haskey(pwf_data, "DGER") ? pwf_data["DGER"][bus_i][9:14] : 0.0 # Default value for this field in pwf
-_handle_pmax(pwf_data::Dict, bus_i::Int) = haskey(pwf_data, "DGER") ? pwf_data["DGER"][bus_i][16:21] : 99999.0 # Default value for this field in pwf
+function _handle_pmin(pwf_data::Dict, bus_i::Int)
+    if haskey(pwf_data, "DGER")
+        bus = filter(x -> x["NUMBER"] == bus_i, pwf_data["DGER"])
+        if length(bus) == 1
+            return bus[1]["MINIMUM ACTIVE GENERATION"]
+        end
+    end    
+    return 0.0 # Default value for this field in pwf
+end
+
+function _handle_pmax(pwf_data::Dict, bus_i::Int)
+    if haskey(pwf_data, "DGER")
+        bus = filter(x -> x["NUMBER"] == bus_i, pwf_data["DGER"])
+        if length(bus) == 1
+            return bus[1]["MAXIMUM ACTIVE GENERATION"]
+        end
+    end
+    return 99999.0 # Default value for this field in pwf
+end
 
 function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
 
     pm_data["gen"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
         for bus in pwf_data["DBAR"]
-            if bus["REACTIVE GENERATION"] > 0.0 || bus["ACTIVE GENERATION"] > 0.0
+            if bus["REACTIVE GENERATION"] != 0.0 || bus["ACTIVE GENERATION"] != 0.0
                 sub_data = Dict{String,Any}()
 
                 sub_data["gen_bus"] = bus["NUMBER"]
@@ -444,8 +569,8 @@ function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
                 sub_data["mbase"] = _handle_base_mva(pwf_data)
                 sub_data["pmin"] = _handle_pmin(pwf_data, bus["NUMBER"])
                 sub_data["pmax"] = _handle_pmax(pwf_data, bus["NUMBER"])
-                sub_data["qmin"] = pop!(bus, "MINIMUM REACTIVE GENERATION") / 100
-                sub_data["qmax"] = pop!(bus, "MAXIMUM REACTIVE GENERATION") / 100
+                sub_data["qmin"] = pop!(bus, "MINIMUM REACTIVE GENERATION")
+                sub_data["qmax"] = pop!(bus, "MAXIMUM REACTIVE GENERATION")
     
                 # Default Cost functions
                 sub_data["model"] = 2
@@ -474,7 +599,7 @@ function _handle_base_mva(pwf_data::Dict)
     return baseMVA
 end
 
-function _pwf_to_powermodels!(pwf_data::Dict)
+function _pwf_to_powermodels!(pwf_data::Dict, validate::Bool)
     pm_data = Dict{String,Any}()
 
     pm_data["per_unit"] = false
@@ -489,6 +614,16 @@ function _pwf_to_powermodels!(pwf_data::Dict)
     _pwf2pm_load!(pm_data, pwf_data)
     _pwf2pm_generator!(pm_data, pwf_data)
 
+    # ToDo: fields not yet contemplated by the parser
+
+    pm_data["dcline"] = Dict{String,Any}()
+    pm_data["storage"] = Dict{String,Any}()
+    pm_data["switch"] = Dict{String,Any}()
+    pm_data["shunt"] = Dict{String,Any}()
+
+    if validate
+        PowerModels.correct_network_data!(pm_data)
+    end
     
     return pm_data
 end
