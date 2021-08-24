@@ -237,12 +237,6 @@ end
         end
 
         @testset "Power Flow" begin
-            pm_data["dcline"] = Dict{String,Any}()
-            pm_data["gen"] = Dict{String,Any}()
-            pm_data["storage"] = Dict{String,Any}()
-            pm_data["switch"] = Dict{String,Any}()
-            pm_data["shunt"] = Dict{String,Any}()
-            pm_data["load"] = Dict{String,Any}()
 
             pm = instantiate_model(pm_data, ACPPowerModel, PowerModels.build_pf);
             result = optimize_model!(pm, optimizer=Ipopt.Optimizer)
@@ -259,7 +253,7 @@ end
                 @test solution["baseMVA"]             == 100.0
                 @test solution["multiinfrastructure"] == false
                 @test solution["multinetwork"]        == false
-                @test solution["per_unit"]            == false
+                @test solution["per_unit"]            == true
                 @test length(solution["bus"])         == 9
             end
 
