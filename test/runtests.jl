@@ -1,6 +1,6 @@
 using Test, PowerModels, Ipopt
 
-include("src/ParsePWF.jl")
+include("src/ParserPWF.jl")
 
 @testset "Test functions" begin
     include("test/test_pwf.jl")

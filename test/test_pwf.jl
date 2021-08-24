@@ -214,8 +214,7 @@ end
 
     @testset "Resulting Dict" begin
         file = open(joinpath(@__DIR__,"data/sistema_teste_radial.pwf"))
-        pwf_data = ParsePWF._parse_pwf_data(file)
-        pm_data = ParsePWF._pwf_to_powermodels!(pwf_data)
+        pm_data = ParsePWF.parse_pwf(file)
 
         @testset "PowerModels Dict" begin
             @test isa(pm_data, Dict)
