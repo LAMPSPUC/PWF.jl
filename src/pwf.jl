@@ -53,9 +53,13 @@ const _dger_dtypes = [("NUMBER", Int, 1:5), ("OPERATION", Char, 7),
     ("ROTOR SERVICE FACTOR", Float64, 46:49), ("CHARGE ANGLE", Float64, 51:54),
     ("MACHINE REACTANCE", Float64, 56:60), ("NOMINAL APPARENT POWER", Float64, 62:66)]
 
+const _dshl_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
+    ("TO BUS", Int64, 10:14), ("CIRCUIT", Int64, 15:16), ("SHUNT FROM", Float64, 18:23),
+    ("SHUNT TO", Float64, 24:29), ("STATUS FROM", Char, 31:32, ("STATUS TO", Char, 34:35))]
+
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes,
     "DGBT" => _dgbt_dtypes, "DGLT" => _dglt_dtypes,
-    "DGER" => _dger_dtypes)
+    "DGER" => _dger_dtypes, "DSHL" => _dshl_dtypes)
 
 const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
                         filter(x -> x%7 == 6, 1:69), Char)
@@ -120,13 +124,17 @@ const _default_dgbt = Dict("GROUP" => 0, "VOLTAGE" => 1.0)
 const _default_dglt = Dict("GROUP" => nothing,  "LOWER BOUND" => 0.8, "UPPER BOUND" => 1.2,
     "LOWER EMERGENCY BOUND" => 0.8, "UPPER EMERGENCY BOUND" => 1.2)
 
+const _default_dshl = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" => nothing,
+    "CIRCUIT" => nothing, "SHUNT FROM" => nothing, "SHUNT TO" => nothing,
+    "STATUS FROM" => 'L', "STATUS TO" => 'L')
+
 const _default_titu = ""
 
 const _default_name = ""
 
 const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DCTE" => _default_dcte,
     "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name, "DGER" => _default_dger,
-    "DGBT" => _default_dgbt, "DGLT" => _default_dglt)
+    "DGBT" => _default_dgbt, "DGLT" => _default_dglt, "DSHL" => _default_dshl)
 
 
 const title_identifier = "TITU"
