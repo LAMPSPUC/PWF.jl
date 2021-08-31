@@ -72,7 +72,7 @@ const _mnemonic_pairs = Dict("DOPC" =>  _mnemonic_dopc,
 )
 
 const _default_dbar = Dict("NUMBER" => nothing, "OPERATION" => 'A', "STATUS" => 'L',
-    "TYPE" => 0, "BASE VOLTAGE GROUP" => 0, "NAME" => nothing, "VOLTAGE LIMIT GROUP" => 0,
+    "TYPE" => 0, "BASE VOLTAGE GROUP" => " 0", "NAME" => nothing, "VOLTAGE LIMIT GROUP" => " 0",
     "VOLTAGE" => 1.0, "ANGLE" => 0.0, "ACTIVE GENERATION" => 0.0,
     "REACTIVE GENERATION" => 0.0, "MINIMUM REACTIVE GENERATION" => 0.0,
     "MAXIMUM REACTIVE GENERATION" => 0.0, "CONTROLLED BUS" => nothing,
