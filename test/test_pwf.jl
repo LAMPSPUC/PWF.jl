@@ -266,12 +266,15 @@ end
         file_pwf = open(joinpath(@__DIR__,"data/sistema_teste_new_3barras_mod.pwf"))
     
         pwf_data = ParsePWF.parse_pwf(file_pwf)
-        pm = instantiate_model(pwf_data, ACPPowerModel, PowerModels.build_pf)
-        result_pwf = optimize_model!(pm, optimizer=Ipopt.Optimizer)
-    
         raw_data = PowerModels.parse_file(file_raw)
-        result_raw = PowerModels.run_ac_pf(raw_data, Ipopt.Optimizer)
-    
+
+        solver = optimizer_with_attributes(
+            Ipopt.Optimizer, 
+            "print_level"=>0,
+        )
+        result_pwf = PowerModels.run_ac_pf(pwf_data, solver)
+        result_raw = PowerModels.run_ac_pf(raw_data, solver)
+        
         @test check_same_dict(result_pwf["solution"], result_raw["solution"], atol = 10e-9)
     
     end
