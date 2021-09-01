@@ -513,11 +513,20 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
                 sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
                 sub_data["index"] = length(pm_data["branch"]) + 1
 
-                #ToDo
-                #sub_data["rate_a"] = _handle_rates(pwf_data)[1]
-                #sub_data["rate_b"] = _handle_rates(pwf_data)[2]
-                #sub_data["rate_c"] = _handle_rates(pwf_data)[3]
+                sub_data["rate_a"] = pop!(branch, "NORMAL CAPACITY")
+                sub_data["rate_b"] = pop!(branch, "EQUIPAMENT CAPACITY")
+                sub_data["rate_c"] = pop!(branch, "EMERGENCY CAPACITY")
 
+                if sub_data["rate_a"] == 0.0
+                    delete!(sub_data, "rate_a")
+                end
+                if sub_data["rate_b"] == 0.0
+                    delete!(sub_data, "rate_b")
+                end
+                if sub_data["rate_c"] == 0.0
+                    delete!(sub_data, "rate_c")
+                end
+    
                 idx = string(sub_data["index"])
                 pm_data["branch"][idx] = sub_data
             end
@@ -646,11 +655,20 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding trans
                 sub_data["b_fr"] = _handle_b_fr(pwf_data, sub_data["index"] - non_transformers)
                 sub_data["b_to"] = _handle_b_to(pwf_data, sub_data["index"] - non_transformers)
 
-                #ToDo
-                #sub_data["rate_a"] = _handle_rates(pwf_data)[1]
-                #sub_data["rate_b"] = _handle_rates(pwf_data)[2]
-                #sub_data["rate_c"] = _handle_rates(pwf_data)[3]
+                sub_data["rate_a"] = pop!(branch, "NORMAL CAPACITY")
+                sub_data["rate_b"] = pop!(branch, "EQUIPAMENT CAPACITY")
+                sub_data["rate_c"] = pop!(branch, "EMERGENCY CAPACITY")
 
+                if sub_data["rate_a"] == 0.0
+                    delete!(sub_data, "rate_a")
+                end
+                if sub_data["rate_b"] == 0.0
+                    delete!(sub_data, "rate_b")
+                end
+                if sub_data["rate_c"] == 0.0
+                    delete!(sub_data, "rate_c")
+                end
+    
                 idx = string(sub_data["index"])
                 pm_data["branch"][idx] = sub_data
             end
