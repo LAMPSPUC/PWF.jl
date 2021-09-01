@@ -505,10 +505,15 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
                 sub_data["b_to"] = branch["SHUNT SUSCEPTANCE"] / 200.0
                 sub_data["tap"] = pop!(branch, "TAP")
                 sub_data["shift"] = pop!(branch, "LAG")
-                sub_data["br_status"] = 1
                 sub_data["angmin"] = -360.0 # No limit
                 sub_data["angmax"] = 360.0 # No limit
                 sub_data["transformer"] = false
+
+                if branch["STATUS"] == 'D'
+                    sub_data["br_status"] = 0
+                else
+                    sub_data["br_status"] = 1
+                end
 
                 sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
                 sub_data["index"] = length(pm_data["branch"]) + 1
@@ -644,10 +649,15 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding trans
                 sub_data["g_to"] = 0.0
                 sub_data["tap"] = pop!(branch, "TAP")
                 sub_data["shift"] = pop!(branch, "LAG")
-                sub_data["br_status"] = 1
                 sub_data["angmin"] = -360.0 # No limit
                 sub_data["angmax"] = 360.0 # No limit
                 sub_data["transformer"] = true
+
+                if branch["STATUS"] == 'D'
+                    sub_data["br_status"] = 0
+                else
+                    sub_data["br_status"] = 1
+                end
 
                 sub_data["source_id"] = ["transformer", sub_data["f_bus"], sub_data["t_bus"], 0, "01", 0]
                 sub_data["index"] = length(pm_data["branch"]) + 1
@@ -680,7 +690,7 @@ function _handle_b_fr(pwf_data::Dict, i::Int)
     b_fr = 0.0
     if haskey(pwf_data, "DSHL")
         if pwf_data["DSHL"][i]["SHUNT FROM"] !== nothing
-            b_fr = pwf_data["DSHL"][i]["SHUNT FROM"]
+            b_fr = pwf_data["DSHL"][i]["SHUNT FROM"] / 100
         end
     end
     return b_fr
@@ -690,7 +700,7 @@ function _handle_b_to(pwf_data::Dict, i::Int)
     b_to = 0.0
     if haskey(pwf_data, "DSHL")
         if pwf_data["DSHL"][i]["SHUNT TO"] !== nothing
-            b_to = pwf_data["DSHL"][i]["SHUNT TO"]
+            b_to = pwf_data["DSHL"][i]["SHUNT TO"] / 100
         end
     end
     return b_to
