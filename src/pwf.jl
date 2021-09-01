@@ -371,6 +371,10 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
         end
     end
 
+    if section == "DLIN" && component == "TAP"
+        pwf_data[section][i]["TRANSFORMER"] = false
+    end
+
 end
 
 """
@@ -486,34 +490,37 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
 
     pm_data["branch"] = Dict{String, Any}()
     if haskey(pwf_data, "DLIN")
-        for (i, branch) in enumerate(pwf_data["DLIN"])
-            sub_data = Dict{String,Any}()
+        for branch in pwf_data["DLIN"]
+            if haskey(branch, "TRANSFORMER")
+                @assert !branch["TRANSFORMER"]
+                sub_data = Dict{String,Any}()
 
-            sub_data["f_bus"] = pop!(branch, "FROM BUS")
-            sub_data["t_bus"] = pop!(branch, "TO BUS")
-            sub_data["br_r"] = pop!(branch, "RESISTANCE") / 100
-            sub_data["br_x"] = pop!(branch, "REACTANCE") / 100
-            sub_data["g_fr"] = 0.0
-            sub_data["b_fr"] = branch["SHUNT SUSCEPTANCE"] / 200.0
-            sub_data["g_to"] = 0.0
-            sub_data["b_to"] = branch["SHUNT SUSCEPTANCE"] / 200.0
-            sub_data["tap"] = pop!(branch, "TAP")
-            sub_data["shift"] = pop!(branch, "LAG")
-            sub_data["br_status"] = 1
-            sub_data["angmin"] = -360.0 # No limit
-            sub_data["angmax"] = 360.0 # No limit
-            sub_data["transformer"] = false
+                sub_data["f_bus"] = pop!(branch, "FROM BUS")
+                sub_data["t_bus"] = pop!(branch, "TO BUS")
+                sub_data["br_r"] = pop!(branch, "RESISTANCE") / 100
+                sub_data["br_x"] = pop!(branch, "REACTANCE") / 100
+                sub_data["g_fr"] = 0.0
+                sub_data["b_fr"] = branch["SHUNT SUSCEPTANCE"] / 200.0
+                sub_data["g_to"] = 0.0
+                sub_data["b_to"] = branch["SHUNT SUSCEPTANCE"] / 200.0
+                sub_data["tap"] = pop!(branch, "TAP")
+                sub_data["shift"] = pop!(branch, "LAG")
+                sub_data["br_status"] = 1
+                sub_data["angmin"] = -360.0 # No limit
+                sub_data["angmax"] = 360.0 # No limit
+                sub_data["transformer"] = false
 
-            sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
-            sub_data["index"] = i
+                sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
+                sub_data["index"] = length(pm_data["branch"]) + 1
 
-            #ToDo
-            #sub_data["rate_a"] = _handle_rates(pwf_data)[1]
-            #sub_data["rate_b"] = _handle_rates(pwf_data)[2]
-            #sub_data["rate_c"] = _handle_rates(pwf_data)[3]
+                #ToDo
+                #sub_data["rate_a"] = _handle_rates(pwf_data)[1]
+                #sub_data["rate_b"] = _handle_rates(pwf_data)[2]
+                #sub_data["rate_c"] = _handle_rates(pwf_data)[3]
 
-            idx = string(sub_data["index"])
-            pm_data["branch"][idx] = sub_data
+                idx = string(sub_data["index"])
+                pm_data["branch"][idx] = sub_data
+            end
         end
     end
 end
@@ -607,6 +614,70 @@ function _handle_base_mva(pwf_data::Dict)
     return baseMVA
 end
 
+function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding transformer
+    if !haskey(pm_data, "branch")
+        pm_data["branch"] = Dict{String, Any}()
+        non_transformers = 0
+    else
+        non_transformers = length(pm_data["branch"])
+    end
+
+    if haskey(pwf_data, "DLIN")
+        for branch in pwf_data["DLIN"]
+            if !haskey(branch, "TRANSFORMER")
+                sub_data = Dict{String,Any}()
+
+                sub_data["f_bus"] = pop!(branch, "FROM BUS")
+                sub_data["t_bus"] = pop!(branch, "TO BUS")
+                sub_data["br_r"] = pop!(branch, "RESISTANCE") / 100
+                sub_data["br_x"] = pop!(branch, "REACTANCE") / 100
+                sub_data["g_fr"] = 0.0
+                sub_data["g_to"] = 0.0
+                sub_data["tap"] = pop!(branch, "TAP")
+                sub_data["shift"] = pop!(branch, "LAG")
+                sub_data["br_status"] = 1
+                sub_data["angmin"] = -360.0 # No limit
+                sub_data["angmax"] = 360.0 # No limit
+                sub_data["transformer"] = true
+
+                sub_data["source_id"] = ["transformer", sub_data["f_bus"], sub_data["t_bus"], 0, "01", 0]
+                sub_data["index"] = length(pm_data["branch"]) + 1
+
+                sub_data["b_fr"] = _handle_b_fr(pwf_data, sub_data["index"] - non_transformers)
+                sub_data["b_to"] = _handle_b_to(pwf_data, sub_data["index"] - non_transformers)
+
+                #ToDo
+                #sub_data["rate_a"] = _handle_rates(pwf_data)[1]
+                #sub_data["rate_b"] = _handle_rates(pwf_data)[2]
+                #sub_data["rate_c"] = _handle_rates(pwf_data)[3]
+
+                idx = string(sub_data["index"])
+                pm_data["branch"][idx] = sub_data
+            end
+        end
+    end
+end
+
+function _handle_b_fr(pwf_data::Dict, i::Int)
+    b_fr = 0.0
+    if haskey(pwf_data, "DSHL")
+        if pwf_data["DSHL"][i]["SHUNT FROM"] !== nothing
+            b_fr = pwf_data["DSHL"][i]["SHUNT FROM"]
+        end
+    end
+    return b_fr
+end
+
+function _handle_b_to(pwf_data::Dict, i::Int)
+    b_to = 0.0
+    if haskey(pwf_data, "DSHL")
+        if pwf_data["DSHL"][i]["SHUNT TO"] !== nothing
+            b_to = pwf_data["DSHL"][i]["SHUNT TO"]
+        end
+    end
+    return b_to
+end
+
 function _pwf_to_powermodels!(pwf_data::Dict, validate::Bool)
     pm_data = Dict{String,Any}()
 
@@ -621,6 +692,7 @@ function _pwf_to_powermodels!(pwf_data::Dict, validate::Bool)
     _pwf2pm_branch!(pm_data, pwf_data)
     _pwf2pm_load!(pm_data, pwf_data)
     _pwf2pm_generator!(pm_data, pwf_data)
+    _pwf2pm_transformer!(pm_data, pwf_data)
 
     # ToDo: fields not yet contemplated by the parser
 
