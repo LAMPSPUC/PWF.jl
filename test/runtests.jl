@@ -1,5 +1,10 @@
+using Ipopt
 using Test
+using PowerModels
 
-@testset "Default" begin
-    @test true
+include("../src/ParserPWF.jl")
+
+@testset "Test functions" begin
+    include("test_functions.jl")
+    include("test_pwf.jl")
 end
