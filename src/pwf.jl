@@ -207,7 +207,7 @@ function _parse_line_element!(data::Dict{String, Any}, line::String, section::Ab
                 data[field] = element
             end
         catch
-            if !needs_default(element)
+            if !_needs_default(element)
                 @warn "Could not parse $element to $dtype, setting it as a String"
             end
             data[field] = element
@@ -230,13 +230,13 @@ function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, se
                     try
                         data[line[k]] = parse(mn_type, line[v])
                     catch
-                        if !needs_default(line[v])
+                        if !_needs_default(line[v])
                             @warn "Could not parse $(line[v]) to $mn_type, setting it as a String"
                         end
-                        !needs_default(line[k]) ? data[line[k]] = line[v] : nothing
+                        !_needs_default(line[k]) ? data[line[k]] = line[v] : nothing
                     end
                 else
-                    !needs_default(line[k]) ? data[line[k]] = line[v] : nothing
+                    !_needs_default(line[k]) ? data[line[k]] = line[v] : nothing
                 end
                     
             end
@@ -299,8 +299,8 @@ function _parse_section!(data::Dict{String, Any}, section_lines::Vector{String})
     data[section] = section_data
 end
 
-needs_default(str::String) = unique(str) == [' ']
-needs_default(ch::Char) = ch == ' '
+_needs_default(str::String) = unique(str) == [' ']
+_needs_default(ch::Char) = ch == ' '
 
 function _populate_defaults!(pwf_data::Dict{String, Any})
 
@@ -322,7 +322,7 @@ function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::Strin
             if haskey(element, component)
                 component_value = element[component]
                 if isa(component_value, String) || isa(component_value, Char)
-                    if needs_default(component_value)
+                    if _needs_default(component_value)
                         pwf_data[section][i][component] = default
                         _handle_special_defaults!(pwf_data, section, i, component)
                     end
@@ -343,7 +343,7 @@ function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::Strin
         if haskey(section_data, component)
             component_value = section_data[component]
             if isa(component_value, String) || isa(component_value, Char)
-                if needs_default(component_value)
+                if _needs_default(component_value)
                     pwf_data[section][component] = default
                 end
             end
@@ -489,9 +489,6 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
     
 end
 
-#ToDo
-#_handle_rates(pwf_data) = 10000, 10000, 10000
-
 function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
 
     pm_data["branch"] = Dict{String, Any}()
@@ -549,7 +546,7 @@ function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict)
     pm_data["load"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
         for bus in pwf_data["DBAR"]
-            if bus["REACTIVE CHARGE"] > 0.0 || bus["ACTIVE CHARGE"] > 0.0
+            if bus["REACTIVE CHARGE"] != 0.0 || bus["ACTIVE CHARGE"] != 0.0
                 sub_data = Dict{String,Any}()
 
                 sub_data["load_bus"] = bus["NUMBER"]
