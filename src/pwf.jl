@@ -332,6 +332,7 @@ function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::Strin
                 _handle_special_defaults!(pwf_data, section, i, component)
             end
         end
+        _handle_transformer_default!(pwf_data, section, i)
     end
 end
 
@@ -376,6 +377,11 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
     end
 
 end
+
+_handle_transformer_default!(pwf_data::Dict{String, Any}, section::String, i::Int) =
+    section == "DLIN" ? !haskey(pwf_data[section][i], "TRANSFORMER") ?
+    pwf_data[section][i]["TRANSFORMER"] = true :
+    @assert(!pwf_data[section][i]["TRANSFORMER"]) : nothing
 
 """
     _parse_pwf_data(data_io)
@@ -491,8 +497,7 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
     pm_data["branch"] = Dict{String, Any}()
     if haskey(pwf_data, "DLIN")
         for branch in pwf_data["DLIN"]
-            if haskey(branch, "TRANSFORMER")
-                @assert !branch["TRANSFORMER"]
+            if !branch["TRANSFORMER"]
                 sub_data = Dict{String,Any}()
 
                 sub_data["f_bus"] = pop!(branch, "FROM BUS")
@@ -638,7 +643,7 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding trans
 
     if haskey(pwf_data, "DLIN")
         for branch in pwf_data["DLIN"]
-            if !haskey(branch, "TRANSFORMER")
+            if branch["TRANSFORMER"]
                 sub_data = Dict{String,Any}()
 
                 sub_data["f_bus"] = pop!(branch, "FROM BUS")

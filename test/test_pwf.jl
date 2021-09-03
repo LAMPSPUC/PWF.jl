@@ -52,7 +52,7 @@
                 @test length(item) == 30
             end
             for item in dict["DLIN"]
-                @test length(item) == 30
+                @test length(item) == 31
             end
         end
 
@@ -104,6 +104,7 @@
                 @test isa(item["EMERGENCY CAPACITY"], Float64)
                 @test isa(item["NUMBER OF TAPS"], Int)
                 @test isa(item["EQUIPAMENT CAPACITY"], Float64)
+                @test isa(item["TRANSFORMER"], Bool)
             end
         end
 
@@ -168,6 +169,7 @@ end
 
         @testset "Branch" begin
             ParsePWF._pwf2pm_branch!(pm_data, pwf_data)
+            ParsePWF._pwf2pm_transformer!(pm_data, pwf_data)
             
             @test haskey(pm_data, "branch")
             @test length(pm_data["branch"]) == 7
