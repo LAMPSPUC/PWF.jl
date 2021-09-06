@@ -521,16 +521,16 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
                 sub_data["index"] = length(pm_data["branch"]) + 1
 
                 sub_data["rate_a"] = pop!(branch, "NORMAL CAPACITY")
-                sub_data["rate_b"] = pop!(branch, "EQUIPAMENT CAPACITY")
-                sub_data["rate_c"] = pop!(branch, "EMERGENCY CAPACITY")
+                sub_data["rate_b"] = pop!(branch, "EMERGENCY CAPACITY")
+                sub_data["rate_c"] = pop!(branch, "EQUIPAMENT CAPACITY")
 
-                if sub_data["rate_a"] == 0.0
+                if sub_data["rate_a"] >= 9999
                     delete!(sub_data, "rate_a")
                 end
-                if sub_data["rate_b"] == 0.0
+                if sub_data["rate_b"] >= 9999
                     delete!(sub_data, "rate_b")
                 end
-                if sub_data["rate_c"] == 0.0
+                if sub_data["rate_c"] >= 9999
                     delete!(sub_data, "rate_c")
                 end
     
@@ -668,16 +668,16 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding trans
                 sub_data["b_to"] = _handle_b_to(pwf_data, sub_data["index"] - non_transformers)
 
                 sub_data["rate_a"] = pop!(branch, "NORMAL CAPACITY")
-                sub_data["rate_b"] = pop!(branch, "EQUIPAMENT CAPACITY")
-                sub_data["rate_c"] = pop!(branch, "EMERGENCY CAPACITY")
+                sub_data["rate_b"] = pop!(branch, "EMERGENCY CAPACITY")
+                sub_data["rate_c"] = pop!(branch, "EQUIPAMENT CAPACITY")
 
-                if sub_data["rate_a"] == 0.0
+                if sub_data["rate_a"] >= 9999
                     delete!(sub_data, "rate_a")
                 end
-                if sub_data["rate_b"] == 0.0
+                if sub_data["rate_b"] >= 9999
                     delete!(sub_data, "rate_b")
                 end
-                if sub_data["rate_c"] == 0.0
+                if sub_data["rate_c"] >= 9999
                     delete!(sub_data, "rate_c")
                 end
     
