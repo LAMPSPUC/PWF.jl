@@ -502,11 +502,11 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
                 sub_data["br_r"] = pop!(branch, "RESISTANCE") / 100
                 sub_data["br_x"] = pop!(branch, "REACTANCE") / 100
                 sub_data["g_fr"] = 0.0
-                sub_data["b_fr"] = branch["SHUNT SUSCEPTANCE"] / 200.0
+                sub_data["b_fr"] = _handle_b_fr(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"])
                 sub_data["g_to"] = 0.0
-                sub_data["b_to"] = branch["SHUNT SUSCEPTANCE"] / 200.0
+                sub_data["b_to"] = _handle_b_to(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"])
                 sub_data["tap"] = pop!(branch, "TAP")
-                sub_data["shift"] = pop!(branch, "LAG")
+                sub_data["shift"] = -pop!(branch, "LAG")
                 sub_data["angmin"] = -360.0 # No limit
                 sub_data["angmax"] = 360.0 # No limit
                 sub_data["transformer"] = false
@@ -650,7 +650,7 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding trans
                 sub_data["g_fr"] = 0.0
                 sub_data["g_to"] = 0.0
                 sub_data["tap"] = pop!(branch, "TAP")
-                sub_data["shift"] = pop!(branch, "LAG")
+                sub_data["shift"] = -pop!(branch, "LAG")
                 sub_data["angmin"] = -360.0 # No limit
                 sub_data["angmax"] = 360.0 # No limit
                 sub_data["transformer"] = true
@@ -664,8 +664,8 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding trans
                 sub_data["source_id"] = ["transformer", sub_data["f_bus"], sub_data["t_bus"], 0, "01", 0]
                 sub_data["index"] = length(pm_data["branch"]) + 1
 
-                sub_data["b_fr"] = _handle_b_fr(pwf_data, sub_data["index"] - non_transformers)
-                sub_data["b_to"] = _handle_b_to(pwf_data, sub_data["index"] - non_transformers)
+                sub_data["b_fr"] = _handle_b_fr(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"])
+                sub_data["b_to"] = _handle_b_to(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"])
 
                 sub_data["rate_a"] = pop!(branch, "NORMAL CAPACITY")
                 sub_data["rate_b"] = pop!(branch, "EMERGENCY CAPACITY")
@@ -688,24 +688,32 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding trans
     end
 end
 
-function _handle_b_fr(pwf_data::Dict, i::Int)
-    b_fr = 0.0
+function _handle_b_fr(pm_data::Dict, pwf_data::Dict, f_bus::Int, t_bus::Int, susceptance::Float64)
+    i = count(x -> x["f_bus"] == f_bus && x["t_bus"] == t_bus, values(pm_data["branch"])) + 1
+    b_fr = susceptance / 2.0
     if haskey(pwf_data, "DSHL")
-        if pwf_data["DSHL"][i]["SHUNT FROM"] !== nothing
-            b_fr = pwf_data["DSHL"][i]["SHUNT FROM"] / 100
+        group = findall(x -> x["FROM BUS"] == f_bus && x["TO BUS"] == t_bus, pwf_data["DSHL"])
+        if length(group) > 0 && length(group) >= i
+            if pwf_data["DSHL"][group[i]]["SHUNT FROM"] !== nothing
+                b_fr = pwf_data["DSHL"][group[i]]["SHUNT FROM"] / 100
+            end
         end
     end
-    return b_fr
+    return b_fr / 100
 end
 
-function _handle_b_to(pwf_data::Dict, i::Int)
-    b_to = 0.0
+function _handle_b_to(pm_data, pwf_data::Dict, f_bus::Int, t_bus::Int, susceptance::Float64)
+    i = count(x -> x["f_bus"] == f_bus && x["t_bus"] == t_bus, values(pm_data["branch"])) + 1
+    b_to = susceptance / 2.0
     if haskey(pwf_data, "DSHL")
-        if pwf_data["DSHL"][i]["SHUNT TO"] !== nothing
-            b_to = pwf_data["DSHL"][i]["SHUNT TO"] / 100
+        group = findall(x -> x["FROM BUS"] == f_bus && x["TO BUS"] == t_bus, pwf_data["DSHL"])
+        if length(group) > 0 && length(group) >= i
+            if pwf_data["DSHL"][group[i]]["SHUNT TO"] !== nothing
+                b_to = pwf_data["DSHL"][group[i]]["SHUNT TO"] / 100
+            end
         end
     end
-    return b_to
+    return b_to / 100
 end
 
 function _pwf_to_powermodels!(pwf_data::Dict, validate::Bool)
