@@ -6,6 +6,14 @@ using PowerModels
 include("pwf.jl")
 # -----------------------------------------------------------------------------------------
 
+function parse_pwf(filename::String)::Dict
+    pwf_data = open(filename) do f
+        parse_pwf(f)
+    end
+
+    return pwf_data
+end
+
 """
     parse_pwf(io)
 

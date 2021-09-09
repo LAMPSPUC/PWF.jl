@@ -1,0 +1,47 @@
+TITU
+Caso do Anderson - Página 38                                                    
+DOPC IMPR
+(Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E
+QLIM L CREM L STEP L NEWT L MOST L MOSG L MOSF L RCVG L RMON L FILE L
+CONT L CELO L MFCT L
+99999
+DCTE
+(Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) 
+BASE   100. DASE   100. TEPA     .1 EXST     .4 TETP     5. TBPA     5.
+TLPP     1. TEPR     .1 QLST     .4 TLPR     .1 TLPQ     2. TSBZ    .01
+TSBA     5. ASTP    .05 VSTP     5. TLVC     .5 TLTC    .01 TSFR  .1E-7
+ZMAX   500. TLPV     .5 VDVM   200. VDVN    40. TUDC   .001 TADC    .01
+PGER    30. TPST     .2 VFLD    80. ZMIN   .001 HIST    470 LFIT     10
+ACIT     35 LFCV      1 DCIT     10 VSIT     10 LPIT     50 LFLP     10
+PDIT     10 LCRT     96 LPRT     60 CSTP     5. ASDC     1.
+ICIT   9999 DMAX      5 FDIV     2. ICMN    .05 VART     5. TSTP     33
+ICMV     .5 APAS    90. CPAR    70. VAVT     2. VAVF     5. VMVF    15.
+VPVT     2. VPVF     5. VPMF    10. VSVF    20. VINF     1. VSUP     1.
+TLSI     0. NDIR    20. STTR     5. TRPT   100. STIR     1. BFPO     1.
+LFPO     .1                                                            
+99999
+DBAR
+(Num)OETGb(   nome   )Gl( V)( A)( Pg)( Qg)( Qn)( Qm)(Bc  )( Pl)( Ql)( Sh)Are(Vf)M(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
+    1 L2 0Bus 1        010750.00142.510.88-130.130.4                                                         
+    2 L1 0Bus 2        01075-1.890.00-2.59-101.101.2                                                       
+    3 L1 0Bus 3        01075-1.485.00-13.7-67.467.40                                                          
+    4 L3 0Bus 4        01072-4.1                                                           
+    5 L  0Bus 5        01050-7.7                          125.050.00                                                  
+    6 L  0Bus 6        01065-6.7                          90.0030.00                                                   
+    7 L3 0Bus 7        01078-4.6                                  
+    8 L  0Bus 8        01069-6.3                          100.035.00           
+    9 L3 0Bus 9        01083-3.9                                   
+99999
+DLIN
+(De )d O d(Pa )NcEP ( R% )( X% )(Mvar)(Tap)(Tmn)(Tmx)(Phs)(Bc  )(Cn)(Ce)Ns(Cq)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
+    1         4 1L  0.00005.7600      1.000                                   
+    2         7 1L  0.00006.2500      1.000                                   
+    3         9 1L  0.00005.8600      1.000                                
+    4         5 1L  1.00008.500017.600                                   
+    4         6 1L  1.70009.200015.800                                  
+    6         9 1L  3.900017.00035.800                                    
+    7         5 1L  3.200016.10030.600                                     
+    7         8 1L  0.85007.200014.900       
+    8         9 1L  1.190010.08020.900                                                         
+99999
+FIM

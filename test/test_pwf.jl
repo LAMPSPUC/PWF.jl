@@ -52,7 +52,7 @@
                 @test length(item) == 30
             end
             for item in dict["DLIN"]
-                @test length(item) == 30
+                @test length(item) == 31
             end
         end
 
@@ -104,6 +104,7 @@
                 @test isa(item["EMERGENCY CAPACITY"], Float64)
                 @test isa(item["NUMBER OF TAPS"], Int)
                 @test isa(item["EQUIPAMENT CAPACITY"], Float64)
+                @test isa(item["TRANSFORMER"], Bool)
             end
         end
 
@@ -168,6 +169,7 @@ end
 
         @testset "Branch" begin
             ParsePWF._pwf2pm_branch!(pm_data, pwf_data)
+            ParsePWF._pwf2pm_transformer!(pm_data, pwf_data)
             
             @test haskey(pm_data, "branch")
             @test length(pm_data["branch"]) == 7
@@ -262,20 +264,24 @@ end
     end
 
     @testset "Power Flow results" begin
-        file_raw = joinpath(@__DIR__,"data/teste_3barras_2ref_mod_volt.raw")
-        file_pwf = open(joinpath(@__DIR__,"data/sistema_teste_new_3barras_mod.pwf"))
-    
-        pwf_data = ParsePWF.parse_pwf(file_pwf)
-        raw_data = PowerModels.parse_file(file_raw)
+        filenames = ["teste_3barras", "sistema_9barras_caso1", "EMG"]
 
-        solver = optimizer_with_attributes(
-            Ipopt.Optimizer, 
-            "print_level"=>0,
-        )
-        result_pwf = PowerModels.run_ac_pf(pwf_data, solver)
-        result_raw = PowerModels.run_ac_pf(raw_data, solver)
+        for name in filenames
+            file_raw = joinpath(@__DIR__,"data/$name.raw")
+            file_pwf = open(joinpath(@__DIR__,"data/$name.pwf"))
         
-        @test check_same_dict(result_pwf["solution"], result_raw["solution"], atol = 10e-9)
+            pwf_data = ParsePWF.parse_pwf(file_pwf)
+            raw_data = PowerModels.parse_file(file_raw)
+
+            solver = optimizer_with_attributes(
+                Ipopt.Optimizer, 
+                "print_level"=>0,
+            )
+            result_pwf = PowerModels.run_ac_pf(pwf_data, solver)
+            result_raw = PowerModels.run_ac_pf(raw_data, solver)
+            
+            @test check_same_dict(result_pwf["solution"], result_raw["solution"], atol = 10e-9)
+        end
     
     end
 
