@@ -1,17 +1,14 @@
+<img src="docs/lampspucpptreduced.png" alt="MarineGEO circle logo" align="right" width=300>
 <h1>ParserPWF.jl</h1>
+
+<br>
 
 ---
 
-<img src="docs/lampspucpptreduced.png" alt="MarineGEO circle logo" align="left">
-
 ParserPWF.jl is a Julia package for converting ANAREDE data format (".pwf") into [PowerModels.jl](https://github.com/lanl-ansi/PowerModels.jl) network data dictionary. The implementations were made based on the ANAREDE user guide manual (v09).
 
-<br>
-<br>
-<br>
-<br>
-
 **Quickstart**
+
 Parsing a .pwf file is as simple as:
 
 ```julia
