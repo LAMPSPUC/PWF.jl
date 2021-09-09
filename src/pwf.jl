@@ -531,7 +531,7 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
             sub_data["bus_i"] = bus["NUMBER"]
             sub_data["bus_type"] = _handle_bus_type(bus)
             sub_data["area"] = pop!(bus, "AREA")
-            sub_data["vm"] = pop!(bus, "VOLTAGE")/1000 # Implicit decimal point ignored
+            sub_data["vm"] = bus["VOLTAGE"]/1000 # Implicit decimal point ignored
             sub_data["va"] = pop!(bus, "ANGLE")
             sub_data["zone"] = 1
             sub_data["name"] = pop!(bus, "NAME")
@@ -785,130 +785,75 @@ end
 
 
 function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict)
-    pm_data["dcline"] = []
 
-    
+    pm_data["dcline"] = Dict{String, Any}()
 
-    if haskey(pwf_data, "TWO-TERMINAL DC")
-        for dcline in pwf_data["TWO-TERMINAL DC"]
-            sub_data = Dict{String,Any}()
-
-            # Unit conversions?
-            power_demand = dcline["MDC"] == 1 ? abs(dcline["SETVL"]) : dcline["MDC"] == 2 ? abs(dcline["SETVL"] / pop!(dcline, "VSCHD") / 1000) : 0
-
-            sub_data["f_bus"] = dcline["IPR"]
-            sub_data["t_bus"] = dcline["IPI"]
-            sub_data["br_status"] = pop!(dcline, "MDC") == 0 ? 0 : 1
-            sub_data["pf"] = power_demand
-            sub_data["pt"] = power_demand
-            sub_data["qf"] = 0.0
-            sub_data["qt"] = 0.0
-            sub_data["vf"] = _get_bus_value(pop!(dcline, "IPR"), "vm", pm_data)
-            sub_data["vt"] = _get_bus_value(pop!(dcline, "IPI"), "vm", pm_data)
-
-            sub_data["pminf"] = 0.0
-            sub_data["pmaxf"] = dcline["SETVL"] > 0 ? power_demand : -power_demand
-            sub_data["pmint"] = pop!(dcline, "SETVL") > 0 ? -power_demand : power_demand
-            sub_data["pmaxt"] = 0.0
-
-            anmn = []
-            for key in ["ANMNR", "ANMNI"]
-                if abs(dcline[key]) <= 90.
-                    push!(anmn, pop!(dcline, key))
-                else
-                    push!(anmn, 0)
-                    Memento.warn(_LOGGER, "$key outside reasonable limits, setting to 0 degress")
-                end
-            end
-
-            sub_data["qmaxf"] = 0.0
-            sub_data["qmaxt"] = 0.0
-            sub_data["qminf"] = -max(abs(sub_data["pminf"]), abs(sub_data["pmaxf"])) * cosd(anmn[1])
-            sub_data["qmint"] = -max(abs(sub_data["pmint"]), abs(sub_data["pmaxt"])) * cosd(anmn[2])
-
-            # Can we use "number of bridges in series (NBR/NBI)" to compute a loss?
-            sub_data["loss0"] = 0.0
-            sub_data["loss1"] = 0.0
-
-            # Costs (set to default values)
-            sub_data["startup"] = 0.0
-            sub_data["shutdown"] = 0.0
-            sub_data["ncost"] = 3
-            sub_data["cost"] = [0.0, 0.0, 0.0]
-            sub_data["model"] = 2
-
-            sub_data["source_id"] = ["two-terminal dc", sub_data["f_bus"], sub_data["t_bus"], pop!(dcline, "NAME")]
-            sub_data["index"] = length(pm_data["dcline"]) + 1
-
-            push!(pm_data["dcline"], sub_data)
-        end
+    if !(haskey(pwf_data, "DCBA") && haskey(pwf_data, "DCLI") && haskey(pwf_data, "DCNV") && haskey(pwf_data, "DCCV"))
+        return
     end
+    @assert length(pwf_data["DCBA"]) == 4*length(pwf_data["DCLI"]) == 2*length(pwf_data["DCNV"]) == 2*length(pwf_data["DCCV"])
 
-    if haskey(pwf_data, "VOLTAGE SOURCE CONVERTER")
-        Memento.info(_LOGGER, "VSC-HVDC lines are supported via a dc line model approximated by two generators and an associated loss.")
-        for dcline in pwf_data["VOLTAGE SOURCE CONVERTER"]
-            # Converter buses : is the distinction between ac and dc side meaningful?
-            dcside, acside = dcline["CONVERTER BUSES"]
+    for i1 in 1:length(pwf_data["DCLI"])
+        i2 = 2*(i1 - 1) + 1, 2*i1
+        i4 = 4*(i1 - 1) + 1, 4*(i1 - 1) + 2, 4*(i1 - 1) + 3, 4*i1 
 
-            # PowerWorld conversion from PTI to matpower seems to create two
-            # artificial generators from a VSC, but it is not clear to me how
-            # the value of "pg" is determined and adds shunt to the DC-side bus.
-            sub_data = Dict{String,Any}()
+        sub_data = Dict{String, Any}()
 
-            # VSC intended to be one or bi-directional?
-            sub_data["f_bus"] = pop!(dcside, "IBUS")
-            sub_data["t_bus"] = pop!(acside, "IBUS")
-            sub_data["br_status"] = pop!(dcline, "MDC") == 0 || pop!(dcside, "TYPE") == 0 || pop!(acside, "TYPE") == 0 ? 0 : 1
+        @assert pwf_data["DCCV"][i2[1]]["CONVERTER CONTROL TYPE"] == pwf_data["DCCV"][i2[2]]["CONVERTER CONTROL TYPE"]
+        mdc  = pwf_data["DCCV"][i2[1]]["CONVERTER CONTROL TYPE"]
 
-            sub_data["pf"] = 0.0
-            sub_data["pt"] = 0.0
+        setvl = pwf_data["DCCV"][i2[1]]["SPECIFIED VALUE"]
+        vschd = pwf_data["DCBA"][i4[1]]["VOLTAGE"]
+        power_demand = mdc == 'P' ? abs(setvl) : mdc == 'C' ? abs(setvl / vschd / 1000) : 0
 
-            sub_data["qf"] = 0.0
-            sub_data["qt"] = 0.0
+        sub_data["f_bus"] = pwf_data["DCNV"][i2[1]]["AC BUS"]
+        sub_data["t_bus"] = pwf_data["DCNV"][i2[2]]["AC BUS"]
+        sub_data["br_status"] = mdc in ['C', 'P'] ? 1 : 0
+        sub_data["pf"] = power_demand
+        sub_data["pt"] = power_demand
+        sub_data["qf"] = 0.0
+        sub_data["qt"] = 0.0
+        sub_data["vf"] = filter(x -> x["NUMBER"] == sub_data["f_bus"], pwf_data["DBAR"])[1]["VOLTAGE"]/1000
+        sub_data["vt"] = filter(x -> x["NUMBER"] == sub_data["t_bus"], pwf_data["DBAR"])[1]["VOLTAGE"]/1000
 
-            sub_data["vf"] = pop!(dcside, "MODE") == 1 ? pop!(dcside, "ACSET") : 1.0
-            sub_data["vt"] = pop!(acside, "MODE") == 1 ? pop!(acside, "ACSET") : 1.0
+        sub_data["pminf"] = 0.0
+        sub_data["pmaxf"] = setvl > 0 ? power_demand : -power_demand
+        sub_data["pmint"] = setvl > 0 ? -power_demand : power_demand
+        sub_data["pmaxt"] = 0.0
 
-            sub_data["pmaxf"] = dcside["SMAX"] == 0.0 && dcside["IMAX"] == 0.0 ? max(abs(dcside["MAXQ"]), abs(dcside["MINQ"])) : min(pop!(dcside, "IMAX"), pop!(dcside, "SMAX"))
-            sub_data["pmaxt"] = acside["SMAX"] == 0.0 && acside["IMAX"] == 0.0 ? max(abs(acside["MAXQ"]), abs(acside["MINQ"])) : min(pop!(acside, "IMAX"), pop!(acside, "SMAX"))
-            sub_data["pminf"] = -sub_data["pmaxf"]
-            sub_data["pmint"] = -sub_data["pmaxt"]
-
-            sub_data["qminf"] = pop!(dcside, "MINQ")
-            sub_data["qmaxf"] = pop!(dcside, "MAXQ")
-            sub_data["qmint"] = pop!(acside, "MINQ")
-            sub_data["qmaxt"] = pop!(acside, "MAXQ")
-
-            sub_data["loss0"] = (pop!(dcside, "ALOSS") + pop!(acside, "ALOSS") + pop!(dcside, "MINLOSS") + pop!(acside, "MINLOSS")) * 1e-3
-            sub_data["loss1"] = (pop!(dcside, "BLOSS") + pop!(acside, "BLOSS")) * 1e-3 # how to include resistance?
-
-            # Costs (set to default values)
-            sub_data["startup"] = 0.0
-            sub_data["shutdown"] = 0.0
-            sub_data["ncost"] = 3
-            sub_data["cost"] = [0.0, 0.0, 0.0]
-            sub_data["model"] = 2
-
-            sub_data["source_id"] = ["vsc dc", sub_data["f_bus"], sub_data["t_bus"], pop!(dcline, "NAME")]
-            sub_data["index"] = length(pm_data["dcline"]) + 1
-
-            if import_all
-                _import_remaining_keys!(sub_data, dcline)
-
-                for cb in sub_data["converter buses"]
-                    for (k,v) in cb
-                        cb[lowercase(k)] = v
-                        delete!(cb, k)
-                    end
-                end
+        anmn = []
+        for idx in i2
+            angle = pwf_data["DCCV"][idx]["MINIMUM CONVERTER ANGLE"]
+            if abs(angle) <= 90.0
+                push!(anmn, angle)
+            else
+                push!(anmn, 0)
+                @warn("$key outside reasonable limits, setting to 0 degress")
             end
-
-            push!(pm_data["dcline"], sub_data)
         end
+
+        sub_data["qmaxf"] = 0.0
+        sub_data["qmaxt"] = 0.0
+        sub_data["qminf"] = -max(abs(sub_data["pminf"]), abs(sub_data["pmaxf"])) * cosd(anmn[1])
+        sub_data["qmint"] = -max(abs(sub_data["pmint"]), abs(sub_data["pmaxt"])) * cosd(anmn[2])
+
+        # Can we use "number of bridges in series (NBR/NBI)" to compute a loss?
+        sub_data["loss0"] = 0.0
+        sub_data["loss1"] = 0.0
+
+        # Costs (set to default values)
+        sub_data["startup"] = 0.0
+        sub_data["shutdown"] = 0.0
+        sub_data["ncost"] = 3
+        sub_data["cost"] = [0.0, 0.0, 0.0]
+        sub_data["model"] = 2
+
+        sub_data["source_id"] = ["two-terminal dc", sub_data["f_bus"], sub_data["t_bus"], pwf_data["DCBA"][i4[1]]["NAME"]]
+        sub_data["index"] = i1
+
+        pm_data["dcline"]["$i1"] = sub_data
     end
 end
-
-
 
 function _pwf_to_powermodels!(pwf_data::Dict, validate::Bool)
     pm_data = Dict{String,Any}()
