@@ -264,20 +264,24 @@ end
     end
 
     @testset "Power Flow results" begin
-        file_raw = joinpath(@__DIR__,"data/teste_3barras_2ref_mod_volt.raw")
-        file_pwf = open(joinpath(@__DIR__,"data/sistema_teste_new_3barras_mod.pwf"))
-    
-        pwf_data = ParsePWF.parse_pwf(file_pwf)
-        raw_data = PowerModels.parse_file(file_raw)
+        filenames = ["teste_3barras", "sistema_9barras_caso1", "EMG"]
 
-        solver = optimizer_with_attributes(
-            Ipopt.Optimizer, 
-            "print_level"=>0,
-        )
-        result_pwf = PowerModels.run_ac_pf(pwf_data, solver)
-        result_raw = PowerModels.run_ac_pf(raw_data, solver)
+        for name in filenames
+            file_raw = joinpath(@__DIR__,"data/$name.raw")
+            file_pwf = open(joinpath(@__DIR__,"data/$name.pwf"))
         
-        @test check_same_dict(result_pwf["solution"], result_raw["solution"], atol = 10e-9)
+            pwf_data = ParsePWF.parse_pwf(file_pwf)
+            raw_data = PowerModels.parse_file(file_raw)
+
+            solver = optimizer_with_attributes(
+                Ipopt.Optimizer, 
+                "print_level"=>0,
+            )
+            result_pwf = PowerModels.run_ac_pf(pwf_data, solver)
+            result_raw = PowerModels.run_ac_pf(raw_data, solver)
+            
+            @test check_same_dict(result_pwf["solution"], result_raw["solution"], atol = 10e-9)
+        end
     
     end
 
