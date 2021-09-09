@@ -4,6 +4,8 @@
 #                                                               #
 #################################################################
 
+# This parser was develop using ANAREDE v09' user manual
+
 """
 A list of data file sections in the order that they appear in a PWF file
 """
@@ -363,12 +365,22 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
         bus_type = pwf_data[section][i]["TYPE"]
         if bus_type == 2
             pwf_data[section][i][component] = -9999.0
+        else
+            # If the reactive generation is different from zero, the limits will be the reactive generation itself
+            if pwf_data[section][i]["REACTIVE GENERATION"] != 0.0
+                pwf_data[section][i][component] = pwf_data[section][i]["REACTIVE GENERATION"]
+            end
         end
     end
     if section == "DBAR" && component == "MAXIMUM REACTIVE GENERATION"
         bus_type = pwf_data[section][i]["TYPE"]
         if bus_type == 2
             pwf_data[section][i][component] = 99999.0
+        else
+            # If the reactive generation is different from zero, the limits will be the reactive generation itself
+            if pwf_data[section][i]["REACTIVE GENERATION"] != 0.0
+                pwf_data[section][i][component] = pwf_data[section][i]["REACTIVE GENERATION"]
+            end
         end
     end
 
@@ -571,7 +583,9 @@ function _handle_pmin(pwf_data::Dict, bus_i::Int)
             return bus[1]["MINIMUM ACTIVE GENERATION"]
         end
     end    
-    return 0.0 # Default value for this field in pwf
+    @warn("DGER not found, setting pmin as the bar active generation")
+    bus = findfirst(x -> x["NUMBER"] == bus_i, pwf_data["DBAR"])
+    return pwf_data["DBAR"][bus]["ACTIVE GENERATION"]
 end
 
 function _handle_pmax(pwf_data::Dict, bus_i::Int)
@@ -581,7 +595,9 @@ function _handle_pmax(pwf_data::Dict, bus_i::Int)
             return bus[1]["MAXIMUM ACTIVE GENERATION"]
         end
     end
-    return 99999.0 # Default value for this field in pwf
+    @warn("DGER not found, setting pmax as the bar active generation")
+    bus = findfirst(x -> x["NUMBER"] == bus_i, pwf_data["DBAR"])
+    return pwf_data["DBAR"][bus]["ACTIVE GENERATION"]
 end
 
 function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
@@ -594,14 +610,14 @@ function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
 
                 sub_data["gen_bus"] = bus["NUMBER"]
                 sub_data["gen_status"] = 1
-                sub_data["pg"] = pop!(bus, "ACTIVE GENERATION")
-                sub_data["qg"] = pop!(bus, "REACTIVE GENERATION")
+                sub_data["pg"] = bus["ACTIVE GENERATION"]
+                sub_data["qg"] = bus["REACTIVE GENERATION"]
                 sub_data["vg"] = pm_data["bus"]["$(bus["NUMBER"])"]["vm"]
                 sub_data["mbase"] = _handle_base_mva(pwf_data)
                 sub_data["pmin"] = _handle_pmin(pwf_data, bus["NUMBER"])
                 sub_data["pmax"] = _handle_pmax(pwf_data, bus["NUMBER"])
-                sub_data["qmin"] = pop!(bus, "MINIMUM REACTIVE GENERATION")
-                sub_data["qmax"] = pop!(bus, "MAXIMUM REACTIVE GENERATION")
+                sub_data["qmin"] = haskey(bus, "MINIMUM REACTIVE GENERATION") ? bus["MINIMUM REACTIVE GENERATION"] : bus["REACTIVE GENERATION"]
+                sub_data["qmax"] = haskey(bus, "MAXIMUM REACTIVE GENERATION") ? bus["MAXIMUM REACTIVE GENERATION"] : bus["REACTIVE GENERATION"]
     
                 # Default Cost functions
                 sub_data["model"] = 2
@@ -661,7 +677,8 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding trans
                     sub_data["br_status"] = 1
                 end
 
-                sub_data["source_id"] = ["transformer", sub_data["f_bus"], sub_data["t_bus"], 0, "01", 0]
+                n = count(x -> x["f_bus"] == sub_data["f_bus"] && x["t_bus"] == sub_data["t_bus"], values(pm_data["branch"])) 
+                sub_data["source_id"] = ["transformer", sub_data["f_bus"], sub_data["t_bus"], 0, "0$(n + 1)", 0]
                 sub_data["index"] = length(pm_data["branch"]) + 1
 
                 sub_data["b_fr"] = _handle_b_fr(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"])
