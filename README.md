@@ -1,4 +1,4 @@
-<img src="docs/lampspucpptreduced.png" alt="MarineGEO circle logo" align="right" width=300>
+<img src="docs/lampspucpptreduced.png" align="right" width=300>
 <h1>ParserPWF.jl</h1>
 
 <br>
@@ -22,9 +22,10 @@ network_data = parse_pwf(file)
 Then you are ready to use PowerModels.jl
 
 ```julia
-using PowerModels
+using PowerModels, Ipopt
 
-run_ac_pf(network_data)
+solver = Ipopt.Optimizer
+run_ac_pf(network_data, solver)
 ```
 
 For more information about PowerModels.jl visit the PowerModels [documentation](https://lanl-ansi.github.io/PowerModels.jl/stable/)
