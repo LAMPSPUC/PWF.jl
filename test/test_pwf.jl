@@ -264,7 +264,7 @@ end
     end
 
     @testset "Power Flow results" begin
-        filenames = ["teste_3barras", "sistema_9barras_caso1", "EMG"]
+        filenames = ["teste_3barras", "sistema_9barras_caso1"] #, "EMG"]
 
         for name in filenames
             file_raw = joinpath(@__DIR__,"data/$name.raw")

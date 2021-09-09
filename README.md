@@ -2,15 +2,11 @@
 <h1>ParserPWF.jl</h1>
 
 <br>
+<br>
 
 ---
 
 ParserPWF.jl is a Julia package for converting ANAREDE data format (".pwf") into [PowerModels.jl](https://github.com/lanl-ansi/PowerModels.jl) network data dictionary. The implementations were made based on the ANAREDE user guide manual (v09).
-
-<br>
-<br>
-<br>
-<br>
 
 **Quickstart**
 
