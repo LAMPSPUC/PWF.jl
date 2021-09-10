@@ -798,7 +798,7 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict)
         @warn("DC line will not be parsed due to the absence of at least one those sections: DCBA, DCLI, DCNV, DCCV, DELO")
         return
     end
-    @assert length(pwf_data["DCBA"]) == 4*length(pwf_data["DCLI"]) == 2*length(pwf_data["DCNV"]) == 2*length(pwf_data["DCCV"] == 4*length(pwf_data["DELO"]))
+    @assert length(pwf_data["DCBA"]) == 4*length(pwf_data["DCLI"]) == 2*length(pwf_data["DCNV"]) == 2*length(pwf_data["DCCV"]) == 4*length(pwf_data["DELO"])
 
     for i1 in 1:length(pwf_data["DCLI"])
         i2 = 2*(i1 - 1) + 1, 2*i1
