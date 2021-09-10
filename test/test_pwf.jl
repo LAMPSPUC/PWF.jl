@@ -1,6 +1,6 @@
 @testset "PWF to Dict" begin
     @testset "Intermediary functions" begin
-        file = open(joinpath(@__DIR__,"data/sistema_teste_radial.pwf"))
+        file = open(joinpath(@__DIR__,"data/test_system.pwf"))
 
         sections = ParsePWF._split_sections(file)
         @test isa(sections, Vector{Vector{String}})
@@ -22,7 +22,7 @@
 
 
     @testset "Resulting Dict" begin
-        file = open(joinpath(@__DIR__,"data/sistema_teste_radial.pwf"))
+        file = open(joinpath(@__DIR__,"data/test_system.pwf"))
         dict = ParsePWF._parse_pwf_data(file)
 
         @testset "Keys" begin
@@ -128,7 +128,7 @@ end
 
 @testset "Dict to PowerModels" begin
     @testset "Intermediary functions" begin
-        file = open(joinpath(@__DIR__,"data/sistema_teste_radial.pwf"))
+        file = open(joinpath(@__DIR__,"data/test_system.pwf"))
         pwf_data = ParsePWF._parse_pwf_data(file)
         pm_data = Dict{String, Any}()
 
@@ -212,10 +212,25 @@ end
 
         end
 
+        @testset "DCline" begin
+
+            pwf_dc = joinpath(@__DIR__,"data/300bus.pwf")
+            pwf_data_dc = ParsePWF.parse_pwf(pwf_dc)
+
+            @test haskey(pwf_data_dc, "dcline")
+            @test length(pwf_data_dc["dcline"]) == 1
+
+            raw_dc = joinpath(@__DIR__,"data/300bus.raw")
+            raw_data_dc = PowerModels.parse_file(raw_dc)
+
+            @test check_same_dict(pwf_data_dc, raw_data_dc, "dcline")   
+                
+        end
+
     end
 
     @testset "Resulting Dict" begin
-        file = open(joinpath(@__DIR__,"data/sistema_teste_radial.pwf"))
+        file = open(joinpath(@__DIR__,"data/test_system.pwf"))
         pm_data = ParsePWF.parse_pwf(file)
 
         @testset "PowerModels Dict" begin
@@ -264,7 +279,7 @@ end
     end
 
     @testset "Power Flow results" begin
-        filenames = ["teste_3barras", "sistema_9barras_caso1", "EMG"]
+        filenames = ["3bus", "9bus"]
 
         for name in filenames
             file_raw = joinpath(@__DIR__,"data/$name.raw")

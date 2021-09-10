@@ -816,9 +816,11 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict)
         sub_data["vf"] = filter(x -> x["NUMBER"] == sub_data["f_bus"], pwf_data["DBAR"])[1]["VOLTAGE"]/1000
         sub_data["vt"] = filter(x -> x["NUMBER"] == sub_data["t_bus"], pwf_data["DBAR"])[1]["VOLTAGE"]/1000
 
+        # Assumption - the power demand sign is derived from the field looseness
+        sub_data["pmaxf"] = pwf_data["DCCV"][i2[1]]["LOOSENESS"] == 'N' ? power_demand : -power_demand
+        sub_data["pmint"] = pwf_data["DCCV"][i2[1]]["LOOSENESS"] == 'N' ? -power_demand : power_demand
+
         sub_data["pminf"] = 0.0
-        sub_data["pmaxf"] = setvl > 0 ? power_demand : -power_demand
-        sub_data["pmint"] = setvl > 0 ? -power_demand : power_demand
         sub_data["pmaxt"] = 0.0
 
         anmn = []
