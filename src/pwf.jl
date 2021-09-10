@@ -59,6 +59,11 @@ const _dshl_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
     ("TO BUS", Int64, 10:14), ("CIRCUIT", Int64, 15:16), ("SHUNT FROM", Float64, 18:23),
     ("SHUNT TO", Float64, 24:29), ("STATUS FROM", Char, 31:32, ("STATUS TO", Char, 34:35))]
 
+const _dcer_dtypes = [("NUMBER", Int, 1:5), ("OPERATION", Char, 7), ("GROUP", Int64, 9:10),
+    ("UNITIES", Int64, 12:13), ("CONTROLLED BUS", Int64, 15:19), ("INCLINATION", Float64, 21:26),
+    ("REACTIVE GENERATION", Float64, 28:32), ("MINIMUM REACTIVE GENERATION", Float64, 33:37),
+    ("MAXIMUM REACTIVE GENERATION", Float64, 38:42), ("CONTROL MODE", Char, 44), ("STATUS", Char, 46)]
+
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes,
     "DGBT" => _dgbt_dtypes, "DGLT" => _dglt_dtypes,
     "DGER" => _dger_dtypes, "DSHL" => _dshl_dtypes)
@@ -705,6 +710,7 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding trans
     end
 end
 
+# Analyzing PowerModels' raw parser, it was concluded that b_to & b_fr data was present in DSHL section
 function _handle_b_fr(pm_data::Dict, pwf_data::Dict, f_bus::Int, t_bus::Int, susceptance::Float64)
     i = count(x -> x["f_bus"] == f_bus && x["t_bus"] == t_bus, values(pm_data["branch"])) + 1
     b_fr = susceptance / 2.0
@@ -732,6 +738,62 @@ function _handle_b_to(pm_data, pwf_data::Dict, f_bus::Int, t_bus::Int, susceptan
     end
     return b_to / 100
 end
+
+function _psse2pm_shunt!(pm_data::Dict, pti_data::Dict, import_all::Bool)
+    pm_data["shunt"] = []
+
+    fixed_shunt_bus = filter(x -> x["TOTAL REACTIVE POWER"] != 0.0, pwf_data["DBAR"])
+
+    for bus in fixed_shunt_bus
+        sub_data = Dict{String,Any}()
+
+        sub_data["shunt_bus"] = bus["NUMBER"]
+        sub_data["gs"] = 0        
+        sub_data["bs"] =  bus["TOTAL REACTIVE POWER"] 
+        sub_data["status"] = bus["STATUS"]
+
+        sub_data["source_id"] = ["fixed shunt", sub_data["shunt_bus"], sub_data["shunt_bus"]]
+        sub_data["index"] = length(pm_data["shunt"]) + 1
+    end
+
+    if haskey(pwf_data, "DCER")
+        @warn("Switched shunt converted to fixed shunt, with default value gs=0.0")
+
+        for shunt in pwf_data["DCER"]
+            sub_data = Dict{String,Any}()
+
+            sub_data["shunt_bus"] = shunt["NUMBER"]
+            sub_data["gs"] = 0.0
+            sub_data["bs"] = pop!(shunt, "BINIT")
+            sub_data["status"] = pop!(shunt, "STAT")
+
+            sub_data["source_id"] = ["switched shunt", sub_data["shunt_bus"], pop!(shunt, "SWREM")]
+            sub_data["index"] = length(pm_data["shunt"]) + 1
+    end
+
+    if haskey(pti_data, "SWITCHED SHUNT")
+        Memento.info(_LOGGER, "Switched shunt converted to fixed shunt, with default value gs=0.0")
+
+        for shunt in pti_data["SWITCHED SHUNT"]
+            sub_data = Dict{String,Any}()
+
+            sub_data["shunt_bus"] = pop!(shunt, "I")
+            sub_data["gs"] = 0.0
+            sub_data["bs"] = pop!(shunt, "BINIT")
+            sub_data["status"] = pop!(shunt, "STAT")
+
+            sub_data["source_id"] = ["switched shunt", sub_data["shunt_bus"], pop!(shunt, "SWREM")]
+            sub_data["index"] = length(pm_data["shunt"]) + 1
+
+            if import_all
+                _import_remaining_keys!(sub_data, shunt)
+            end
+
+            push!(pm_data["shunt"], sub_data)
+        end
+    end
+end
+
 
 function _pwf_to_powermodels!(pwf_data::Dict, validate::Bool)
     pm_data = Dict{String,Any}()
