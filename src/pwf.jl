@@ -84,10 +84,13 @@ const _dccv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("LOOSENE
     ("MINIMUM DC VOLTAGE FOR POWER CONTROL", Float64, 63:66),
     ("TAP HI MVAR MODE", Float64, 68:72), ("TAP REDUCED VOLTAGE MODE", Float64, 74:78)]
 
+const _delo_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("VOLTAGE", Float64, 8:12),
+    ("BASE", Float64, 14:18), ("NAME", String, 20:39), ("HI MVAR MODE", Char, 41), ("STATUS", Char, 43)]
+
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes,
     "DGBT" => _dgbt_dtypes, "DGLT" => _dglt_dtypes, "DGER" => _dger_dtypes,
     "DSHL" => _dshl_dtypes, "DCBA" => _dcba_dtypes, "DCLI" => _dcli_dtypes,
-    "DCNV" => _dcnv_dtypes, "DCCV" => _dccv_dtypes)
+    "DCNV" => _dcnv_dtypes, "DCCV" => _dccv_dtypes, "DELO" => _delo_dtypes)
 
 const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
                         filter(x -> x%7 == 6, 1:69), Char)
@@ -178,6 +181,9 @@ const _default_dccv = Dict("NUMBER" => nothing, "OPERATION" => 'A', "LOOSENESS" 
     "MAXIMUM TRANSFORMER TAP" => nothing, "TRANSFORMER TAP NUMBER OF STEPS" => Inf,
     "MINIMUM DC VOLTAGE FOR POWER CONTROL" => 0.0, "TAP HI MVAR MODE" => nothing,
     "TAP REDUCED VOLTAGE MODE" => 1.0)
+
+const _default_delo = Dict("NUMBER" => nothing, "OPERATION" => 'A', "VOLTAGE" => nothing,
+    "BASE" => nothing, "NAME" => nothing, "HI MVAR MODE" => 'N', "STATUS" => 'L')
 
 const _default_titu = ""
 
@@ -788,10 +794,11 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict)
 
     pm_data["dcline"] = Dict{String, Any}()
 
-    if !(haskey(pwf_data, "DCBA") && haskey(pwf_data, "DCLI") && haskey(pwf_data, "DCNV") && haskey(pwf_data, "DCCV"))
+    if !(haskey(pwf_data, "DCBA") && haskey(pwf_data, "DCLI") && haskey(pwf_data, "DCNV") && haskey(pwf_data, "DCCV") && haskey(pwf_data, "DELO"))
+        @warn("DC line will not be parsed due to the absence of at least one those sections: DCBA, DCLI, DCNV, DCCV, DELO")
         return
     end
-    @assert length(pwf_data["DCBA"]) == 4*length(pwf_data["DCLI"]) == 2*length(pwf_data["DCNV"]) == 2*length(pwf_data["DCCV"])
+    @assert length(pwf_data["DCBA"]) == 4*length(pwf_data["DCLI"]) == 2*length(pwf_data["DCNV"]) == 2*length(pwf_data["DCCV"] == 4*length(pwf_data["DELO"]))
 
     for i1 in 1:length(pwf_data["DCLI"])
         i2 = 2*(i1 - 1) + 1, 2*i1
@@ -808,11 +815,16 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict)
 
         sub_data["f_bus"] = pwf_data["DCNV"][i2[1]]["AC BUS"]
         sub_data["t_bus"] = pwf_data["DCNV"][i2[2]]["AC BUS"]
-        sub_data["br_status"] = mdc in ['C', 'P'] ? 1 : 0
+
+        # Assumption - bus status is defined on DELO section
+        sub_data["br_status"] = pwf_data["DELO"][i1]["STATUS"] == 'L' ? 1 : 0
+
         sub_data["pf"] = power_demand
         sub_data["pt"] = power_demand
         sub_data["qf"] = 0.0
         sub_data["qt"] = 0.0
+
+        # Assumption - vf & vt are directly the voltage for each bus, instead of what is indicated in DELO section
         sub_data["vf"] = filter(x -> x["NUMBER"] == sub_data["f_bus"], pwf_data["DBAR"])[1]["VOLTAGE"]/1000
         sub_data["vt"] = filter(x -> x["NUMBER"] == sub_data["t_bus"], pwf_data["DBAR"])[1]["VOLTAGE"]/1000
 
@@ -839,11 +851,11 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict)
         sub_data["qminf"] = -max(abs(sub_data["pminf"]), abs(sub_data["pmaxf"])) * cosd(anmn[1])
         sub_data["qmint"] = -max(abs(sub_data["pmint"]), abs(sub_data["pmaxt"])) * cosd(anmn[2])
 
-        # Can we use "number of bridges in series (NBR/NBI)" to compute a loss?
+        # Assumption - same values as PowerModels
         sub_data["loss0"] = 0.0
         sub_data["loss1"] = 0.0
 
-        # Costs (set to default values)
+        # Assumption - same values as PowerModels
         sub_data["startup"] = 0.0
         sub_data["shutdown"] = 0.0
         sub_data["ncost"] = 3
