@@ -214,7 +214,7 @@ end
 
         @testset "DCline" begin
 
-            pwf_dc = joinpath(@__DIR__,"data/300bus.pwf")
+            pwf_dc = open(joinpath(@__DIR__,"data/300bus.pwf"))
             pwf_data_dc = ParsePWF.parse_pwf(pwf_dc)
 
             @test haskey(pwf_data_dc, "dcline")
