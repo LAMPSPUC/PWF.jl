@@ -59,9 +59,38 @@ const _dshl_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
     ("TO BUS", Int64, 10:14), ("CIRCUIT", Int64, 15:16), ("SHUNT FROM", Float64, 18:23),
     ("SHUNT TO", Float64, 24:29), ("STATUS FROM", Char, 31:32, ("STATUS TO", Char, 34:35))]
 
+const _dcba_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("TYPE", Int64, 8),
+    ("POLARITY", String, 9), ("NAME", String, 10:21), ("VOLTAGE LIMIT GROUP", String, 22:23),
+    ("VOLTAGE", Float64, 24:28), ("GROUND ELECTRODE", Float64, 67:71), ("DC LINK", Int64, 72:75)]
+
+const _dcli_dtypes = [("FROM BUS", Int64, 1:4), ("OPERATION", Int64, 6), ("TO BUS", Int64, 9:12),
+    ("CIRCUIT", Int64, 13:14), ("OWNER", Char, 16), ("RESISTANCE", Float64, 18:23),
+    ("INDUCTANCE", Float64, 24:29), ("CAPACITY", Float64, 61:64)]
+
+const _dcnv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("AC BUS", Int64, 8:12),
+    ("DC BUS", Int64, 14:17), ("NEUTRAL BUS", Int64, 19:22), ("OPERATION MODE", Char, 24),
+    ("BRIDGES", Int64, 26), ("CURRENTS", Float64, 28:32), ("COMMUTATION REACTANCE", Float64, 24:38),
+    ("SECONDARY VOLTAGE", Float64, 40:44), ("TRANSFORMER POWER", Float64, 46:50),
+    ("REACTOR RESISTANCE", Float64, 52:56), ("REACTOR INDUCTANCE", Float64, 58:62),
+    ("CAPACITANCE", Float64, 64:68), ("FREQUENCY", Float64, 70:71)]
+
+const _dccv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("LOOSENESS", Char, 8),
+    ("INVERTER CONTROL MODE", Char, 9), ("CONVERTER CONTROL TYPE", Char, 10),
+    ("SPECIFIED VALUE", Float64, 12:16), ("CURRENT MARGIN", Float64,18:22),
+    ("MAXIMUM OVERCURRENT", Float64, 24:28), ("CONVERTER ANGLE", Float64, 30:34),
+    ("MINIMUM CONVERTER ANGLE", Float64, 36:40), ("MAXIMUM CONVERTER ANGLE", Float64, 42:46),
+    ("MINIMUM TRANSFORMER TAP", Float64, 48:52), ("MAXIMUM TRANSFORMER TAP", Float64, 54:58),
+    ("TRANSFORMER TAP NUMBER OF STEPS", Int64, 60:61),
+    ("MINIMUM DC VOLTAGE FOR POWER CONTROL", Float64, 63:66),
+    ("TAP HI MVAR MODE", Float64, 68:72), ("TAP REDUCED VOLTAGE MODE", Float64, 74:78)]
+
+const _delo_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("VOLTAGE", Float64, 8:12),
+    ("BASE", Float64, 14:18), ("NAME", String, 20:39), ("HI MVAR MODE", Char, 41), ("STATUS", Char, 43)]
+
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes,
-    "DGBT" => _dgbt_dtypes, "DGLT" => _dglt_dtypes,
-    "DGER" => _dger_dtypes, "DSHL" => _dshl_dtypes)
+    "DGBT" => _dgbt_dtypes, "DGLT" => _dglt_dtypes, "DGER" => _dger_dtypes,
+    "DSHL" => _dshl_dtypes, "DCBA" => _dcba_dtypes, "DCLI" => _dcli_dtypes,
+    "DCNV" => _dcnv_dtypes, "DCCV" => _dccv_dtypes, "DELO" => _delo_dtypes)
 
 const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
                         filter(x -> x%7 == 6, 1:69), Char)
@@ -130,13 +159,40 @@ const _default_dshl = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" =
     "CIRCUIT" => nothing, "SHUNT FROM" => nothing, "SHUNT TO" => nothing,
     "STATUS FROM" => 'L', "STATUS TO" => 'L')
 
+const _default_dcba = Dict("NUMBER" => nothing, "OPERATION" => 'A', "TYPE" => 0,
+    "POLARITY" => nothing, "NAME" => nothing, "VOLTAGE LIMIT GROUP" => nothing,
+    "VOLTAGE" => 0, "GROUND ELECTRODE" => 0.0, "DC LINK" => 1)
+
+const _default_dcli = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" => nothing,
+    "CIRCUIT" => nothing, "OWNER" => nothing, "RESISTANCE" => nothing, "INDUCTANCE" => 0.0,
+    "CAPACITY" => Inf)
+
+const _default_dcnv = Dict("NUMBER" => nothing, "OPERATION" => 'A', "AC BUS" => nothing,
+    "DC BUS" => nothing, "NEUTRAL BUS" => nothing, "OPERATION MODE" => nothing,
+    "BRIDGES" => nothing, "CURRENTS" => nothing, "COMMUTATION REACTANCE" => nothing,
+    "SECONDARY VOLTAGE" => nothing, "TRANSFORMER POWER" => nothing, "REACTOR RESISTANCE" => 0.0,
+    "REACTOR INDUCTANCE" => 0.0, "CAPACITANCE" => Inf, "FREQUENCY" => 60.0)
+
+const _default_dccv = Dict("NUMBER" => nothing, "OPERATION" => 'A', "LOOSENESS" => 'N',
+    "INVERTER CONTROL MODE" => nothing, "CONVERTER CONTROL TYPE" => nothing,
+    "SPECIFIED VALUE" => nothing, "CURRENT MARGIN" => 10.0, "MAXIMUM OVERCURRENT" => 9999,
+    "CONVERTER ANGLE" => 0.0, "MINIMUM CONVERTER ANGLE" => 0.0,
+    "MAXIMUM CONVERTER ANGLE" => 0.0, "MINIMUM TRANSFORMER TAP" => nothing,
+    "MAXIMUM TRANSFORMER TAP" => nothing, "TRANSFORMER TAP NUMBER OF STEPS" => Inf,
+    "MINIMUM DC VOLTAGE FOR POWER CONTROL" => 0.0, "TAP HI MVAR MODE" => nothing,
+    "TAP REDUCED VOLTAGE MODE" => 1.0)
+
+const _default_delo = Dict("NUMBER" => nothing, "OPERATION" => 'A', "VOLTAGE" => nothing,
+    "BASE" => nothing, "NAME" => nothing, "HI MVAR MODE" => 'N', "STATUS" => 'L')
+
 const _default_titu = ""
 
 const _default_name = ""
 
 const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DCTE" => _default_dcte,
     "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name, "DGER" => _default_dger,
-    "DGBT" => _default_dgbt, "DGLT" => _default_dglt, "DSHL" => _default_dshl)
+    "DGBT" => _default_dgbt, "DGLT" => _default_dglt, "DSHL" => _default_dshl, "DCBA" => _default_dcba,
+    "DCLI" => _default_dcli, "DCNV" => _default_dcnv, "DCCV" => _default_dccv)
 
 
 const title_identifier = "TITU"
@@ -481,7 +537,7 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
             sub_data["bus_i"] = bus["NUMBER"]
             sub_data["bus_type"] = _handle_bus_type(bus)
             sub_data["area"] = pop!(bus, "AREA")
-            sub_data["vm"] = pop!(bus, "VOLTAGE")/1000 # Implicit decimal point ignored
+            sub_data["vm"] = bus["VOLTAGE"]/1000 # Implicit decimal point ignored
             sub_data["va"] = pop!(bus, "ANGLE")
             sub_data["zone"] = 1
             sub_data["name"] = pop!(bus, "NAME")
@@ -733,6 +789,86 @@ function _handle_b_to(pm_data, pwf_data::Dict, f_bus::Int, t_bus::Int, susceptan
     return b_to / 100
 end
 
+
+function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict)
+
+    pm_data["dcline"] = Dict{String, Any}()
+
+    if !(haskey(pwf_data, "DCBA") && haskey(pwf_data, "DCLI") && haskey(pwf_data, "DCNV") && haskey(pwf_data, "DCCV") && haskey(pwf_data, "DELO"))
+        @warn("DC line will not be parsed due to the absence of at least one those sections: DCBA, DCLI, DCNV, DCCV, DELO")
+        return
+    end
+    @assert length(pwf_data["DCBA"]) == 4*length(pwf_data["DCLI"]) == 2*length(pwf_data["DCNV"]) == 2*length(pwf_data["DCCV"]) == 4*length(pwf_data["DELO"])
+
+    for i1 in 1:length(pwf_data["DCLI"])
+        i2 = 2*(i1 - 1) + 1, 2*i1
+        i4 = 4*(i1 - 1) + 1, 4*(i1 - 1) + 2, 4*(i1 - 1) + 3, 4*i1 
+
+        sub_data = Dict{String, Any}()
+
+        @assert pwf_data["DCCV"][i2[1]]["CONVERTER CONTROL TYPE"] == pwf_data["DCCV"][i2[2]]["CONVERTER CONTROL TYPE"]
+        mdc  = pwf_data["DCCV"][i2[1]]["CONVERTER CONTROL TYPE"]
+
+        setvl = pwf_data["DCCV"][i2[1]]["SPECIFIED VALUE"]
+        vschd = pwf_data["DCBA"][i4[1]]["VOLTAGE"]
+        power_demand = mdc == 'P' ? abs(setvl) : mdc == 'C' ? abs(setvl / vschd / 1000) : 0
+
+        sub_data["f_bus"] = pwf_data["DCNV"][i2[1]]["AC BUS"]
+        sub_data["t_bus"] = pwf_data["DCNV"][i2[2]]["AC BUS"]
+
+        # Assumption - bus status is defined on DELO section
+        sub_data["br_status"] = pwf_data["DELO"][i1]["STATUS"] == 'L' ? 1 : 0
+
+        sub_data["pf"] = power_demand
+        sub_data["pt"] = power_demand
+        sub_data["qf"] = 0.0
+        sub_data["qt"] = 0.0
+
+        # Assumption - vf & vt are directly the voltage for each bus, instead of what is indicated in DELO section
+        sub_data["vf"] = filter(x -> x["NUMBER"] == sub_data["f_bus"], pwf_data["DBAR"])[1]["VOLTAGE"]/1000
+        sub_data["vt"] = filter(x -> x["NUMBER"] == sub_data["t_bus"], pwf_data["DBAR"])[1]["VOLTAGE"]/1000
+
+        # Assumption - the power demand sign is derived from the field looseness
+        sub_data["pmaxf"] = pwf_data["DCCV"][i2[1]]["LOOSENESS"] == 'N' ? power_demand : -power_demand
+        sub_data["pmint"] = pwf_data["DCCV"][i2[1]]["LOOSENESS"] == 'N' ? -power_demand : power_demand
+
+        sub_data["pminf"] = 0.0
+        sub_data["pmaxt"] = 0.0
+
+        anmn = []
+        for idx in i2
+            angle = pwf_data["DCCV"][idx]["MINIMUM CONVERTER ANGLE"]
+            if abs(angle) <= 90.0
+                push!(anmn, angle)
+            else
+                push!(anmn, 0)
+                @warn("$key outside reasonable limits, setting to 0 degress")
+            end
+        end
+
+        sub_data["qmaxf"] = 0.0
+        sub_data["qmaxt"] = 0.0
+        sub_data["qminf"] = -max(abs(sub_data["pminf"]), abs(sub_data["pmaxf"])) * cosd(anmn[1])
+        sub_data["qmint"] = -max(abs(sub_data["pmint"]), abs(sub_data["pmaxt"])) * cosd(anmn[2])
+
+        # Assumption - same values as PowerModels
+        sub_data["loss0"] = 0.0
+        sub_data["loss1"] = 0.0
+
+        # Assumption - same values as PowerModels
+        sub_data["startup"] = 0.0
+        sub_data["shutdown"] = 0.0
+        sub_data["ncost"] = 3
+        sub_data["cost"] = [0.0, 0.0, 0.0]
+        sub_data["model"] = 2
+
+        sub_data["source_id"] = ["two-terminal dc", sub_data["f_bus"], sub_data["t_bus"], pwf_data["DCBA"][i4[1]]["NAME"]]
+        sub_data["index"] = i1
+
+        pm_data["dcline"]["$i1"] = sub_data
+    end
+end
+
 function _pwf_to_powermodels!(pwf_data::Dict, validate::Bool)
     pm_data = Dict{String,Any}()
 
@@ -748,10 +884,10 @@ function _pwf_to_powermodels!(pwf_data::Dict, validate::Bool)
     _pwf2pm_load!(pm_data, pwf_data)
     _pwf2pm_generator!(pm_data, pwf_data)
     _pwf2pm_transformer!(pm_data, pwf_data)
+    _pwf2pm_dcline!(pm_data, pwf_data)
 
     # ToDo: fields not yet contemplated by the parser
 
-    pm_data["dcline"] = Dict{String,Any}()
     pm_data["storage"] = Dict{String,Any}()
     pm_data["switch"] = Dict{String,Any}()
     pm_data["shunt"] = Dict{String,Any}()
