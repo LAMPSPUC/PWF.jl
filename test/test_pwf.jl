@@ -23,7 +23,7 @@
 
     @testset "Resulting Dict" begin
         file = open(joinpath(@__DIR__,"data/test_system.pwf"))
-        dict = ParsePWF._parse_pwf_data(file)
+        dict = ParserPWF._parse_pwf_data(file)
 
         @testset "Keys" begin
             @test haskey(dict, "TITU")
@@ -129,7 +129,7 @@ end
 @testset "Dict to PowerModels" begin
     @testset "Intermediary functions" begin
         file = open(joinpath(@__DIR__,"data/test_system.pwf"))
-        pwf_data = ParsePWF._parse_pwf_data(file)
+        pwf_data = ParserPWF._parse_pwf_data(file)
         pm_data = Dict{String, Any}()
 
         @testset "Bus" begin
@@ -215,7 +215,7 @@ end
         @testset "DCline" begin
 
             pwf_dc = open(joinpath(@__DIR__,"data/300bus.pwf"))
-            pwf_data_dc = ParsePWF.parse_pwf(pwf_dc)
+            pwf_data_dc = ParserPWF.parse_pwf(pwf_dc)
 
             @test haskey(pwf_data_dc, "dcline")
             @test length(pwf_data_dc["dcline"]) == 1
@@ -231,7 +231,7 @@ end
 
     @testset "Resulting Dict" begin
         file = open(joinpath(@__DIR__,"data/test_system.pwf"))
-        pm_data = ParsePWF.parse_pwf(file)
+        pm_data = ParserPWF.parse_pwf(file)
 
         @testset "PowerModels Dict" begin
             @test isa(pm_data, Dict)
