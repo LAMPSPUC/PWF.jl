@@ -2,21 +2,21 @@
     @testset "Intermediary functions" begin
         file = open(joinpath(@__DIR__,"data/test_system.pwf"))
 
-        sections = ParsePWF._split_sections(file)
+        sections = ParserPWF._split_sections(file)
         @test isa(sections, Vector{Vector{String}})
         @test length(sections) == 5
         @test sections[1][1] == "TITU"
 
         data = Dict{String, Any}()
-        ParsePWF._parse_section!(data, sections[1])
+        ParserPWF._parse_section!(data, sections[1])
         @test haskey(data, "TITU")
-        ParsePWF._parse_section!(data, sections[2])
+        ParserPWF._parse_section!(data, sections[2])
         @test haskey(data, "DOPC")
-        ParsePWF._parse_section!(data, sections[3])
+        ParserPWF._parse_section!(data, sections[3])
         @test haskey(data, "DCTE")
-        ParsePWF._parse_section!(data, sections[4])
+        ParserPWF._parse_section!(data, sections[4])
         @test haskey(data, "DBAR")
-        ParsePWF._parse_section!(data, sections[5])
+        ParserPWF._parse_section!(data, sections[5])
         @test haskey(data, "DLIN")
     end
 
@@ -133,7 +133,7 @@ end
         pm_data = Dict{String, Any}()
 
         @testset "Bus" begin
-            ParsePWF._pwf2pm_bus!(pm_data, pwf_data)
+            ParserPWF._pwf2pm_bus!(pm_data, pwf_data)
             
             @test haskey(pm_data, "bus")
             @test length(pm_data["bus"]) == 9
@@ -168,8 +168,8 @@ end
         end
 
         @testset "Branch" begin
-            ParsePWF._pwf2pm_branch!(pm_data, pwf_data)
-            ParsePWF._pwf2pm_transformer!(pm_data, pwf_data)
+            ParserPWF._pwf2pm_branch!(pm_data, pwf_data)
+            ParserPWF._pwf2pm_transformer!(pm_data, pwf_data)
             
             @test haskey(pm_data, "branch")
             @test length(pm_data["branch"]) == 7
@@ -285,7 +285,7 @@ end
             file_raw = joinpath(@__DIR__,"data/$name.raw")
             file_pwf = open(joinpath(@__DIR__,"data/$name.pwf"))
         
-            pwf_data = ParsePWF.parse_pwf(file_pwf)
+            pwf_data = ParserPWF.parse_pwf(file_pwf)
             raw_data = PowerModels.parse_file(file_raw)
 
             solver = optimizer_with_attributes(

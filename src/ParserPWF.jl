@@ -1,10 +1,12 @@
-module ParsePWF
+module ParserPWF
 
 # using packages
 using PowerModels
+
 # including files
 include("pwf.jl")
-# -----------------------------------------------------------------------------------------
+
+export parse_pwf
 
 function parse_pwf(filename::String)::Dict
     pwf_data = open(filename) do f
