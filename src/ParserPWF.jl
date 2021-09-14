@@ -1,4 +1,4 @@
-module ParsePWF
+module ParserPWF
 
 # using packages
 using PowerModels
