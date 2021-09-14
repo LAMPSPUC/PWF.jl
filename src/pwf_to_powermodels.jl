@@ -444,13 +444,7 @@ end
 """
     parse_pwf_to_powermodels(filename::String, validate::Bool=false)::Dict
 
-Parse .pwf file directly to PowerModels data structure#################################################################
-#                                                               #
-# This file provides functions for interfacing with .pwf files  #
-#                                                               #
-#################################################################
-
-# This parser was develop using ANAREDE v09' user manual
+Parse .pwf file directly to PowerModels data structure
 """
 function parse_pwf_to_powermodels(filename::String, validate::Bool=true)::Dict
     pwf_data = open(filename) do f
