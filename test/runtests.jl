@@ -4,7 +4,9 @@ using PowerModels
 
 include("../src/ParserPWF.jl")
 
-@testset "Test functions" begin
-    include("test_functions.jl")
+include("test_functions.jl")
+
+@testset "ParserPWF" begin
     include("test_pwf.jl")
+    include("test_pwf_to_powermodels.jl")
 end

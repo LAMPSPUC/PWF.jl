@@ -59,6 +59,34 @@ const _dshl_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
     ("TO BUS", Int64, 10:14), ("CIRCUIT", Int64, 15:16), ("SHUNT FROM", Float64, 18:23),
     ("SHUNT TO", Float64, 24:29), ("STATUS FROM", Char, 31:32, ("STATUS TO", Char, 34:35))]
 
+    const _dcba_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("TYPE", Int64, 8),
+    ("POLARITY", String, 9), ("NAME", String, 10:21), ("VOLTAGE LIMIT GROUP", String, 22:23),
+    ("VOLTAGE", Float64, 24:28), ("GROUND ELECTRODE", Float64, 67:71), ("DC LINK", Int64, 72:75)]
+
+const _dcli_dtypes = [("FROM BUS", Int64, 1:4), ("OPERATION", Int64, 6), ("TO BUS", Int64, 9:12),
+    ("CIRCUIT", Int64, 13:14), ("OWNER", Char, 16), ("RESISTANCE", Float64, 18:23),
+    ("INDUCTANCE", Float64, 24:29), ("CAPACITY", Float64, 61:64)]
+
+const _dcnv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("AC BUS", Int64, 8:12),
+    ("DC BUS", Int64, 14:17), ("NEUTRAL BUS", Int64, 19:22), ("OPERATION MODE", Char, 24),
+    ("BRIDGES", Int64, 26), ("CURRENTS", Float64, 28:32), ("COMMUTATION REACTANCE", Float64, 24:38),
+    ("SECONDARY VOLTAGE", Float64, 40:44), ("TRANSFORMER POWER", Float64, 46:50),
+    ("REACTOR RESISTANCE", Float64, 52:56), ("REACTOR INDUCTANCE", Float64, 58:62),
+    ("CAPACITANCE", Float64, 64:68), ("FREQUENCY", Float64, 70:71)]
+
+const _dccv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("LOOSENESS", Char, 8),
+    ("INVERTER CONTROL MODE", Char, 9), ("CONVERTER CONTROL TYPE", Char, 10),
+    ("SPECIFIED VALUE", Float64, 12:16), ("CURRENT MARGIN", Float64,18:22),
+    ("MAXIMUM OVERCURRENT", Float64, 24:28), ("CONVERTER ANGLE", Float64, 30:34),
+    ("MINIMUM CONVERTER ANGLE", Float64, 36:40), ("MAXIMUM CONVERTER ANGLE", Float64, 42:46),
+    ("MINIMUM TRANSFORMER TAP", Float64, 48:52), ("MAXIMUM TRANSFORMER TAP", Float64, 54:58),
+    ("TRANSFORMER TAP NUMBER OF STEPS", Int64, 60:61),
+    ("MINIMUM DC VOLTAGE FOR POWER CONTROL", Float64, 63:66),
+    ("TAP HI MVAR MODE", Float64, 68:72), ("TAP REDUCED VOLTAGE MODE", Float64, 74:78)]
+
+const _delo_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("VOLTAGE", Float64, 8:12),
+    ("BASE", Float64, 14:18), ("NAME", String, 20:39), ("HI MVAR MODE", Char, 41), ("STATUS", Char, 43)]
+
 const _dcer_dtypes = [("BUS", Int, 1:5), ("OPERATION", Char, 7), ("GROUP", Int64, 9:10),
     ("UNITIES", Int64, 12:13), ("CONTROLLED BUS", Int64, 15:19), ("INCLINATION", Float64, 21:26),
     ("REACTIVE GENERATION", Float64, 28:32), ("MINIMUM REACTIVE GENERATION", Float64, 33:37),
@@ -75,10 +103,11 @@ const _fban_2_dtypes = [("GROUP", Int64, 1:2), ("OPERATION", Char, 5), ("STATUS"
     ("CAPACITOR REACTOR", Float64, 17:22)]
 
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes, "DGBT" => _dgbt_dtypes,
-    "DGLT" => _dglt_dtypes, "DGER" => _dger_dtypes, "DSHL" => _dshl_dtypes, "DCER" => _dcer_dtypes,
-    "BUS AND VOLTAGE CONTROL" => _fban_1_dtypes, "REACTORS AND CAPACITORS BANKS" => _fban_2_dtypes,
+    "DGLT" => _dglt_dtypes, "DGER" => _dger_dtypes, "DSHL" => _dshl_dtypes, "DCBA" => _dcba_dtypes, 
+    "DCLI" => _dcli_dtypes, "DCNV" => _dcnv_dtypes, "DCCV" => _dccv_dtypes, "DELO" => _delo_dtypes, 
+    "DCER" => _dcer_dtypes, "BUS AND VOLTAGE CONTROL" => _fban_1_dtypes, "REACTORS AND CAPACITORS BANKS" => _fban_2_dtypes,
     "DBSH" => [_fban_1_dtypes, _fban_2_dtypes])
-
+    
 const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
                         filter(x -> x%7 == 6, 1:69), Char)
 
@@ -146,6 +175,32 @@ const _default_dshl = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" =
     "CIRCUIT" => nothing, "SHUNT FROM" => nothing, "SHUNT TO" => nothing,
     "STATUS FROM" => 'L', "STATUS TO" => 'L')
 
+    const _default_dcba = Dict("NUMBER" => nothing, "OPERATION" => 'A', "TYPE" => 0,
+    "POLARITY" => nothing, "NAME" => nothing, "VOLTAGE LIMIT GROUP" => nothing,
+    "VOLTAGE" => 0, "GROUND ELECTRODE" => 0.0, "DC LINK" => 1)
+
+const _default_dcli = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" => nothing,
+    "CIRCUIT" => nothing, "OWNER" => nothing, "RESISTANCE" => nothing, "INDUCTANCE" => 0.0,
+    "CAPACITY" => Inf)
+
+const _default_dcnv = Dict("NUMBER" => nothing, "OPERATION" => 'A', "AC BUS" => nothing,
+    "DC BUS" => nothing, "NEUTRAL BUS" => nothing, "OPERATION MODE" => nothing,
+    "BRIDGES" => nothing, "CURRENTS" => nothing, "COMMUTATION REACTANCE" => nothing,
+    "SECONDARY VOLTAGE" => nothing, "TRANSFORMER POWER" => nothing, "REACTOR RESISTANCE" => 0.0,
+    "REACTOR INDUCTANCE" => 0.0, "CAPACITANCE" => Inf, "FREQUENCY" => 60.0)
+
+const _default_dccv = Dict("NUMBER" => nothing, "OPERATION" => 'A', "LOOSENESS" => 'N',
+    "INVERTER CONTROL MODE" => nothing, "CONVERTER CONTROL TYPE" => nothing,
+    "SPECIFIED VALUE" => nothing, "CURRENT MARGIN" => 10.0, "MAXIMUM OVERCURRENT" => 9999,
+    "CONVERTER ANGLE" => 0.0, "MINIMUM CONVERTER ANGLE" => 0.0,
+    "MAXIMUM CONVERTER ANGLE" => 0.0, "MINIMUM TRANSFORMER TAP" => nothing,
+    "MAXIMUM TRANSFORMER TAP" => nothing, "TRANSFORMER TAP NUMBER OF STEPS" => Inf,
+    "MINIMUM DC VOLTAGE FOR POWER CONTROL" => 0.0, "TAP HI MVAR MODE" => nothing,
+    "TAP REDUCED VOLTAGE MODE" => 1.0)
+
+const _default_delo = Dict("NUMBER" => nothing, "OPERATION" => 'A', "VOLTAGE" => nothing,
+    "BASE" => nothing, "NAME" => nothing, "HI MVAR MODE" => 'N', "STATUS" => 'L')
+
 const _default_dcer = Dict("BUS" => nothing, "OPERATION" => 'A', "GROUP" => nothing,
     "UNITIES" => 1, "CONTROLLED BUS" => nothing, "INCLINATION" => nothing,
     "REACTIVE GENERATION" => nothing, "MINIMUM REACTIVE GENERATION" => nothing,
@@ -159,8 +214,6 @@ const _default_fban_1 = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS"
     "MAXIMUM VOLTAGE" => nothing, "CONTROLLED BUS" => nothing,
     "INITIAL REACTIVE INJECTION" => 0.0, "CONTROL TYPE" => 'C', "ERASE DBAR" => 'N',
     "EXTREMITY" => nothing, "REACTOR CAPACITOR" => _default_fban_2)
-
-
 
 const _default_titu = ""
 
@@ -475,466 +528,22 @@ function _parse_pwf_data(data_io::IO)
     return pwf_data
 end
 
-function _handle_base_kv(pwf_data::Dict, bus::Dict)
-    group_identifier = bus["BASE VOLTAGE GROUP"]
-    if haskey(pwf_data, "DGBT")
-        if length(pwf_data["DGBT"]) == 1 && pwf_data["DGBT"][1]["GROUP"] != group_identifier
-            @warn "Only one base voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGBT"][1]["GROUP"])"
-            return pwf_data["DGBT"][1]["VOLTAGE"]
-        else
-            group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGBT"])
-            @assert length(group) == 1
-            return group[1]["VOLTAGE"]
-        end
-    else
-        return 1.0 # Default value for this field in .pwf
+function parse_pwf(filename::String)::Dict
+    pwf_data = open(filename) do f
+        parse_pwf(f)
     end
+
+    return pwf_data
 end
 
-function _handle_vmin(pwf_data::Dict, bus::Dict)
-    group_identifier = bus["VOLTAGE LIMIT GROUP"]
-    if haskey(pwf_data, "DGLT")
-        if length(pwf_data["DGLT"]) == 1 && pwf_data["DGLT"][1]["GROUP"] != group_identifier
-            @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"][1]["GROUP"])"
-            return pwf_data["DGLT"][1]["LOWER BOUND"]
-        else
-            group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGLT"])
-            @assert length(group) == 1
-            return group[1]["LOWER BOUND"]
-        end
-    else
-        return 0.9 # Default value given in the PSS(R)E specification
-    end    
-end
-
-function _handle_vmax(pwf_data::Dict, bus::Dict)
-    group_identifier = bus["VOLTAGE LIMIT GROUP"]
-    if haskey(pwf_data, "DGLT")
-        if length(pwf_data["DGLT"]) == 1 && pwf_data["DGLT"][1]["GROUP"] != group_identifier
-            @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"][1]["GROUP"])"
-            return pwf_data["DGLT"][1]["UPPER BOUND"]
-        else
-            group = filter(x -> x["GROUP"] == group_identifier, pwf_data["DGLT"])
-            @assert length(group) == 1
-            return group[1]["UPPER BOUND"]
-        end
-    else
-        return 1.1 # Default value given in the PSS(R)E specification
-    end    
-end
-
-function _handle_bus_type(bus::Dict)
-    bus_type = pop!(bus, "TYPE")
-    dict_bus_type = Dict(0 => 1, 3 => 1, # PQ
-    1 => 2, # PV
-    2 => 3 # Referência
-    )
-    if bus["STATUS"] == 'L'
-        return dict_bus_type[bus_type]
-    elseif bus["STATUS"] == 'D'
-        return 4
-    end
-end
-
-function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
-
-    pm_data["bus"] = Dict{String, Any}()
-    if haskey(pwf_data, "DBAR")
-        for bus in pwf_data["DBAR"]
-            sub_data = Dict{String,Any}()
-
-            sub_data["bus_i"] = bus["NUMBER"]
-            sub_data["bus_type"] = _handle_bus_type(bus)
-            sub_data["area"] = pop!(bus, "AREA")
-            sub_data["vm"] = pop!(bus, "VOLTAGE")/1000 # Implicit decimal point ignored
-            sub_data["va"] = pop!(bus, "ANGLE")
-            sub_data["zone"] = 1
-            sub_data["name"] = pop!(bus, "NAME")
-
-            sub_data["source_id"] = ["bus", "$(bus["NUMBER"])"]
-            sub_data["index"] = bus["NUMBER"]
-
-            sub_data["base_kv"] = _handle_base_kv(pwf_data, bus)
-            sub_data["vmin"] = _handle_vmin(pwf_data, bus)
-            sub_data["vmax"] = _handle_vmax(pwf_data, bus)
-
-            idx = string(sub_data["index"])
-            pm_data["bus"][idx] = sub_data
-        end
-    end
-
-    
-end
-
-function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
-
-    pm_data["branch"] = Dict{String, Any}()
-    if haskey(pwf_data, "DLIN")
-        for branch in pwf_data["DLIN"]
-            if !branch["TRANSFORMER"]
-                sub_data = Dict{String,Any}()
-
-                sub_data["f_bus"] = pop!(branch, "FROM BUS")
-                sub_data["t_bus"] = pop!(branch, "TO BUS")
-                sub_data["br_r"] = pop!(branch, "RESISTANCE") / 100
-                sub_data["br_x"] = pop!(branch, "REACTANCE") / 100
-                sub_data["g_fr"] = 0.0
-                sub_data["b_fr"] = _handle_b_fr(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"])
-                sub_data["g_to"] = 0.0
-                sub_data["b_to"] = _handle_b_to(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"])
-                sub_data["tap"] = pop!(branch, "TAP")
-                sub_data["shift"] = -pop!(branch, "LAG")
-                sub_data["angmin"] = -360.0 # No limit
-                sub_data["angmax"] = 360.0 # No limit
-                sub_data["transformer"] = false
-
-                if branch["STATUS"] == 'D'
-                    sub_data["br_status"] = 0
-                else
-                    sub_data["br_status"] = 1
-                end
-
-                sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
-                sub_data["index"] = length(pm_data["branch"]) + 1
-
-                sub_data["rate_a"] = pop!(branch, "NORMAL CAPACITY")
-                sub_data["rate_b"] = pop!(branch, "EMERGENCY CAPACITY")
-                sub_data["rate_c"] = pop!(branch, "EQUIPAMENT CAPACITY")
-
-                if sub_data["rate_a"] >= 9999
-                    delete!(sub_data, "rate_a")
-                end
-                if sub_data["rate_b"] >= 9999
-                    delete!(sub_data, "rate_b")
-                end
-                if sub_data["rate_c"] >= 9999
-                    delete!(sub_data, "rate_c")
-                end
-    
-                idx = string(sub_data["index"])
-                pm_data["branch"][idx] = sub_data
-            end
-        end
-    end
-end
-
-function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict)
-
-    pm_data["load"] = Dict{String, Any}()
-    if haskey(pwf_data, "DBAR")
-        for bus in pwf_data["DBAR"]
-            if bus["REACTIVE CHARGE"] != 0.0 || bus["ACTIVE CHARGE"] != 0.0
-                sub_data = Dict{String,Any}()
-
-                sub_data["load_bus"] = bus["NUMBER"]
-                sub_data["pd"] = pop!(bus, "ACTIVE CHARGE")
-                sub_data["qd"] = pop!(bus, "REACTIVE CHARGE")
-                sub_data["status"] = 1
-
-                sub_data["source_id"] = ["load", sub_data["load_bus"], "1 "]
-                sub_data["index"] = length(pm_data["load"]) + 1
-            
-                idx = string(sub_data["index"])
-                pm_data["load"][idx] = sub_data
-            end
-        end
-    end
-end
-
-function _handle_pmin(pwf_data::Dict, bus_i::Int)
-    if haskey(pwf_data, "DGER")
-        bus = filter(x -> x["NUMBER"] == bus_i, pwf_data["DGER"])
-        if length(bus) == 1
-            return bus[1]["MINIMUM ACTIVE GENERATION"]
-        end
-    end    
-    @warn("DGER not found, setting pmin as the bar active generation")
-    bus = findfirst(x -> x["NUMBER"] == bus_i, pwf_data["DBAR"])
-    return pwf_data["DBAR"][bus]["ACTIVE GENERATION"]
-end
-
-function _handle_pmax(pwf_data::Dict, bus_i::Int)
-    if haskey(pwf_data, "DGER")
-        bus = filter(x -> x["NUMBER"] == bus_i, pwf_data["DGER"])
-        if length(bus) == 1
-            return bus[1]["MAXIMUM ACTIVE GENERATION"]
-        end
-    end
-    @warn("DGER not found, setting pmax as the bar active generation")
-    bus = findfirst(x -> x["NUMBER"] == bus_i, pwf_data["DBAR"])
-    return pwf_data["DBAR"][bus]["ACTIVE GENERATION"]
-end
-
-function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
-
-    pm_data["gen"] = Dict{String, Any}()
-    if haskey(pwf_data, "DBAR")
-        for bus in pwf_data["DBAR"]
-            if bus["REACTIVE GENERATION"] != 0.0 || bus["ACTIVE GENERATION"] != 0.0
-                sub_data = Dict{String,Any}()
-
-                sub_data["gen_bus"] = bus["NUMBER"]
-                sub_data["gen_status"] = 1
-                sub_data["pg"] = bus["ACTIVE GENERATION"]
-                sub_data["qg"] = bus["REACTIVE GENERATION"]
-                sub_data["vg"] = pm_data["bus"]["$(bus["NUMBER"])"]["vm"]
-                sub_data["mbase"] = _handle_base_mva(pwf_data)
-                sub_data["pmin"] = _handle_pmin(pwf_data, bus["NUMBER"])
-                sub_data["pmax"] = _handle_pmax(pwf_data, bus["NUMBER"])
-                sub_data["qmin"] = haskey(bus, "MINIMUM REACTIVE GENERATION") ? bus["MINIMUM REACTIVE GENERATION"] : bus["REACTIVE GENERATION"]
-                sub_data["qmax"] = haskey(bus, "MAXIMUM REACTIVE GENERATION") ? bus["MAXIMUM REACTIVE GENERATION"] : bus["REACTIVE GENERATION"]
-    
-                # Default Cost functions
-                sub_data["model"] = 2
-                sub_data["startup"] = 0.0
-                sub_data["shutdown"] = 0.0
-                sub_data["ncost"] = 2
-                sub_data["cost"] = [1.0, 0.0]
-    
-                sub_data["source_id"] = ["generator", sub_data["gen_bus"], "1 "]
-                sub_data["index"] = length(pm_data["gen"]) + 1
-                
-                idx = string(sub_data["index"])
-                pm_data["gen"][idx] = sub_data
-            end
-        end
-    end
-end
-
-function _handle_base_mva(pwf_data::Dict)
-    baseMVA = 100.0 # Default value for this field in .pwf
-    if haskey(pwf_data, "DCTE")
-        if haskey(pwf_data["DCTE"], "BASE")
-            baseMVA = pwf_data["DCTE"]["BASE"]
-        end
-    end
-    return baseMVA
-end
-
-function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding transformer
-    if !haskey(pm_data, "branch")
-        pm_data["branch"] = Dict{String, Any}()
-        non_transformers = 0
-    else
-        non_transformers = length(pm_data["branch"])
-    end
-
-    if haskey(pwf_data, "DLIN")
-        for branch in pwf_data["DLIN"]
-            if branch["TRANSFORMER"]
-                sub_data = Dict{String,Any}()
-
-                sub_data["f_bus"] = pop!(branch, "FROM BUS")
-                sub_data["t_bus"] = pop!(branch, "TO BUS")
-                sub_data["br_r"] = pop!(branch, "RESISTANCE") / 100
-                sub_data["br_x"] = pop!(branch, "REACTANCE") / 100
-                sub_data["g_fr"] = 0.0
-                sub_data["g_to"] = 0.0
-                sub_data["tap"] = pop!(branch, "TAP")
-                sub_data["shift"] = -pop!(branch, "LAG")
-                sub_data["angmin"] = -360.0 # No limit
-                sub_data["angmax"] = 360.0 # No limit
-                sub_data["transformer"] = true
-
-                if branch["STATUS"] == 'D'
-                    sub_data["br_status"] = 0
-                else
-                    sub_data["br_status"] = 1
-                end
-
-                n = count(x -> x["f_bus"] == sub_data["f_bus"] && x["t_bus"] == sub_data["t_bus"], values(pm_data["branch"])) 
-                sub_data["source_id"] = ["transformer", sub_data["f_bus"], sub_data["t_bus"], 0, "0$(n + 1)", 0]
-                sub_data["index"] = length(pm_data["branch"]) + 1
-
-                sub_data["b_fr"] = _handle_b_fr(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"])
-                sub_data["b_to"] = _handle_b_to(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"])
-
-                sub_data["rate_a"] = pop!(branch, "NORMAL CAPACITY")
-                sub_data["rate_b"] = pop!(branch, "EMERGENCY CAPACITY")
-                sub_data["rate_c"] = pop!(branch, "EQUIPAMENT CAPACITY")
-
-                if sub_data["rate_a"] >= 9999
-                    delete!(sub_data, "rate_a")
-                end
-                if sub_data["rate_b"] >= 9999
-                    delete!(sub_data, "rate_b")
-                end
-                if sub_data["rate_c"] >= 9999
-                    delete!(sub_data, "rate_c")
-                end
-    
-                idx = string(sub_data["index"])
-                pm_data["branch"][idx] = sub_data
-            end
-        end
-    end
-end
-
-# Analyzing PowerModels' raw parser, it was concluded that b_to & b_fr data was present in DSHL section
-function _handle_b_fr(pm_data::Dict, pwf_data::Dict, f_bus::Int, t_bus::Int, susceptance::Float64)
-    i = count(x -> x["f_bus"] == f_bus && x["t_bus"] == t_bus, values(pm_data["branch"])) + 1
-    b_fr = susceptance / 2.0
-    if haskey(pwf_data, "DSHL")
-        group = findall(x -> x["FROM BUS"] == f_bus && x["TO BUS"] == t_bus, pwf_data["DSHL"])
-        if length(group) > 0 && length(group) >= i
-            if pwf_data["DSHL"][group[i]]["SHUNT FROM"] !== nothing
-                b_fr = pwf_data["DSHL"][group[i]]["SHUNT FROM"] / 100
-            end
-        end
-    end
-    return b_fr / 100
-end
-
-function _handle_b_to(pm_data, pwf_data::Dict, f_bus::Int, t_bus::Int, susceptance::Float64)
-    i = count(x -> x["f_bus"] == f_bus && x["t_bus"] == t_bus, values(pm_data["branch"])) + 1
-    b_to = susceptance / 2.0
-    if haskey(pwf_data, "DSHL")
-        group = findall(x -> x["FROM BUS"] == f_bus && x["TO BUS"] == t_bus, pwf_data["DSHL"])
-        if length(group) > 0 && length(group) >= i
-            if pwf_data["DSHL"][group[i]]["SHUNT TO"] !== nothing
-                b_to = pwf_data["DSHL"][group[i]]["SHUNT TO"] / 100
-            end
-        end
-    end
-    return b_to / 100
-end
-
-# Assumption - if there are more than one shunt for the same bus we sum their values into one shunt (source: Organon)
-# CAUTION: this might be an Organon error
-function _pwf2pm_shunt!(pm_data::Dict, pwf_data::Dict)
-    pm_data["shunt"] = Dict{String, Any}()
-
-    fixed_shunt_bus = filter(x -> x["TOTAL REACTIVE POWER"] != 0.0, pwf_data["DBAR"])
-
-    for bus in fixed_shunt_bus
-        sub_data = Dict{String,Any}()
-
-        sub_data["shunt_bus"] = bus["NUMBER"]
-        sub_data["gs"] = 0.0        
-        sub_data["bs"] =  bus["TOTAL REACTIVE POWER"] 
-
-        if bus["STATUS"] == 'L'
-            sub_data["status"] = 1
-        elseif bus["STATUS"] == 'D'
-            sub_data["status"] = 0
-        end
-
-        n = count(x -> x["shunt_bus"] == sub_data["shunt_bus"], values(pm_data["shunt"])) 
-        sub_data["source_id"] = ["fixed shunt", sub_data["shunt_bus"], "0$(n+1)"]
-        sub_data["index"] = length(pm_data["shunt"]) + 1
-
-        idx = string(sub_data["index"])
-        pm_data["shunt"][idx] = sub_data
-    end
-
-    # Assumption - the reactive generation is already considering the number of unities
-    if haskey(pwf_data, "DCER")
-        @warn("Switched shunt converted to fixed shunt, with default value gs=0.0")
-
-        for shunt in pwf_data["DCER"]
-            n = count(x -> x["shunt_bus"] == shunt["BUS"], values(pm_data["shunt"])) 
-
-            sub_data = Dict{String,Any}()
-
-            sub_data["shunt_bus"] = shunt["BUS"]
-            sub_data["gs"] = 0.0
-            sub_data["bs"] = shunt["REACTIVE GENERATION"]
-
-            status = filter(x -> x["NUMBER"] == sub_data["shunt_bus"], pwf_data["DBAR"])[1]["STATUS"]
-            if status == 'L'
-                sub_data["status"] = 1
-            elseif status == 'D'
-                sub_data["status"] = 0
-            end    
-
-            sub_data["source_id"] = ["switched shunt", sub_data["shunt_bus"], "0$(n+1)"]
-            sub_data["index"] = length(pm_data["shunt"]) + 1
-
-            if _create_new_shunt(sub_data, pm_data)[1]
-                idx = string(sub_data["index"])
-                pm_data["shunt"][idx] = sub_data
-            else
-                idx = _create_new_shunt(sub_data, pm_data)[2]
-                pm_data["shunt"][idx]["gs"] += sub_data["gs"]
-                pm_data["shunt"][idx]["bs"] += sub_data["bs"]
-            end
-    end
-    end
-
-    if haskey(pwf_data, "DBSH")
-        @warn("Switched shunt converted to fixed shunt, with default value gs=0.0")
-
-        for shunt in pwf_data["DBSH"]
-            # Assumption - shunt data should only consider devices without destination bus
-            if shunt["TO BUS"] === nothing
-
-                n = count(x -> x["shunt_bus"] == shunt["FROM BUS"], values(pm_data["shunt"])) 
-
-                sub_data = Dict{String,Any}()
-
-                sub_data["shunt_bus"] = shunt["FROM BUS"]
-                sub_data["gs"] = 0.0
-                sub_data["bs"] = shunt["INITIAL REACTIVE INJECTION"]
-
-                status = filter(x -> x["NUMBER"] == sub_data["shunt_bus"], pwf_data["DBAR"])[1]["STATUS"]
-                if status == 'L'
-                    sub_data["status"] = 1
-                elseif status == 'D'
-                    sub_data["status"] = 0
-                end    
-    
-                sub_data["source_id"] = ["switched shunt", sub_data["shunt_bus"], "0$(n+1)"]
-                sub_data["index"] = length(pm_data["shunt"]) + 1
-
-                if _create_new_shunt(sub_data, pm_data)[1]
-                    idx = string(sub_data["index"])
-                    pm_data["shunt"][idx] = sub_data
-                else
-                    idx = _create_new_shunt(sub_data, pm_data)[2]
-                    pm_data["shunt"][idx]["gs"] += sub_data["gs"]
-                    pm_data["shunt"][idx]["bs"] += sub_data["bs"]
-                end
-            end
-        end
-    end
-end
-
-function _create_new_shunt(sub_data::Dict, pm_data::Dict)
-    for (idx, value) in pm_data["shunt"]
-        if value["shunt_bus"] == sub_data["shunt_bus"] && value["source_id"][1] == sub_data["source_id"][1]
-            return false, idx
-        end
-    end
-    return true    
-end
-
-
-function _pwf_to_powermodels!(pwf_data::Dict, validate::Bool)
-    pm_data = Dict{String,Any}()
-
-    pm_data["per_unit"] = false
-    pm_data["source_type"] = "pwf"
-    pm_data["source_version"] = "09"
-    pm_data["name"] = pwf_data["name"]
-
-    pm_data["baseMVA"] = _handle_base_mva(pwf_data)
-
-    _pwf2pm_bus!(pm_data, pwf_data)
-    _pwf2pm_branch!(pm_data, pwf_data)
-    _pwf2pm_load!(pm_data, pwf_data)
-    _pwf2pm_generator!(pm_data, pwf_data)
-    _pwf2pm_transformer!(pm_data, pwf_data)
-    _pwf2pm_shunt!(pm_data, pwf_data)
-
-    # ToDo: fields not yet contemplated by the parser
-
-    pm_data["dcline"] = Dict{String,Any}()
-    pm_data["storage"] = Dict{String,Any}()
-    pm_data["switch"] = Dict{String,Any}()
-
-    if validate
-        PowerModels.correct_network_data!(pm_data)
-    end
-    
-    return pm_data
+"""
+    parse_pwf(io)
+
+Reads PWF data in `io::IO`, returning a `Dict` of the data parsed into the
+proper types.
+"""
+function parse_pwf(io::IO)
+    # Open file, read it and parse to a Dict 
+    pwf_data = _parse_pwf_data(io)
+    return pwf_data
 end
