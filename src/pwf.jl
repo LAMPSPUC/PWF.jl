@@ -529,7 +529,11 @@ function _handle_bus_type(bus::Dict)
     1 => 2, # PV
     2 => 3 # Referência
     )
-    return dict_bus_type[bus_type]
+    if bus["STATUS"] == 'L'
+        return dict_bus_type[bus_type]
+    elseif bus["STATUS"] == 'D'
+        return 4
+    end
 end
 
 function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
