@@ -452,7 +452,7 @@ function parse_pwf_to_powermodels(filename::String, validate::Bool=true)::Dict
     end
 
     # Parse Dict to a Power Models format
-    pm = parse_pwf_to_powermodels(pwf_data, validate)
+    pm = _parse_pwf_to_powermodels(pwf_data, validate)
     return pm
 end
 
