@@ -55,7 +55,7 @@ function _handle_vmax(pwf_data::Dict, bus::Dict)
 end
 
 function _handle_bus_type(bus::Dict)
-    bus_type = pop!(bus, "TYPE")
+    bus_type = bus["TYPE"]
     dict_bus_type = Dict(0 => 1, 3 => 1, # PQ
     1 => 2, # PV
     2 => 3 # Referência
@@ -152,7 +152,7 @@ function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict)
     pm_data["load"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
         for bus in pwf_data["DBAR"]
-            if bus["REACTIVE CHARGE"] != 0.0 || bus["ACTIVE CHARGE"] != 0.0
+            if bus["TYPE"] == 3
                 sub_data = Dict{String,Any}()
 
                 sub_data["load_bus"] = bus["NUMBER"]
@@ -199,7 +199,7 @@ function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
     pm_data["gen"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
         for bus in pwf_data["DBAR"]
-            if bus["REACTIVE GENERATION"] != 0.0 || bus["ACTIVE GENERATION"] != 0.0
+            if bus["TYPE"] == 1 || bus["TYPE"] == 2
                 sub_data = Dict{String,Any}()
 
                 sub_data["gen_bus"] = bus["NUMBER"]
