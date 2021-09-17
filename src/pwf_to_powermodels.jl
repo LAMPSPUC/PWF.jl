@@ -152,7 +152,7 @@ function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict)
     pm_data["load"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
         for bus in pwf_data["DBAR"]
-            if bus["TYPE"] == 3
+            if bus["ACTIVE CHARGE"] > 0.0 || bus["REACTIVE CHARGE"] > 0.0
                 sub_data = Dict{String,Any}()
 
                 sub_data["load_bus"] = bus["NUMBER"]
@@ -407,6 +407,16 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict)
     end
 end
 
+function _handle_bs(shunt::Dict{String, Any})
+    bs = 0
+    for el in shunt["REACTANCE GROUPS"]
+        if el["STATUS"] == 'L'
+            bs += el["OPERATING UNITIES"]*el["REACTANCE"]
+        end
+    end
+    return bs
+end
+
 # Assumption - if there are more than one shunt for the same bus we sum their values into one shunt (source: Organon)
 # CAUTION: this might be an Organon error
 function _pwf2pm_shunt!(pm_data::Dict, pwf_data::Dict)
@@ -482,7 +492,8 @@ function _pwf2pm_shunt!(pm_data::Dict, pwf_data::Dict)
 
                 sub_data["shunt_bus"] = shunt["FROM BUS"]
                 sub_data["gs"] = 0.0
-                sub_data["bs"] = shunt["INITIAL REACTIVE INJECTION"]
+                
+                sub_data["bs"] = _handle_bs(shunt)
 
                 status = filter(x -> x["NUMBER"] == sub_data["shunt_bus"], pwf_data["DBAR"])[1]["STATUS"]
                 if status == 'L'
@@ -516,7 +527,19 @@ function _create_new_shunt(sub_data::Dict, pm_data::Dict)
     return true    
 end
 
-function _parse_pwf_to_powermodels(pwf_data::Dict, validate::Bool)
+function organon_corrections!(pm_data::Dict, pwf_data::Dict)
+
+    for (i, bus) in pm_data["bus"]
+        pwf_bus = filter(x -> x["NUMBER"] == i, pwf_data["DBAR"])[1]
+        if bus["bus_i"] == 2 && pwf_bus["MINIMUM REACTIVE GENERATION"] == pwf_bus["MAXIMUM REACTIVE GENERATION"] 
+            @warn "Type 2 bus converted into type 1 because Qmin = Qmax"
+            bus["bus_i"] = 1
+        end
+    end
+
+end
+
+function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool, organon::Bool)
     pm_data = Dict{String,Any}()
 
     pm_data["per_unit"] = false
@@ -538,6 +561,10 @@ function _parse_pwf_to_powermodels(pwf_data::Dict, validate::Bool)
     pm_data["storage"] = Dict{String,Any}()
     pm_data["switch"] = Dict{String,Any}()
 
+    if organon
+        organon_corrections!(pm_data, pwf_data)
+    end
+
     if validate
         PowerModels.correct_network_data!(pm_data)
     end
@@ -550,13 +577,13 @@ end
 
 Parse .pwf file directly to PowerModels data structure
 """
-function parse_pwf_to_powermodels(filename::String, validate::Bool=true)::Dict
+function parse_pwf_to_powermodels(filename::String; validate::Bool=true, organon::Bool=false)::Dict
     pwf_data = open(filename) do f
         parse_pwf(f)
     end
 
     # Parse Dict to a Power Models format
-    pm = _parse_pwf_to_powermodels(pwf_data, validate)
+    pm = _parse_pwf_to_powermodels(pwf_data, validate = validate, organon = organon)
     return pm
 end
 
@@ -564,10 +591,10 @@ end
     parse_pwf_to_powermodels(io::Io, validate::Bool=false)::Dict
 
 """
-function parse_pwf_to_powermodels(io::IO, validate::Bool=true)::Dict
+function parse_pwf_to_powermodels(io::IO; validate::Bool=true, organon::Bool=false)::Dict
     pwf_data = _parse_pwf_data(io)
 
     # Parse Dict to a Power Models format
-    pm = _parse_pwf_to_powermodels(pwf_data, validate)
+    pm = _parse_pwf_to_powermodels(pwf_data, validate = validate, organon = organon)
     return pm
 end

@@ -100,7 +100,7 @@ const _fban_1_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
 
 const _fban_2_dtypes = [("GROUP", Int64, 1:2), ("OPERATION", Char, 5), ("STATUS", Char, 7),
     ("UNITIES", Int64, 9:11), ("OPERATING UNITIES", Int64, 13:15),
-    ("CAPACITOR REACTOR", Float64, 17:22)]
+    ("REACTANCE", Float64, 17:22)]
 
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes, "DGBT" => _dgbt_dtypes,
     "DGLT" => _dglt_dtypes, "DGER" => _dger_dtypes, "DSHL" => _dshl_dtypes, "DCBA" => _dcba_dtypes, 
@@ -207,13 +207,13 @@ const _default_dcer = Dict("BUS" => nothing, "OPERATION" => 'A', "GROUP" => noth
     "MAXIMUM REACTIVE GENERATION" => nothing, "CONTROL MODE" => 'I', "STATUS" => 'L')
 
 const _default_fban_2 = Dict("GROUP" => nothing, "OPERATION" => 'A', "STATUS" => 'L',
-    "UNITIES" => 1, "OPERATING UNITIES" => nothing, "CAPACITOR REACTOR" => nothing)
+    "UNITIES" => 1, "OPERATING UNITIES" => nothing, "REACTANCE" => nothing)
 
 const _default_fban_1 = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" => nothing,
     "CIRCUIT" => 1, "CONTROL MODE" => 'C', "MINIMUM VOLTAGE" => nothing,
     "MAXIMUM VOLTAGE" => nothing, "CONTROLLED BUS" => nothing,
     "INITIAL REACTIVE INJECTION" => 0.0, "CONTROL TYPE" => 'C', "ERASE DBAR" => 'N',
-    "EXTREMITY" => nothing, "REACTOR CAPACITOR" => _default_fban_2)
+    "EXTREMITY" => nothing, "REACTANCE GROUPS" => _default_fban_2)
 
 const _default_titu = ""
 
@@ -222,7 +222,7 @@ const _default_name = ""
 const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DCTE" => _default_dcte,
     "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name, "DGER" => _default_dger,
     "DGBT" => _default_dgbt, "DGLT" => _default_dglt, "DSHL" => _default_dshl, "DCER" => _default_dcer,
-    "DBSH" => _default_fban_1, "REACTOR CAPACITOR" => _default_fban_2)
+    "DBSH" => _default_fban_1, "REACTANCE GROUPS" => _default_fban_2)
 
 
 const title_identifier = "TITU"
@@ -376,7 +376,7 @@ function _parse_dbsh_section!(data::Vector{Dict{String, Any}}, section_lines::Ve
 
             rc = Dict{String, Any}[]
             _parse_section_element!(rc, section_lines[idx + 2:next_idx - 1], "REACTORS AND CAPACITORS BANKS")
-            data[end]["REACTOR CAPACITOR"] = rc
+            data[end]["REACTANCE GROUPS"] = rc
         end
 
     end
