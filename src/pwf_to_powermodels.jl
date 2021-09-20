@@ -530,7 +530,7 @@ end
 function organon_corrections!(pm_data::Dict, pwf_data::Dict)
 
     for (i, bus) in pm_data["bus"]
-        pwf_bus = filter(x -> x["NUMBER"] == i, pwf_data["DBAR"])[1]
+        pwf_bus = filter(x -> x["NUMBER"] == parse(Int,i), pwf_data["DBAR"])[1]
         if bus["bus_i"] == 2 && pwf_bus["MINIMUM REACTIVE GENERATION"] == pwf_bus["MAXIMUM REACTIVE GENERATION"] 
             @warn "Type 2 bus converted into type 1 because Qmin = Qmax"
             bus["bus_i"] = 1
@@ -539,7 +539,7 @@ function organon_corrections!(pm_data::Dict, pwf_data::Dict)
 
 end
 
-function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool, organon::Bool)
+function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true, organon::Bool=false)
     pm_data = Dict{String,Any}()
 
     pm_data["per_unit"] = false

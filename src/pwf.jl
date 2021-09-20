@@ -175,7 +175,7 @@ const _default_dshl = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" =
     "CIRCUIT" => nothing, "SHUNT FROM" => nothing, "SHUNT TO" => nothing,
     "STATUS FROM" => 'L', "STATUS TO" => 'L')
 
-    const _default_dcba = Dict("NUMBER" => nothing, "OPERATION" => 'A', "TYPE" => 0,
+const _default_dcba = Dict("NUMBER" => nothing, "OPERATION" => 'A', "TYPE" => 0,
     "POLARITY" => nothing, "NAME" => nothing, "VOLTAGE LIMIT GROUP" => nothing,
     "VOLTAGE" => 0, "GROUND ELECTRODE" => 0.0, "DC LINK" => 1)
 
@@ -222,7 +222,8 @@ const _default_name = ""
 const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DCTE" => _default_dcte,
     "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name, "DGER" => _default_dger,
     "DGBT" => _default_dgbt, "DGLT" => _default_dglt, "DSHL" => _default_dshl, "DCER" => _default_dcer,
-    "DBSH" => _default_fban_1, "REACTANCE GROUPS" => _default_fban_2)
+    "DBSH" => _default_fban_1, "REACTANCE GROUPS" => _default_fban_2, "DCBA" => _default_dcba,
+    "DBLI" => _default_dcli, "DCNV" => _default_dcnv, "DCCV" => _default_dccv, "DELO" => _default_delo)
 
 
 const title_identifier = "TITU"
