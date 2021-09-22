@@ -65,7 +65,7 @@ function _handle_bus_type(bus::Dict)
     elseif bus["STATUS"] == 'D'
         return 4
     end
-end
+        end
 function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
 
     pm_data["bus"] = Dict{String, Any}()
@@ -177,7 +177,6 @@ function _handle_pmin(pwf_data::Dict, bus_i::Int)
             return bus[1]["MINIMUM ACTIVE GENERATION"]
         end
     end    
-    @warn("DGER not found, setting pmin as the bar active generation")
     bus = findfirst(x -> x["NUMBER"] == bus_i, pwf_data["DBAR"])
     return pwf_data["DBAR"][bus]["ACTIVE GENERATION"]
 end
@@ -189,12 +188,15 @@ function _handle_pmax(pwf_data::Dict, bus_i::Int)
             return bus[1]["MAXIMUM ACTIVE GENERATION"]
         end
     end
-    @warn("DGER not found, setting pmax as the bar active generation")
     bus = findfirst(x -> x["NUMBER"] == bus_i, pwf_data["DBAR"])
     return pwf_data["DBAR"][bus]["ACTIVE GENERATION"]
 end
 
 function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
+
+    if !haskey(pwf_data, "DGER")
+        @warn("DGER not found, setting pmin and pmax as the bar active generation")
+    end
 
     pm_data["gen"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
@@ -527,19 +529,7 @@ function _create_new_shunt(sub_data::Dict, pm_data::Dict)
     return true    
 end
 
-function organon_corrections!(pm_data::Dict, pwf_data::Dict)
-
-    for (i, bus) in pm_data["bus"]
-        pwf_bus = filter(x -> x["NUMBER"] == parse(Int,i), pwf_data["DBAR"])[1]
-        if bus["bus_i"] == 2 && pwf_bus["MINIMUM REACTIVE GENERATION"] == pwf_bus["MAXIMUM REACTIVE GENERATION"] 
-            @warn "Type 2 bus converted into type 1 because Qmin = Qmax"
-            bus["bus_i"] = 1
-        end
-    end
-
-end
-
-function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true, organon::Bool=false)
+function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true)
     pm_data = Dict{String,Any}()
 
     pm_data["per_unit"] = false
@@ -561,10 +551,6 @@ function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true, organon:
     pm_data["storage"] = Dict{String,Any}()
     pm_data["switch"] = Dict{String,Any}()
 
-    if organon
-        organon_corrections!(pm_data, pwf_data)
-    end
-
     if validate
         PowerModels.correct_network_data!(pm_data)
     end
@@ -577,13 +563,13 @@ end
 
 Parse .pwf file directly to PowerModels data structure
 """
-function parse_pwf_to_powermodels(filename::String; validate::Bool=true, organon::Bool=false)::Dict
+function parse_pwf_to_powermodels(filename::String; validate::Bool=true)::Dict
     pwf_data = open(filename) do f
         parse_pwf(f)
     end
 
     # Parse Dict to a Power Models format
-    pm = _parse_pwf_to_powermodels(pwf_data, validate = validate, organon = organon)
+    pm = _parse_pwf_to_powermodels(pwf_data, validate = validate)
     return pm
 end
 
@@ -591,10 +577,10 @@ end
     parse_pwf_to_powermodels(io::Io, validate::Bool=false)::Dict
 
 """
-function parse_pwf_to_powermodels(io::IO; validate::Bool=true, organon::Bool=false)::Dict
+function parse_pwf_to_powermodels(io::IO; validate::Bool=true)::Dict
     pwf_data = _parse_pwf_data(io)
 
     # Parse Dict to a Power Models format
-    pm = _parse_pwf_to_powermodels(pwf_data, validate = validate, organon = organon)
+    pm = _parse_pwf_to_powermodels(pwf_data, validate = validate)
     return pm
 end
