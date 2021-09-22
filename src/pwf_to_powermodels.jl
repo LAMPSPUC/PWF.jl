@@ -10,6 +10,13 @@
 
 # This converter uses Organon HPPA raw - pwf converter as benchmark 
 
+const bus_type_num_to_str    = Dict(1 => "PQ", 2 => "PV", 3 => "Vθ", 4 => "OFF")
+const bus_type_str_to_num    = Dict("PQ" => 1, "PV" => 2, "Vθ" => 3, "OFF" => 4)
+const bus_type_pwf_to_raw    = Dict(0 => 1, 1 => 2, 2 => 3, 3 => 1)
+const bus_type_raw_to_pwf    = Dict(1 => 0, 2 => 1, 3 => 2)
+const element_status         = Dict(0 => "OFF", "D" => "OFF", 1 => "ON", "L" => "ON")
+
+
 function _handle_base_kv(pwf_data::Dict, bus::Dict)
     group_identifier = bus["BASE VOLTAGE GROUP"]
     if haskey(pwf_data, "DGBT")
@@ -152,7 +159,7 @@ function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict)
     pm_data["load"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
         for bus in pwf_data["DBAR"]
-            if bus["ACTIVE CHARGE"] > 0.0 || bus["REACTIVE CHARGE"] > 0.0
+            if bus["ACTIVE CHARGE"] > 0.0 || bus["REACTIVE CHARGE"] > 0.0 || bus["TYPE"] == bus_type_str_to_num["PQ"]
                 sub_data = Dict{String,Any}()
 
                 sub_data["load_bus"] = bus["NUMBER"]
@@ -201,7 +208,7 @@ function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
     pm_data["gen"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
         for bus in pwf_data["DBAR"]
-            if bus["TYPE"] == 1 || bus["TYPE"] == 2
+            if bus["ACTIVE GENERATION"] > 0.0 || bus["REACTIVE GENERATION"] != 0.0
                 sub_data = Dict{String,Any}()
 
                 sub_data["gen_bus"] = bus["NUMBER"]
@@ -447,9 +454,12 @@ function _pwf2pm_shunt!(pm_data::Dict, pwf_data::Dict)
         pm_data["shunt"][idx] = sub_data
     end
 
+    if haskey(pwf_data, "DCER") || haskey(pwf_data, "DBSH")
+        @warn("PowerModels current version don't support non-fixed shunts. All continuos or discrete shunts (DCER or DBSH) are considered fixed.")
+    end
+
     # Assumption - the reactive generation is already considering the number of unities
     if haskey(pwf_data, "DCER")
-        @warn("Switched shunt converted to fixed shunt, with default value gs=0.0")
 
         for shunt in pwf_data["DCER"]
             n = count(x -> x["shunt_bus"] == shunt["BUS"], values(pm_data["shunt"])) 
@@ -482,7 +492,6 @@ function _pwf2pm_shunt!(pm_data::Dict, pwf_data::Dict)
     end
 
     if haskey(pwf_data, "DBSH")
-        @warn("Switched shunt converted to fixed shunt, with default value gs=0.0")
 
         for shunt in pwf_data["DBSH"]
             # Assumption - shunt data should only consider devices without destination bus
@@ -529,7 +538,110 @@ function _create_new_shunt(sub_data::Dict, pm_data::Dict)
     return true    
 end
 
-function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true)
+function organon_corrections!(pm_data::Dict, pwf_data::Dict)
+
+    for (i, bus) in pm_data["bus"]
+        pwf_bus = filter(x -> x["NUMBER"] == parse(Int,i), pwf_data["DBAR"])[1]
+        if bus["bus_i"] == 2 && pwf_bus["MINIMUM REACTIVE GENERATION"] == pwf_bus["MAXIMUM REACTIVE GENERATION"] 
+            @warn "Type 2 bus converted into type 1 because Qmin = Qmax"
+            bus["bus_i"] = 1
+        end
+    end
+
+end
+
+
+function generators_from_bus(pm_data::Dict, bus::Int; filters::Vector = [])
+    filters = vcat(gen -> gen["gen_bus"] == bus, filters)
+    return findall(
+            x -> (
+                all([f(x) for f in filters])
+            ), 
+            pm_data["gen"]
+        )
+end
+
+function load_from_bus(pm_data::Dict, bus::Int; filters::Vector = [])
+    filters = vcat(load -> load["load_bus"] == bus, filters)
+    return findall(
+            x -> (
+                all([f(x) for f in filters])
+            ), 
+            pm_data["load"]
+        )  
+end
+
+function _pwf2pm_corrections_PV!(pm_data::Dict)
+    for (i, bus) in pm_data["bus"]
+        if bus_type_num_to_str[bus["bus_type"]] == "PV"
+            filters = [
+                gen -> element_status[gen["gen_status"]] == "ON", 
+                gen -> gen["qmin"] == gen["qmax"]
+            ]
+            if !isempty(generators_from_bus(pm_data, parse(Int, i); filters = filters))
+                bus["bus_type"] = bus_type_str_to_num["PQ"]
+                if isempty(load_from_bus(pm_data, parse(Int, i)))
+                    
+                end
+                @warn "Active generator with QMIN = QMAX found in a PV bus number $i. Changing bus type from PV to PQ."
+            end
+        end
+    end
+end
+
+function sum_generators_power_and_turn_off(pm_data::Dict, gen_keys::Vector)
+    Pg = 0.0
+    Qg = 0.0
+    for (i, key) in enumerate(gen_keys)
+        gen = pm_data["gen"][key]
+        Pg += gen["pg"]
+        Qg += gen["qg"]
+        gen["gen_status"] = 0
+    end
+    return Pg, Qg
+end
+
+
+function _pwf2pm_corrections_PQ!(pm_data::Dict)
+    for (i, bus) in pm_data["bus"]
+        if bus_type_num_to_str[bus["bus_type"]] == "PQ"
+            filters = [
+                gen -> element_status[gen["gen_status"]] == "ON", #1
+                gen -> gen["qmin"] < gen["qmax"],                 #2
+                gen -> gen["qmin"] == gen["qmax"]                 #3
+            ]
+            gen_keys_case1 = generators_from_bus(pm_data, parse(Int, i); filters = filters[[1,2]])
+            gen_keys_case2 = generators_from_bus(pm_data, parse(Int, i); filters = filters[[1,3]])
+
+            if !isempty(gen_keys_case1)
+                # change bus type to PV
+                bus["bus_type"] = bus_type_str_to_num["PV"]
+                @warn "Active generator with QMIN < QMAX found in a PQ bus. Changing bus $i type to PV."
+            elseif !isempty(gen_keys_case2)
+                # change generator status to off and sum load power with gen power
+                Pg, Qg = sum_generators_power_and_turn_off(pm_data, gen_keys_case2)
+                load_key = load_from_bus(pm_data, parse(Int, i))
+                @assert length(load_key) == 1
+                # sum load power with the negative of generator power
+                pm_data["load"][load_key[1]]["pd"] += - Pg
+                pm_data["load"][load_key[1]]["qd"] += - Qg                 
+                @warn "Active generator with QMIN = QMAX found in PQ bus $i. Adding generator power " *
+                    "to load power and changing generator status to off."
+            end
+        end
+    end
+    return
+end
+
+function _pwf2pm_corrections!(pm_data::Dict)
+    
+    _pwf2pm_corrections_PV!(pm_data)
+    _pwf2pm_corrections_PQ!(pm_data)
+    
+    return 
+end
+
+function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true, organon::Bool=false)
     pm_data = Dict{String,Any}()
 
     pm_data["per_unit"] = false
@@ -550,6 +662,9 @@ function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true)
 
     pm_data["storage"] = Dict{String,Any}()
     pm_data["switch"] = Dict{String,Any}()
+
+    # Apply corrections in the pm_data accordingly to Organon
+    _pwf2pm_corrections!(pm_data)
 
     if validate
         PowerModels.correct_network_data!(pm_data)
