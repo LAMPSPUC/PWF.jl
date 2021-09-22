@@ -559,6 +559,16 @@ function generators_from_bus(pm_data::Dict, bus::Int; filters::Vector = [])
         )
 end
 
+function load_from_bus(pm_data::Dict, bus::Int; filters::Vector = [])
+    filters = vcat(load -> load["load_bus"] == bus, filters)
+    return findall(
+            x -> (
+                all([f(x) for f in filters])
+            ), 
+            pm_data["load"]
+        )  
+end
+
 function _pwf2pm_corrections_PV!(pm_data::Dict)
     for (i, bus) in pm_data["bus"]
         if bus_type_num_to_str[bus["bus_type"]] == "PV"
@@ -568,6 +578,9 @@ function _pwf2pm_corrections_PV!(pm_data::Dict)
             ]
             if !isempty(generators_from_bus(pm_data, parse(Int, i); filters = filters))
                 bus["bus_type"] = bus_type_str_to_num["PQ"]
+                if isempty(load_from_bus(pm_data, parse(Int, i)))
+                    
+                end
                 @warn "Active generator with QMIN = QMAX found in a PV bus number $i. Changing bus type from PV to PQ."
             end
         end
@@ -586,15 +599,6 @@ function sum_generators_power_and_turn_off(pm_data::Dict, gen_keys::Vector)
     return Pg, Qg
 end
 
-function load_from_bus(pm_data::Dict, bus::Int; filters::Vector = [])
-    filters = vcat(load -> load["load_bus"] == bus, filters)
-    return findall(
-            x -> (
-                all([f(x) for f in filters])
-            ), 
-            pm_data["load"]
-        )  
-end
 
 function _pwf2pm_corrections_PQ!(pm_data::Dict)
     for (i, bus) in pm_data["bus"]
@@ -612,13 +616,13 @@ function _pwf2pm_corrections_PQ!(pm_data::Dict)
                 bus["bus_type"] = bus_type_str_to_num["PV"]
                 @warn "Active generator with QMIN < QMAX found in a PQ bus. Changing bus $i type to PV."
             elseif !isempty(gen_keys_case2)
-                # change generator status to off and sum P to Pg
+                # change generator status to off and sum load power with gen power
                 Pg, Qg = sum_generators_power_and_turn_off(pm_data, gen_keys_case2)
                 load_key = load_from_bus(pm_data, parse(Int, i))
                 @assert length(load_key) == 1
                 # sum load power with the negative of generator power
                 pm_data["load"][load_key[1]]["pd"] += - Pg
-                pm_data["load"][load_key[1]]["qd"] += - Qg                 # ToDo: Verify
+                pm_data["load"][load_key[1]]["qd"] += - Qg                 
                 @warn "Active generator with QMIN = QMAX found in PQ bus $i. Adding generator power " *
                     "to load power and changing generator status to off."
             end
@@ -657,6 +661,7 @@ function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true, organon:
     pm_data["storage"] = Dict{String,Any}()
     pm_data["switch"] = Dict{String,Any}()
 
+    # Apply corrections in the pm_data accordingly to Organon
     _pwf2pm_corrections!(pm_data)
 
     if validate
