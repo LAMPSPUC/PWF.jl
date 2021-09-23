@@ -16,7 +16,6 @@ const bus_type_pwf_to_raw    = Dict(0 => 1, 1 => 2, 2 => 3, 3 => 1)
 const bus_type_raw_to_pwf    = Dict(1 => 0, 2 => 1, 3 => 2)
 const element_status         = Dict(0 => "OFF", "D" => "OFF", 1 => "ON", "L" => "ON")
 
-
 function _handle_base_kv(pwf_data::Dict, bus::Dict)
     group_identifier = bus["BASE VOLTAGE GROUP"]
     if haskey(pwf_data, "DGBT")
@@ -74,16 +73,6 @@ function _handle_bus_type(bus::Dict)
     end
 end
 
-function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
-
-    pm_data["bus"] = Dict{String, Any}()
-    if haskey(pwf_data, "DBAR")
-        for bus in pwf_data["DBAR"]
-            _pwf2pm_bus!(pm_data, pwf_data, bus)
-        end
-    end
-end
-
 function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data = Dict{String,Any}()
 
@@ -106,14 +95,12 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     pm_data["bus"][idx] = sub_data
 end
 
-function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
+function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
 
-    pm_data["branch"] = Dict{String, Any}()
-    if haskey(pwf_data, "DLIN")
-        for branch in pwf_data["DLIN"]
-            if !branch["TRANSFORMER"]
-                _pwf2pm_branch!(pm_data, pwf_data, branch)
-            end
+    pm_data["bus"] = Dict{String, Any}()
+    if haskey(pwf_data, "DBAR")
+        for bus in pwf_data["DBAR"]
+            _pwf2pm_bus!(pm_data, pwf_data, bus)
         end
     end
 end
@@ -163,31 +150,16 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
 
 end
 
-function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict)
+function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
 
-    pm_data["load"] = Dict{String, Any}()
-    if haskey(pwf_data, "DBAR")
-        for bus in pwf_data["DBAR"]
-            if bus["ACTIVE CHARGE"] > 0.0 || bus["REACTIVE CHARGE"] > 0.0 || bus["TYPE"] == bus_type_raw_to_pwf[bus_type_str_to_num["PQ"]]
-                _pwf2pm_load!(pm_data, pwf_data, bus["NUMBER"])
+    pm_data["branch"] = Dict{String, Any}()
+    if haskey(pwf_data, "DLIN")
+        for branch in pwf_data["DLIN"]
+            if !branch["TRANSFORMER"]
+                _pwf2pm_branch!(pm_data, pwf_data, branch)
             end
         end
     end
-end
-
-function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict, bus::Dict)    
-    sub_data = Dict{String,Any}()
-
-    sub_data["load_bus"] = bus["NUMBER"]
-    sub_data["pd"] = pop!(bus, "ACTIVE CHARGE")
-    sub_data["qd"] = pop!(bus, "REACTIVE CHARGE")
-    sub_data["status"] = 1
-
-    sub_data["source_id"] = ["load", sub_data["load_bus"], "1 "]
-    sub_data["index"] = length(pm_data["load"]) + 1
-
-    idx = string(sub_data["index"])
-    pm_data["load"][idx] = sub_data
 end
 
 function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict, i::Int)    
@@ -207,6 +179,33 @@ function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict, i::Int)
 
     idx = string(sub_data["index"])
     pm_data["load"][idx] = sub_data
+end
+
+function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict, bus::Dict)    
+    sub_data = Dict{String,Any}()
+
+    sub_data["load_bus"] = bus["NUMBER"]
+    sub_data["pd"] = pop!(bus, "ACTIVE CHARGE")
+    sub_data["qd"] = pop!(bus, "REACTIVE CHARGE")
+    sub_data["status"] = 1
+
+    sub_data["source_id"] = ["load", sub_data["load_bus"], "1 "]
+    sub_data["index"] = length(pm_data["load"]) + 1
+
+    idx = string(sub_data["index"])
+    pm_data["load"][idx] = sub_data
+end
+
+function _pwf2pm_load!(pm_data::Dict, pwf_data::Dict)
+
+    pm_data["load"] = Dict{String, Any}()
+    if haskey(pwf_data, "DBAR")
+        for bus in pwf_data["DBAR"]
+            if bus["ACTIVE CHARGE"] > 0.0 || bus["REACTIVE CHARGE"] > 0.0 || bus["TYPE"] == bus_type_raw_to_pwf[bus_type_str_to_num["PQ"]]
+                _pwf2pm_load!(pm_data, pwf_data, bus["NUMBER"])
+            end
+        end
+    end
 end
 
 function _handle_pmin(pwf_data::Dict, bus_i::Int)
@@ -229,22 +228,6 @@ function _handle_pmax(pwf_data::Dict, bus_i::Int)
     end
     bus = findfirst(x -> x["NUMBER"] == bus_i, pwf_data["DBAR"])
     return pwf_data["DBAR"][bus]["ACTIVE GENERATION"]
-end
-
-function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
-
-    if !haskey(pwf_data, "DGER")
-        @warn("DGER not found, setting pmin and pmax as the bar active generation")
-    end
-
-    pm_data["gen"] = Dict{String, Any}()
-    if haskey(pwf_data, "DBAR")
-        for bus in pwf_data["DBAR"]
-            if bus["ACTIVE GENERATION"] > 0.0 || bus["REACTIVE GENERATION"] != 0.0
-                _pwf2pm_generator!(pm_data, pwf_data, bus)
-            end
-        end
-    end
 end
 
 function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict, bus::Dict)
@@ -275,6 +258,22 @@ function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     pm_data["gen"][idx] = sub_data
 end
 
+function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
+
+    if !haskey(pwf_data, "DGER")
+        @warn("DGER not found, setting pmin and pmax as the bar active generation")
+    end
+
+    pm_data["gen"] = Dict{String, Any}()
+    if haskey(pwf_data, "DBAR")
+        for bus in pwf_data["DBAR"]
+            if bus["ACTIVE GENERATION"] > 0.0 || bus["REACTIVE GENERATION"] != 0.0
+                _pwf2pm_generator!(pm_data, pwf_data, bus)
+            end
+        end
+    end
+end
+
 function _handle_base_mva(pwf_data::Dict)
     baseMVA = 100.0 # Default value for this field in .pwf
     if haskey(pwf_data, "DCTE")
@@ -285,18 +284,33 @@ function _handle_base_mva(pwf_data::Dict)
     return baseMVA
 end
 
-function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding transformer
-    if !haskey(pm_data, "branch")
-        pm_data["branch"] = Dict{String, Any}()
-    end
-
-    if haskey(pwf_data, "DLIN")
-        for branch in pwf_data["DLIN"]
-            if branch["TRANSFORMER"]
-                _pwf2pm_transformer!(pm_data, pwf_data, branch)
+# Analyzing PowerModels' raw parser, it was concluded that b_to & b_fr data was present in DSHL section
+function _handle_b_fr(pm_data::Dict, pwf_data::Dict, f_bus::Int, t_bus::Int, susceptance::Float64)
+    i = count(x -> x["f_bus"] == f_bus && x["t_bus"] == t_bus, values(pm_data["branch"])) + 1
+    b_fr = susceptance / 2.0
+    if haskey(pwf_data, "DSHL")
+        group = findall(x -> x["FROM BUS"] == f_bus && x["TO BUS"] == t_bus, pwf_data["DSHL"])
+        if length(group) > 0 && length(group) >= i
+            if pwf_data["DSHL"][group[i]]["SHUNT FROM"] !== nothing
+                b_fr = pwf_data["DSHL"][group[i]]["SHUNT FROM"] / 100
             end
         end
     end
+    return b_fr / 100
+end
+
+function _handle_b_to(pm_data, pwf_data::Dict, f_bus::Int, t_bus::Int, susceptance::Float64)
+    i = count(x -> x["f_bus"] == f_bus && x["t_bus"] == t_bus, values(pm_data["branch"])) + 1
+    b_to = susceptance / 2.0
+    if haskey(pwf_data, "DSHL")
+        group = findall(x -> x["FROM BUS"] == f_bus && x["TO BUS"] == t_bus, pwf_data["DSHL"])
+        if length(group) > 0 && length(group) >= i
+            if pwf_data["DSHL"][group[i]]["SHUNT TO"] !== nothing
+                b_to = pwf_data["DSHL"][group[i]]["SHUNT TO"] / 100
+            end
+        end
+    end
+    return b_to / 100
 end
 
 function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two-winding transformer
@@ -345,48 +359,28 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two
     pm_data["branch"][idx] = sub_data
 end
 
-# Analyzing PowerModels' raw parser, it was concluded that b_to & b_fr data was present in DSHL section
-function _handle_b_fr(pm_data::Dict, pwf_data::Dict, f_bus::Int, t_bus::Int, susceptance::Float64)
-    i = count(x -> x["f_bus"] == f_bus && x["t_bus"] == t_bus, values(pm_data["branch"])) + 1
-    b_fr = susceptance / 2.0
-    if haskey(pwf_data, "DSHL")
-        group = findall(x -> x["FROM BUS"] == f_bus && x["TO BUS"] == t_bus, pwf_data["DSHL"])
-        if length(group) > 0 && length(group) >= i
-            if pwf_data["DSHL"][group[i]]["SHUNT FROM"] !== nothing
-                b_fr = pwf_data["DSHL"][group[i]]["SHUNT FROM"] / 100
+function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding transformer
+    if !haskey(pm_data, "branch")
+        pm_data["branch"] = Dict{String, Any}()
+    end
+
+    if haskey(pwf_data, "DLIN")
+        for branch in pwf_data["DLIN"]
+            if branch["TRANSFORMER"]
+                _pwf2pm_transformer!(pm_data, pwf_data, branch)
             end
         end
     end
-    return b_fr / 100
 end
 
-function _handle_b_to(pm_data, pwf_data::Dict, f_bus::Int, t_bus::Int, susceptance::Float64)
-    i = count(x -> x["f_bus"] == f_bus && x["t_bus"] == t_bus, values(pm_data["branch"])) + 1
-    b_to = susceptance / 2.0
-    if haskey(pwf_data, "DSHL")
-        group = findall(x -> x["FROM BUS"] == f_bus && x["TO BUS"] == t_bus, pwf_data["DSHL"])
-        if length(group) > 0 && length(group) >= i
-            if pwf_data["DSHL"][group[i]]["SHUNT TO"] !== nothing
-                b_to = pwf_data["DSHL"][group[i]]["SHUNT TO"] / 100
-            end
+function _handle_bs(shunt::Dict{String, Any})
+    bs = 0
+    for el in shunt["REACTANCE GROUPS"]
+        if el["STATUS"] == 'L'
+            bs += el["OPERATING UNITIES"]*el["REACTANCE"]
         end
     end
-    return b_to / 100
-end
-
-function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict)
-
-    pm_data["dcline"] = Dict{String, Any}()
-
-    if !(haskey(pwf_data, "DCBA") && haskey(pwf_data, "DCLI") && haskey(pwf_data, "DCNV") && haskey(pwf_data, "DCCV") && haskey(pwf_data, "DELO"))
-        @warn("DC line will not be parsed due to the absence of at least one those sections: DCBA, DCLI, DCNV, DCCV, DELO")
-        return
-    end
-    @assert length(pwf_data["DCBA"]) == 4*length(pwf_data["DCLI"]) == 2*length(pwf_data["DCNV"]) == 2*length(pwf_data["DCCV"]) == 4*length(pwf_data["DELO"])
-
-    for i1 in 1:length(pwf_data["DCLI"])
-        _pwf2pm_dcline!(pm_data, pwf_data, i1)
-    end
+    return bs
 end
 
 function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict, i1::Int)
@@ -457,16 +451,29 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict, i1::Int)
     pm_data["dcline"]["$i1"] = sub_data
 end
 
-function _handle_bs(shunt::Dict{String, Any})
-    bs = 0
-    for el in shunt["REACTANCE GROUPS"]
-        if el["STATUS"] == 'L'
-            bs += el["OPERATING UNITIES"]*el["REACTANCE"]
-        end
+function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict)
+
+    pm_data["dcline"] = Dict{String, Any}()
+
+    if !(haskey(pwf_data, "DCBA") && haskey(pwf_data, "DCLI") && haskey(pwf_data, "DCNV") && haskey(pwf_data, "DCCV") && haskey(pwf_data, "DELO"))
+        @warn("DC line will not be parsed due to the absence of at least one those sections: DCBA, DCLI, DCNV, DCCV, DELO")
+        return
     end
-    return bs
+    @assert length(pwf_data["DCBA"]) == 4*length(pwf_data["DCLI"]) == 2*length(pwf_data["DCNV"]) == 2*length(pwf_data["DCCV"]) == 4*length(pwf_data["DELO"])
+
+    for i1 in 1:length(pwf_data["DCLI"])
+        _pwf2pm_dcline!(pm_data, pwf_data, i1)
+    end
 end
 
+function _create_new_shunt(sub_data::Dict, pm_data::Dict)
+    for (idx, value) in pm_data["shunt"]
+        if value["shunt_bus"] == sub_data["shunt_bus"] && value["source_id"][1] == sub_data["source_id"][1]
+            return false, idx
+        end
+    end
+    return true    
+end
 
 function _pwf2pm_fixed_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data = Dict{String,Any}()
@@ -552,15 +559,6 @@ function _pwf2pm_discrete_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
     end
 end
 
-function _create_new_shunt(sub_data::Dict, pm_data::Dict)
-    for (idx, value) in pm_data["shunt"]
-        if value["shunt_bus"] == sub_data["shunt_bus"] && value["source_id"][1] == sub_data["source_id"][1]
-            return false, idx
-        end
-    end
-    return true    
-end
-
 # Assumption - if there are more than one shunt for the same bus we sum their values into one shunt (source: Organon)
 # CAUTION: this might be an Organon error
 function _pwf2pm_shunt!(pm_data::Dict, pwf_data::Dict)
@@ -591,7 +589,6 @@ function _pwf2pm_shunt!(pm_data::Dict, pwf_data::Dict)
         end
     end
 end
-
 
 function generators_from_bus(pm_data::Dict, bus::Int; filters::Vector = [])
     filters = vcat(gen -> gen["gen_bus"] == bus, filters)
@@ -642,7 +639,6 @@ function sum_generators_power_and_turn_off(pm_data::Dict, gen_keys::Vector)
     end
     return Pg, Qg
 end
-
 
 function _pwf2pm_corrections_PQ!(pm_data::Dict)
     for (i, bus) in pm_data["bus"]
