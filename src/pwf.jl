@@ -297,7 +297,7 @@ function _parse_line_element!(data::Dict{String, Any}, line::String, section::Ab
             end
         catch
             if !_needs_default(element)
-                @warn "Could not parse $element to $dtype, setting it as a String"
+                @warn "Could not parse $element to $dtype inside $section section, setting it as a String"
             end
             data[field] = element
         end

@@ -467,36 +467,6 @@ function _handle_bs(shunt::Dict{String, Any})
     return bs
 end
 
-# Assumption - if there are more than one shunt for the same bus we sum their values into one shunt (source: Organon)
-# CAUTION: this might be an Organon error
-function _pwf2pm_shunt!(pm_data::Dict, pwf_data::Dict)
-    pm_data["shunt"] = Dict{String, Any}()
-
-    fixed_shunt_bus = filter(x -> x["TOTAL REACTIVE POWER"] != 0.0, pwf_data["DBAR"])
-
-    for bus in fixed_shunt_bus
-        _pwf2pm_fixed_shunt!(pm_data, pwf_data, bus)
-    end
-
-    if haskey(pwf_data, "DCER") || haskey(pwf_data, "DBSH")
-        @warn("PowerModels current version don't support non-fixed shunts. All continuous or discrete shunts (DCER or DBSH) are considered fixed.")
-    end
-
-    # Assumption - the reactive generation is already considering the number of unities
-    if haskey(pwf_data, "DCER")
-
-        for shunt in pwf_data["DCER"]
-            _pwf2pm_continuous_shunt!(pm_data, pwf_data, shunt)
-        end
-    end
-
-    if haskey(pwf_data, "DBSH")
-
-        for shunt in pwf_data["DBSH"]
-            _pwf2pm_discrete_shunt!(pm_data, pwf_data, shunt)
-        end
-    end
-end
 
 function _pwf2pm_fixed_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data = Dict{String,Any}()
@@ -519,7 +489,7 @@ function _pwf2pm_fixed_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     pm_data["shunt"][idx] = sub_data
 end
 
-function _pwf2pm_continuous_shunt(pm_data::Dict, pwf_data::Dict, shunt::Dict)
+function _pwf2pm_continuous_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
     n = count(x -> x["shunt_bus"] == shunt["BUS"], values(pm_data["shunt"])) 
 
     sub_data = Dict{String,Any}()
@@ -590,6 +560,38 @@ function _create_new_shunt(sub_data::Dict, pm_data::Dict)
     end
     return true    
 end
+
+# Assumption - if there are more than one shunt for the same bus we sum their values into one shunt (source: Organon)
+# CAUTION: this might be an Organon error
+function _pwf2pm_shunt!(pm_data::Dict, pwf_data::Dict)
+    pm_data["shunt"] = Dict{String, Any}()
+
+    fixed_shunt_bus = filter(x -> x["TOTAL REACTIVE POWER"] != 0.0, pwf_data["DBAR"])
+
+    for bus in fixed_shunt_bus
+        _pwf2pm_fixed_shunt!(pm_data, pwf_data, bus)
+    end
+
+    if haskey(pwf_data, "DCER") || haskey(pwf_data, "DBSH")
+        @warn("PowerModels current version don't support non-fixed shunts. All continuous or discrete shunts (DCER or DBSH) are considered fixed.")
+    end
+
+    # Assumption - the reactive generation is already considering the number of unities
+    if haskey(pwf_data, "DCER")
+
+        for shunt in pwf_data["DCER"]
+            _pwf2pm_continuous_shunt!(pm_data, pwf_data, shunt)
+        end
+    end
+
+    if haskey(pwf_data, "DBSH")
+
+        for shunt in pwf_data["DBSH"]
+            _pwf2pm_discrete_shunt!(pm_data, pwf_data, shunt)
+        end
+    end
+end
+
 
 function generators_from_bus(pm_data::Dict, bus::Int; filters::Vector = [])
     filters = vcat(gen -> gen["gen_bus"] == bus, filters)
