@@ -32,7 +32,6 @@ network_data = parse_pwf_to_powermodels(file)
 Then you are ready to use PowerModels!
 
 ```julia
-
 using PowerModels, Ipopt
 
 run_ac_pf(network_data, Ipopt.Optimizer)
