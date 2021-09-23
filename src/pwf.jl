@@ -4,7 +4,7 @@
 #                                                               #
 #################################################################
 
-# This parser was develop using ANAREDE v09' user manual
+# This parser was develop using ANAREDE v09 user manual
 
 """
 A list of data file sections in the order that they appear in a PWF file
@@ -59,7 +59,7 @@ const _dshl_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
     ("TO BUS", Int64, 10:14), ("CIRCUIT", Int64, 15:16), ("SHUNT FROM", Float64, 18:23),
     ("SHUNT TO", Float64, 24:29), ("STATUS FROM", Char, 31:32, ("STATUS TO", Char, 34:35))]
 
-const _dcba_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("TYPE", Int64, 8),
+    const _dcba_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("TYPE", Int64, 8),
     ("POLARITY", String, 9), ("NAME", String, 10:21), ("VOLTAGE LIMIT GROUP", String, 22:23),
     ("VOLTAGE", Float64, 24:28), ("GROUND ELECTRODE", Float64, 67:71), ("DC LINK", Int64, 72:75)]
 
@@ -87,11 +87,27 @@ const _dccv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("LOOSENE
 const _delo_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("VOLTAGE", Float64, 8:12),
     ("BASE", Float64, 14:18), ("NAME", String, 20:39), ("HI MVAR MODE", Char, 41), ("STATUS", Char, 43)]
 
-const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes,
-    "DGBT" => _dgbt_dtypes, "DGLT" => _dglt_dtypes, "DGER" => _dger_dtypes,
-    "DSHL" => _dshl_dtypes, "DCBA" => _dcba_dtypes, "DCLI" => _dcli_dtypes,
-    "DCNV" => _dcnv_dtypes, "DCCV" => _dccv_dtypes, "DELO" => _delo_dtypes)
+const _dcer_dtypes = [("BUS", Int, 1:5), ("OPERATION", Char, 7), ("GROUP", Int64, 9:10),
+    ("UNITIES", Int64, 12:13), ("CONTROLLED BUS", Int64, 15:19), ("INCLINATION", Float64, 21:26),
+    ("REACTIVE GENERATION", Float64, 28:32), ("MINIMUM REACTIVE GENERATION", Float64, 33:37),
+    ("MAXIMUM REACTIVE GENERATION", Float64, 38:42), ("CONTROL MODE", Char, 44), ("STATUS", Char, 46)]
 
+const _fban_1_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
+    ("TO BUS", Int64, 10:14), ("CIRCUIT", Int64, 15:16), ("CONTROL MODE", Char, 18),
+    ("MINIMUM VOLTAGE", Float64, 20:23), ("MAXIMUM VOLTAGE", Float64, 25:28),
+    ("CONTROLLED BUS", Int64, 30:34), ("INITIAL REACTIVE INJECTION", Float64, 36:41),
+    ("CONTROL TYPE", Char, 43), ("ERASE DBAR", Char, 45), ("EXTREMITY", Int64, 47:51)]
+
+const _fban_2_dtypes = [("GROUP", Int64, 1:2), ("OPERATION", Char, 5), ("STATUS", Char, 7),
+    ("UNITIES", Int64, 9:11), ("OPERATING UNITIES", Int64, 13:15),
+    ("REACTANCE", Float64, 17:22)]
+
+const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes, "DGBT" => _dgbt_dtypes,
+    "DGLT" => _dglt_dtypes, "DGER" => _dger_dtypes, "DSHL" => _dshl_dtypes, "DCBA" => _dcba_dtypes, 
+    "DCLI" => _dcli_dtypes, "DCNV" => _dcnv_dtypes, "DCCV" => _dccv_dtypes, "DELO" => _delo_dtypes, 
+    "DCER" => _dcer_dtypes, "BUS AND VOLTAGE CONTROL" => _fban_1_dtypes, "REACTORS AND CAPACITORS BANKS" => _fban_2_dtypes,
+    "DBSH" => [_fban_1_dtypes, _fban_2_dtypes])
+    
 const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
                         filter(x -> x%7 == 6, 1:69), Char)
 
@@ -185,14 +201,29 @@ const _default_dccv = Dict("NUMBER" => nothing, "OPERATION" => 'A', "LOOSENESS" 
 const _default_delo = Dict("NUMBER" => nothing, "OPERATION" => 'A', "VOLTAGE" => nothing,
     "BASE" => nothing, "NAME" => nothing, "HI MVAR MODE" => 'N', "STATUS" => 'L')
 
+const _default_dcer = Dict("BUS" => nothing, "OPERATION" => 'A', "GROUP" => nothing,
+    "UNITIES" => 1, "CONTROLLED BUS" => nothing, "INCLINATION" => nothing,
+    "REACTIVE GENERATION" => nothing, "MINIMUM REACTIVE GENERATION" => nothing,
+    "MAXIMUM REACTIVE GENERATION" => nothing, "CONTROL MODE" => 'I', "STATUS" => 'L')
+
+const _default_fban_2 = Dict("GROUP" => nothing, "OPERATION" => 'A', "STATUS" => 'L',
+    "UNITIES" => 1, "OPERATING UNITIES" => nothing, "REACTANCE" => nothing)
+
+const _default_fban_1 = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" => nothing,
+    "CIRCUIT" => 1, "CONTROL MODE" => 'C', "MINIMUM VOLTAGE" => nothing,
+    "MAXIMUM VOLTAGE" => nothing, "CONTROLLED BUS" => nothing,
+    "INITIAL REACTIVE INJECTION" => 0.0, "CONTROL TYPE" => 'C', "ERASE DBAR" => 'N',
+    "EXTREMITY" => nothing, "REACTANCE GROUPS" => _default_fban_2)
+
 const _default_titu = ""
 
 const _default_name = ""
 
 const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DCTE" => _default_dcte,
     "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name, "DGER" => _default_dger,
-    "DGBT" => _default_dgbt, "DGLT" => _default_dglt, "DSHL" => _default_dshl, "DCBA" => _default_dcba,
-    "DCLI" => _default_dcli, "DCNV" => _default_dcnv, "DCCV" => _default_dccv)
+    "DGBT" => _default_dgbt, "DGLT" => _default_dglt, "DSHL" => _default_dshl, "DCER" => _default_dcer,
+    "DBSH" => _default_fban_1, "REACTANCE GROUPS" => _default_fban_2, "DCBA" => _default_dcba,
+    "DBLI" => _default_dcli, "DCNV" => _default_dcnv, "DCCV" => _default_dccv, "DELO" => _default_delo)
 
 
 const title_identifier = "TITU"
@@ -266,7 +297,7 @@ function _parse_line_element!(data::Dict{String, Any}, line::String, section::Ab
             end
         catch
             if !_needs_default(element)
-                @warn "Could not parse $element to $dtype, setting it as a String"
+                @warn "Could not parse $element to $dtype inside $section section, setting it as a String"
             end
             data[field] = element
         end
@@ -312,11 +343,16 @@ function _first_data_line(section_lines::Vector{String})
 end
 
 """
-    _parse_section_element(data, section_lines, section)
+    _parse_section_element!(data, section_lines, section)
 Internal function. Parses a section containing a system component.
 Returns a Vector of Dict, where each entry corresponds to a single element.
 """
-function _parse_section_element(data::Vector{Dict{String, Any}}, section_lines::Vector{String}, section::AbstractString)
+function _parse_section_element!(data::Vector{Dict{String, Any}}, section_lines::Vector{String}, section::AbstractString)
+
+    if section == "DBSH"
+        _parse_dbsh_section!(data, section_lines)
+        return
+    end
 
     first_line = _first_data_line(section_lines)
     for line in section_lines[first_line:end]
@@ -329,6 +365,24 @@ function _parse_section_element(data::Vector{Dict{String, Any}}, section_lines::
     end
 
 end
+
+function _parse_dbsh_section!(data::Vector{Dict{String, Any}}, section_lines::Vector{String})
+
+    sub_titles_idx = vcat(1, findall(x -> x == "FBAN", section_lines))
+    for (i, idx) in enumerate(sub_titles_idx)
+
+        if idx != sub_titles_idx[end]
+            next_idx = sub_titles_idx[i + 1]
+            _parse_section_element!(data, section_lines[idx:idx + 2], "BUS AND VOLTAGE CONTROL")
+
+            rc = Dict{String, Any}[]
+            _parse_section_element!(rc, section_lines[idx + 2:next_idx - 1], "REACTORS AND CAPACITORS BANKS")
+            data[end]["REACTANCE GROUPS"] = rc
+        end
+
+    end
+end
+
 """
     _parse_section(data, section_lines)
 
@@ -337,7 +391,6 @@ transforms it into a Dict and saves it into `data::Dict`.
 """
 function _parse_section!(data::Dict{String, Any}, section_lines::Vector{String})
     section = split(section_lines[1], " ")[1]
-
     if section == title_identifier
         section_data = section_lines[end]
 
@@ -347,7 +400,7 @@ function _parse_section!(data::Dict{String, Any}, section_lines::Vector{String})
 
     elseif section in keys(_pwf_dtypes)
         section_data = Dict{String, Any}[]
-        _parse_section_element(section_data, section_lines, section)
+        _parse_section_element!(section_data, section_lines, section)
 
     else
         @warn "Currently there is no support for $section parsing"
@@ -361,6 +414,8 @@ _needs_default(str::String) = unique(str) == [' ']
 _needs_default(ch::Char) = ch == ' '
 
 function _populate_defaults!(pwf_data::Dict{String, Any})
+
+    @warn "Populating defaults"
 
     for (section, section_data) in pwf_data
         if !haskey(_pwf_defaults, section)
@@ -384,6 +439,10 @@ function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::Strin
                         pwf_data[section][i][component] = default
                         _handle_special_defaults!(pwf_data, section, i, component)
                     end
+                elseif isa(component_value, Dict) || isa(component_value, Vector{Dict{String,Any}})
+                    sub_data = pwf_data[section][i]
+                    _populate_section_defaults!(sub_data, component, component_value)
+                    pwf_data[section][i] = sub_data
                 end
             else
                 pwf_data[section][i][component] = default
@@ -469,7 +528,6 @@ function _parse_pwf_data(data_io::IO)
     
     return pwf_data
 end
-
 
 function parse_pwf(filename::String)::Dict
     pwf_data = open(filename) do f

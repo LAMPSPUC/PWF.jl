@@ -1,6 +1,6 @@
 @testset "PWF to Dict" begin
     @testset "Intermediary functions" begin
-        file = open(joinpath(@__DIR__,"data/test_system.pwf"))
+        file = open(joinpath(@__DIR__,"data/pwf/test_system.pwf"))
 
         sections = ParserPWF._split_sections(file)
         @test isa(sections, Vector{Vector{String}})
@@ -22,7 +22,7 @@
 
 
     @testset "Resulting Dict" begin
-        file = open(joinpath(@__DIR__,"data/test_system.pwf"))
+        file = open(joinpath(@__DIR__,"data//pwf/test_system.pwf"))
         dict = ParserPWF._parse_pwf_data(file)
 
         @testset "Keys" begin
