@@ -1,6 +1,6 @@
 @testset "Dict to PowerModels" begin
     @testset "Intermediary functions" begin
-        file = open(joinpath(@__DIR__,"data/test_system.pwf"))
+        file = open(joinpath(@__DIR__,"data/pwf/test_system.pwf"))
         pwf_data = ParserPWF._parse_pwf_data(file)
         pm_data = Dict{String, Any}()
 
@@ -86,13 +86,13 @@
 
         @testset "DCline" begin
 
-            pwf_dc = open(joinpath(@__DIR__,"data/300bus.pwf"))
+            pwf_dc = open(joinpath(@__DIR__,"data/pwf/300bus.pwf"))
             pwf_data_dc = ParserPWF.parse_pwf_to_powermodels(pwf_dc)
 
             @test haskey(pwf_data_dc, "dcline")
             @test length(pwf_data_dc["dcline"]) == 1
 
-            raw_dc = joinpath(@__DIR__,"data/300bus.raw")
+            raw_dc = joinpath(@__DIR__,"data/raw/300bus.raw")
             raw_data_dc = PowerModels.parse_file(raw_dc)
 
             @test check_same_dict(pwf_data_dc, raw_data_dc, "dcline")   
@@ -102,7 +102,7 @@
     end
 
     @testset "Resulting Dict" begin
-        file = open(joinpath(@__DIR__,"data/test_system.pwf"))
+        file = open(joinpath(@__DIR__,"data/pwf/test_system.pwf"))
         pm_data = ParserPWF.parse_pwf_to_powermodels(file)
 
         @testset "PowerModels Dict" begin
@@ -150,12 +150,14 @@
 
     end
 
+
+
     @testset "Power Flow results" begin
         filenames = ["3bus", "9bus"]
 
         for name in filenames
-            file_raw = joinpath(@__DIR__,"data/$name.raw")
-            file_pwf = open(joinpath(@__DIR__,"data/$name.pwf"))
+            file_raw = joinpath(@__DIR__,"data/raw/$name.raw")
+            file_pwf = open(joinpath(@__DIR__,"data/pwf/$name.pwf"))
         
             pwf_data = ParserPWF.parse_pwf_to_powermodels(file_pwf)
             raw_data = PowerModels.parse_file(file_raw)
@@ -164,6 +166,7 @@
                 Ipopt.Optimizer, 
                 "print_level"=>0,
             )
+            
             result_pwf = PowerModels.run_ac_pf(pwf_data, solver)
             result_raw = PowerModels.run_ac_pf(raw_data, solver)
             
@@ -172,4 +175,20 @@
     
     end
 
+    @testset "PWF to PM corrections" begin
+        file = open(joinpath(@__DIR__,"data/pwf/3bus_corrections.pwf"))
+        pm_data = ParserPWF.parse_pwf_to_powermodels(file)
+        solver = optimizer_with_attributes(
+            Ipopt.Optimizer, 
+            "print_level"=>0,
+        )
+        parse_result = PowerModels.run_ac_pf(pm_data, solver);
+
+        result = Dict(
+            "1" => Dict("va" => 0, "vm" => 1.029),
+            "2" => Dict("va" => -0.0171315, "vm" => 1.03),
+            "3" => Dict("va" => -0.02834, "vm" => 0.999)
+        );
+        @test check_same_dict(parse_result["solution"]["bus"], result)
+    end
 end
