@@ -68,17 +68,16 @@ Dict{String, Any} with 6 entries:
 - DCNV
 - DCCV
 - DELO
+- DCER
+- DBSH (fban)
 - DOPC
 - DCTE
 
 **Incoming Sections:**
 
 - DARE
-- DBSH
 - DCAI
 - DCAR
-- DCER
-- DCLI
 - DCSC
 - DGEI
 - DGLT
@@ -117,10 +116,10 @@ Dict{String, Any} with 13 entries:
 - load
 - branch
 - dcline
+- shunt
 
 **Incoming Network Data Sections:**
 
-- shunt
 - switch
 - storage
 
