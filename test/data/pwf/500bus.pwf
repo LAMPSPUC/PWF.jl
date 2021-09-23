@@ -1,0 +1,1314 @@
+(ARQUIVO GRAVADO A PARTIR DO PROGRAMA ORGANON)
+TITU
+0,    100.00, 33, 0, 0, 60.00       / March 15, 2017 14:58:                                                             
+DOPC
+(Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E
+NEWT L STEP L CREM L CELO L 
+RCVG L RMON L MOST L MOSG L MOSF L FILE L CONT L
+QLIM L
+CTAP D
+TAPD D
+CSCA D
+CPHS D
+99999
+(Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val)
+DCTE
+BASE 100.  
+TEPA .1    
+TEPR .1    
+VFLD 80.   
+ACIT     35
+99999
+DBAR
+(Num)OETGb(   nome   )Gl( V)( A)( Pg)( Qg)( Qn)( Qm)(Bc  )( Pl)( Ql)( Sh)Are(Vf)M(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
+    1 L  AWINNSBORO 0  A1012-7.3                                           11000
+    2 L  AWINNSBORO 1  A1012-7.4                          42.8 11.41       11000
+    3 L  ACOLUMBIA 1~3 A1006-8.6                                           11000
+    4 L  ACOLUMBIA 1~4 A1004-8.8                          132.735.38       11000
+    5 L  ASMYRNA 0     A10152.14                                           11000
+    6 L  ASMYRNA 1     A10152.14                          3.213.857        11000
+    7 L   EASTOVER 2 0 A1034-3.5                                           11000
+    8 L  AEASTOVER 2 1 A1027-5.2                                           11000
+    9 L1  EASTOVER 2 2 A1040-.66771.8105.7-94.2359.7                       11000
+   10 L  ACHAPPELLS ~6 A1017-10.                                           11000
+   11 L  ACHAPPELLS ~7 A1017-10.                          2.472.659        11000
+   12 L  APELZER 0     A 992-11.                                           11000
+   13 L  APELZER 1     A 991-11.                          37.169.91        11000
+   14 L   SENECA 3 0   A1030.069                                           11000
+   15 L  ASENECA 3 1   A1021-2.6                                           11000
+   16 L1  SENECA 3 2   A10402.91444.484.63-36.4163.6                       11000
+   17 L2  SENECA 3 3   A10403.47888.3150. -72.9327.1                       11000
+   18 L1  SENECA 3 4   A10404.37157.621.67-12.958.                         11000
+   19 L  AMONETTA 0    A1018-11.                                           11000
+   20 L  AMONETTA 1    A1018-11.                          4.5421.211       11000
+   21 L  ALEXINGTON ~2 A1010-8.9                                           11000
+   22 L  ALEXINGTON ~3 A1007-9.1                          148.739.65       11000
+   23 L   WELLFORD 0   A1027-4.5                                           11000
+   24 L  AWELLFORD 1   A1012-7.3                                           11000
+   25 L  AWELLFORD 2   A1012-7.4                          2.283.609        11000
+   26 L  AWELLFORD 3   A1012-7.4                          21.665.777       11000
+   27 L  ALAURENS 0    A1013-13.                                           11000
+   28 L  ALAURENS 1    A1012-13.                          62.9316.78       11000
+   29 L  ACOLUMBIA 1~1 A1009-11.                                           11000
+   30 L  ACOLUMBIA 1~2 A1008-11.                          99.9726.66       11000
+   31 L  AWINDSOR 0    A1032-14.                                           11000
+   32 L  AWINDSOR 1    A1032-14.                          9.7652.604       11000
+   33 L  APROSPERITY 0 A1006-12.                                           11000
+   34 L  APROSPERITY 1 A1006-12.                          25.  6.666       11000
+   35 L  ANORTH AUGU~3 A1018-12.                                           11000
+   36 L  ANORTH AUGU~4 A1017-12.                          43.3511.56       11000
+   37 L  ALANDO 0      A10192.52                                           11000
+   38 L  ALANDO 1      A10192.52                          .129 .034        11000
+   39 L   GAFFNEY 3 0  A1030-4.3                                           11000
+   40 L  AGAFFNEY 3 1  A1023-5.5                                           11000
+   41 L  AGAFFNEY 3 2  A1022-5.7                          57.9915.46       11000
+   42 L  ACLARKS HIL~4 A1024-10.                                           11000
+   43 L  ACLARKS HIL~5 A1024-10.                          4.4611.19        11000
+   44 L  AJENKINSVIL~1 A1018-6.3                                           11000
+   45 L  AJENKINSVIL~2 A1018-6.3                          2.031.542        11000
+   46 L  AWOODRUFF 0   A1004-9.7                                           11000
+   47 L  AWOODRUFF 1   A1004-9.8                          43.4111.58       11000
+   48 L  AIVA 0        A1001-14.                                           11000
+   49 L1  IVA 1        A1003-14.1.3  .606 -.159.606                        11000
+   50 L1  IVA 2        A1003-14.2.6  1.212-.3171.212                       11000
+   51 L  AIVA 3        A1001-14.                          .354 .094        11000
+   52 L  AIVA 4        A1001-14.                          23.396.237       11000
+   53 L  ACAYCE 0      A1017-9.8                                           11000
+   54 L  ACAYCE 1      A1016-9.8                          34.819.282       11000
+   55 L  ATROY 0       A1019-9.7                                           11000
+   56 L  ATROY 1       A1019-9.7                          2.253.601        11000
+   57 L   SIMPSONVIL~3 A1010-6.2                                           11000
+   58 L  ASIMPSONVIL~4 A1002-9.                                            11000
+   59 L  ASIMPSONVIL~5 A1000-9.3                          140.937.58       11000
+   60 L  AMAYO 0       A1020-6.1                                           11000
+   61 L  AMAYO 1       A1020-6.1                          .204 .054        11000
+   62 L  ABELTON 2 0   A1010-8.4                                           11000
+   63 L1  BELTON 2 1   A1010-8.4          0.   0.                          11000
+   64 L  ABELTON 2 2   A1009-8.5                          34.789.274       11000
+   65 L   BRADLEY 0    A1025-7.2                                           11000
+   66 L  ABRADLEY 1    A1021-8.9                                           11000
+   67 L  ABRADLEY 2    A1021-8.9                          4.5691.218       11000
+   68 L  AENOREE 0     A1010-10.                                           11000
+   69 L  AENOREE 1     A1009-10.                          16.964.523       11000
+   70 L  AHONEA PATH~2 A 995-11.                                           11000
+   71 L1  HONEA PATH~3 A 996-11.4.   1.536-.1961.536                       11000
+   72 L1  HONEA PATH~4 A 996-11.2.   .768 -.098.768                        11000
+   73 L1  HONEA PATH~5 A 997-11.1.4  .538 -.069.538                        11000
+   74 L  ASPRINGFIEL~1 A1025-13.                                           11000
+   75 L  ASPRINGFIEL~2 A1025-13.                          5.3011.414       11000
+   76 L  AEDGEMOOR 0   A10183.39                                           11000
+   77 L  AEDGEMOOR 1   A10183.38                          6.9511.854       11000
+   78 L  ANEWRY 0      A1013-5.                                            11000
+   79 L  ANEWRY 1      A1013-5.                           .381 .102        11000
+   80 L   CLARKS HIL~1 A1032-6.7                                           11000
+   81 L  ACLARKS HIL~2 A1026-9.3                                           11000
+   82 L1  CLARKS HIL~3 A1040-.67361.941.1 -17.7139.                        11000
+   83 L  ANEWBERRY 0   A1004-12.                                           11000
+   84 L  ANEWBERRY 1   A1003-12.                          61.4116.38       11000
+   85 L  AAIKEN 3 0    A1026-12.                                           11000
+   86 L  AAIKEN 3 1    A1026-12.                          17.594.691       11000
+   87 L  AROCK HILL ~5 A10014.16                                           11000
+   88 L  AROCK HILL ~6 A10014.15                          5.2531.401       11000
+   89 L  ACAMERON 0    A1018-7.7                                           11000
+   90 L  ACAMERON 1    A1018-7.7                          5.9011.574       11000
+   91 L  ASENECA 2 0   A1012-4.1                                           11000
+   92 L  ASENECA 2 1   A1011-4.2                          65.0317.34       11000
+   93 L  ABLAIR 0      A1015-3.                                            11000
+   94 L  ABLAIR 1      A1015-3.                           5.2141.39        11000
+   95 L  AWALHALLA 0   A1012-4.1                                           11000
+   96 L  AWALHALLA 1   A1012-4.1                          34.  9.066       11000
+   97 L  AANDERSON 4 0 A1005-15.                                           11000
+   98 L  AANDERSON 4 1 A1004-15.                          37.099.891       11000
+   99 L  APACOLET 0    A1022-5.7                                           11000
+  100 L  APACOLET 1    A1022-5.7                          13.523.606       11000
+  101 L  APACOLET 2    A1022-5.7                          .891 .238        11000
+  102 L  AABBEVILLE 0  A1003-13.                                           11000
+  103 L  AABBEVILLE 1  A1002-13.                          38.8 10.35       11000
+  104 L  AAIKEN 2 0    A1018-14.                                           11000
+  105 L  AAIKEN 2 1    A1017-14.                          80.3321.42       11000
+  106 L  AJOHNSTON 0   A1020-11.                                           11000
+  107 L  AJOHNSTON 1   A1020-11.                          16.  4.268       11000
+  108 L  ASPARTANBU~14 A1015-6.6                                           11000
+  109 L  ASPARTANBU~15 A1014-6.7                          47.5812.69       11000
+  110 L  AGAFFNEY 2 0  A1027-1.5                                           11000
+  111 L  AGAFFNEY 2 1  A1026-1.6                          62.2916.61       11000
+  112 L  ALEESVILLE 0  A1014-10.                                           11000
+  113 L  ALEESVILLE 1  A1013-10.                          45.9912.26       11000
+  114 L  ALANGLEY 0    A1019-13.                                           11000
+  115 L  ALANGLEY 1    A1019-13.                          5.0611.35        11000
+  116 L  ALANGLEY 2    A1019-13.                          3.099.826        11000
+  117 L  ADONALDS 0    A1005-10.                                           11000
+  118 L  ADONALDS 1    A1004-10.                          8.8322.355       11000
+  119 L  AGREENVILL~17 A 987-12.                                           11000
+  120 L  AGREENVILL~18 A 987-12.                          31.658.44        11000
+  121 L  ACOLUMBIA 9 0 A1013-10.                                           11000
+  122 L  ACOLUMBIA 9 1 A1012-11.                          53.3614.23       11000
+  123 L   SALEM 3 0    A1030-.28                                           11000
+  124 L  ASALEM 3 1    A1028-.98                                           11000
+  125 L1  SALEM 3 2    A1030-.28          0.   0.                          11000
+  126 L1  SALEM 3 3    A1030-.28          0.   0.                          11000
+  127 L1  SALEM 3 4    A10403.87162. 26.08-7.9462.21                       11000
+  128 L1  SALEM 3 5    A10401.09162. 62.21-7.9462.21                       11000
+  129 L  AGREENVILL~15 A 984-12.                                           11000
+  130 L  AGREENVILL~16 A 983-13.                          103.227.53       11000
+  131 L  ACOWPENS 0    A1020-6.                                            11000
+  132 L  ACOWPENS 1    A1020-6.                           25.2 6.721       11000
+  133 L  AWESTMINSTE~3 A1013-4.                                            11000
+  134 L  AWESTMINSTE~4 A1012-4.1                          42.6511.37       11000
+  135 L  ASAINT MATT~1 A1015-7.9                                           11000
+  136 L  ASAINT MATT~2 A1015-7.9                          26.767.135       11000
+  137 L  AGREENWOOD ~3 A1007-11.                                           11000
+  138 L  AGREENWOOD ~4 A1006-11.                          78.7 20.99       11000
+  139 L  AFINGERVILL~1 A1016-6.6                                           11000
+  140 L  AFINGERVILL~2 A1016-6.6                          .255 .068        11000
+  141 L  AROCK HILL ~3 A1001.905                                           11000
+  142 L  AROCK HILL ~4 A 998.605                          161.343.02       11000
+  143 L  AYORK 2 0     A10199.88                                           11000
+  144 L1  YORK 2 1     A104022.4602.5111.4-49.4221.7                       11000
+  145 L1  YORK 2 2     A104012.6298.2126.8-49.4221.7                       11000
+  146 L   CHAPIN 0     A1029-4.4                                           11000
+  147 L  ACHAPIN 1     A1017-5.1                                           11000
+  148 L  ACHAPIN 2     A1016-5.2                          57.4215.31       11000
+  149 L  AMODOC 0      A1022-10.                                           11000
+  150 L  AMODOC 1      A1022-10.                          1.503.401        11000
+  151 L   SPARTANBU~11 A1028-4.6                                           11000
+  152 L  ASPARTANBU~12 A1027-7.                                            11000
+  153 L  ASPARTANBU~13 A1026-7.1                          93.1524.84       11000
+  154 L  ABOILING SP~1 A1010-7.5                                           11000
+  155 L  ABOILING SP~2 A1009-7.6                          66.8417.82       11000
+  156 L  AGREENVILL~13 A 989-11.                                           11000
+  157 L  AGREENVILL~14 A 988-11.                          105.528.12       11000
+  158 L  APELION 0     A1011-10.                                           11000
+  159 L  APELION 1     A1010-10.                          22.856.094       11000
+  160 L  AGRANITEVIL~1 A1020-12.                                           11000
+  161 L  AGRANITEVIL~2 A1019-12.                          25.956.921       11000
+  162 L   IRMO 0       A1029-4.4                                           11000
+  163 L  AIRMO 1       A1025-5.1                                           11000
+  164 L  AIRMO 2       A1024-5.4                          98.1526.17       11000
+  165 L   SALEM 2 0    A1030.075                                           11000
+  166 L  ASALEM 2 1    A1025-1.5                                           11000
+  167 L1  SALEM 2 2    A10402.3 193.545.89-9.4874.3                        11000
+  168 L1  SALEM 2 3    A10403.74193.532.76-9.4874.3                        11000
+  169 L1  SALEM 2 4    A10405.37387. 51.61-19. 148.6                       11000
+  170 L  AWEST UNION 0 A1012-4.2                                           11000
+  171 L  AWEST UNION 1 A1012-4.2                          12.383.3         11000
+  172 L  ACROSS HILL 0 A1005-9.3                                           11000
+  173 L  ACROSS HILL 1 A1005-9.3                          3.135.836        11000
+  174 L  ACROSS HILL 2 A1005-9.3                          7.3051.948       11000
+  175 L   FORT LAWN 0  A1034-.09                                           11000
+  176 L  AFORT LAWN 1  A1023.719                                           11000
+  177 L  AFORT LAWN 2  A1023.702                          8.7812.342       11000
+  178 L  AFORT LAWN 3  A1023.708                          6.8131.817       11000
+  179 L  ANORTH 0      A1004-11.                                           11000
+  180 L  ANORTH 1      A1004-11.                          14.143.77        11000
+  181 L  AANDERSON 3 0 A1011-14.                                           11000
+  182 L  AANDERSON 3 1 A1010-15.                          82.6122.03       11000
+  183 L  ABLACKSBURG~6 A1025-3.2                                           11000
+  184 L  ABLACKSBURG~7 A1025-3.3                          30.188.047       11000
+  185 L  ALIBERTY 0    A1010-5.8                                           11000
+  186 L  ALIBERTY 1    A1009-5.9                          45.3512.09       11000
+  187 L  AELLOREE 0    A1017-8.                                            11000
+  188 L  AELLOREE 1    A1017-8.1                          11.052.946       11000
+  189 L  AWAGENER 0    A1028-14.                                           11000
+  190 L  AWAGENER 1    A1028-14.                          14.073.752       11000
+  191 L  ATRENTON 0    A1020-12.                                           11000
+  192 L  ATRENTON 1    A1019-12.                          16.444.384       11000
+  193 L  ABATESBURG 0  A1015-11.                                           11000
+  194 L  ABATESBURG 1  A1015-11.                          28.697.652       11000
+  195 L   COLUMBIA 8 0 A1029-4.4                                           11000
+  196 L  ACOLUMBIA 8 1 A1020-6.6                                           11000
+  197 L1  COLUMBIA 8 2 A1040.472293.643.32-35.8136.8                       11000
+  198 L1  COLUMBIA 8 3 A1040-2. 207.352.58-25.396.6                        11000
+  199 L  ACOLUMBIA 8 4 A1018-6.8                          86.3923.04       11000
+  200 L  ALITTLE MOU~1 A1021-5.9                                           11000
+  201 L  ALITTLE MOU~2 A1021-5.9                          8.8892.37        11000
+  202 L  ACLINTON 0    A1002-8.8                                           11000
+  203 L  ACLINTON 1    A1002-8.8                          4.6891.25        11000
+  204 L  ACLINTON 2    A1002-8.9                          45.6712.18       11000
+  205 L  AWARRENVILL~1 A1022-13.                                           11000
+  206 L  AWARRENVILL~2 A1022-13.                          3.009.802        11000
+  207 L  AWARRENVILL~3 A1021-13.                          22.576.019       11000
+  208 L  ASIMPSONVIL~1 A1007-13.                                           11000
+  209 L  ASIMPSONVIL~2 A1006-13.                          81.8621.83       11000
+  210 L  ADUNCAN 0     A1003-8.7                                           11000
+  211 L  ADUNCAN 1     A1003-8.8                          34.289.141       11000
+  212 L  ANORTH AUGU~1 A1020-11.                                           11000
+  213 L  ANORTH AUGU~2 A1018-12.                          97.4826.         11000
+  214 L  AGREENWOOD ~1 A1004-11.                                           11000
+  215 L  AGREENWOOD ~2 A1003-12.                          84.4822.53       11000
+  216 L  ABELTON 1 0   A 991-12.                                           11000
+  217 L  ABELTON 1 1   A 990-12.                          55.1 14.69       11000
+  218 L  AVAUCLUSE 0   A1027-12.                                           11000
+  219 L  AVAUCLUSE 1   A1027-12.                          .333 .089        11000
+  220 L   UNION 3 0    A1036-.43                                           11000
+  221 L  AUNION 3 1    A1020-3.7                                           11000
+  222 L1  UNION 3 2    A1036-.375.2  1.997-.2551.997                       11000
+  223 L1  UNION 3 3    A1038-.1418.  6.912-.8826.912                       11000
+  224 L1  UNION 3 4    A10402.84511.239.98-25. 196.3                       11000
+  225 L1  UNION 3 5    A10401.27514.869.42-25.2197.7                       11000
+  226 L  AMOUNTAIN R~1 A1012-4.2                                           11000
+  227 L  AMOUNTAIN R~2 A1012-4.2                          5.4241.446       11000
+  228 L  APICKENS 0    A1001-6.6                                           11000
+  229 L  APICKENS 1    A1000-6.7                          54.0914.42       11000
+  230 L  AWESTMINSTE~1 A1011-9.3                                           11000
+  231 L1  WESTMINSTE~2 A1013-9. 2.9  1.351-.3541.351                       11000
+  232 L   WEST COLUM~3 A1029-5.3                                           11000
+  233 L  AWEST COLUM~4 A1019-8.6                                           11000
+  234 L  AWEST COLUM~5 A1018-8.7                          59.9615.99       11000
+  235 L   WARD 0       A1030-9.1                                           11000
+  236 L  AWARD 1       A1022-10.                                           11000
+  237 L  AWARD 2       A1022-10.                          2.712.723        11000
+  238 L  AMOORE 0      A1016-8.3                                           11000
+  239 L  AMOORE 1      A1015-8.4                          39.1310.44       11000
+  240 L  AWILLISTON 0  A1023-13.                                           11000
+  241 L  AWILLISTON 1  A1023-13.                          19.745.264       11000
+  242 L  ACOLUMBIA 7 0 A1020-12.                                           11000
+  243 L  ACOLUMBIA 7 1 A1019-13.                          74.4719.86       11000
+  244 L  AWATERLOO 0   A1008-9.5                                           11000
+  245 L  AWATERLOO 1   A1008-9.6                          11.843.156       11000
+  246 L   BLACKSBURG~1 A1032-4.1                                           11000
+  247 L  ABLACKSBURG~2 A1026-3.4                                           11000
+  248 L1  BLACKSBURG~3 A1032-4.1          0.   0.                          11000
+  249 L1  BLACKSBURG~4 A1032-4.1          0.   0.                          11000
+  250 L1  BLACKSBURG~5 A1032-4.1          0.   0.                          11000
+  251 L  ATAYLORS 0    A 990-11.                                           11000
+  252 L  ATAYLORS 1    A 988-12.                          118.731.65       11000
+  253 L  AGREENVILLE~6 A 991-11.                                           11000
+  254 L1  GREENVILLE~7 A 991-11.          0.   0.                          11000
+  255 L1  GREENVILLE~8 A 991-11.          0.   0.                          11000
+  256 L1  GREENVILLE~9 A 991-11.          0.   0.                          11000
+  257 L1  GREENVILL~10 A 991-11.          0.   0.                          11000
+  258 L1  GREENVILL~11 A 992-11.1.1  .513 -.134.513                        11000
+  259 L  AGREENVILL~12 A 991-11.                          8.16 2.176       11000
+  260 L  ASALEM 1 0    A1026-1.3                                           11000
+  261 L  ASALEM 1 1    A1025-1.4                          18.684.982       11000
+  262 L   COLUMBIA 6 0 A1029-5.6                                           11000
+  263 L  ACOLUMBIA 6 1 A1022-9.8                                           11000
+  264 L1  COLUMBIA 6 2 A1029-5.6          0.   0.                          11000
+  265 L1  COLUMBIA 6 3 A1029-5.6          0.   0.                          11000
+  266 L  ACOLUMBIA 6 4 A1022-9.9                          61.7816.48       11000
+  267 L  AAIKEN 1 0    A1016-15.                                           11000
+  268 L  AAIKEN 1 1    A1014-15.                          117.131.24       11000
+  269 L  APOMARIA 0    A1016-3.8                                           11000
+  270 L  APOMARIA 1    A1016-3.8                          6.8011.814       11000
+  271 L   RIDGE SPRI~1 A1029-9.3                                           11000
+  272 L  ARIDGE SPRI~2 A1024-11.                                           11000
+  273 L  ARIDGE SPRI~3 A1024-11.                          9.4922.531       11000
+  274 L  AGAFFNEY 1 0  A1026-2.3                                           11000
+  275 L1  GAFFNEY 1 1  A1026-2.3          0.   0.                          11000
+  276 L  ACOLUMBIA 5 0 A1017-10.                                           11000
+  277 L  ACOLUMBIA 5 1 A1017-10.                          .405 .108        11000
+  278 L  ACOLUMBIA 5 2 A1017-10.                          5.7691.538       11000
+  279 L  AMARIETTA 0   A1002-7.8                                           11000
+  280 L  AMARIETTA 1   A1002-7.8                          16.944.518       11000
+  281 L  AANDERSON 2 0 A 994-13.                                           11000
+  282 L  AANDERSON 2 1 A 992-13.                          117.331.28       11000
+  283 L  ASALUDA 0     A1017-11.                                           11000
+  284 L  ASALUDA 1     A1016-11.                          32.658.706       11000
+  285 L  AFAIR PLAY 0  A1009-11.                                           11000
+  286 L  AFAIR PLAY 1  A1009-11.                          8.2682.205       11000
+  287 L  AHOPKINS 0    A1014-9.1                                           11000
+  288 L  AHOPKINS 1    A1014-9.2                          58.1115.5        11000
+  289 L  ASUNSET 0     A1018-3.                                            11000
+  290 L  ASUNSET 1     A1018-3.                           3.69 .984        11000
+  291 L  ASALLEY 0     A1007-11.                                           11000
+  292 L  ASALLEY 1     A1007-11.                          7.6172.031       11000
+  293 L  AEDGEFIELD 0  A1019-11.                                           11000
+  294 L  AEDGEFIELD 1  A1019-12.                          25.616.828       11000
+  295 L  ABUFFALO 0    A1010-8.6                                           11000
+  296 L  ABUFFALO 1    A1010-8.7                          7.7882.077       11000
+  297 L   WARE SHOAL~1 A1018-6.9                                           11000
+  298 L  AWARE SHOAL~2 A1016-8.3                                           11000
+  299 L  AWARE SHOAL~3 A1015-8.4                          14.573.885       11000
+  300 L  AYORK 1 0     A1005-1.3                                           11000
+  301 L1  YORK 1 1     A1007-1.22.9  1.351-.3541.351                       11000
+  302 L1  YORK 1 2     A1007-1.22.9  1.351-.3541.351                       11000
+  303 L  AYORK 1 3     A1004-1.5                          86.7623.14       11000
+  304 L  APIEDMONT 0   A 985-12.                                           11000
+  305 L1  PIEDMONT 1   A 988-12.1.   .384 -.049.384                        11000
+  306 L1  PIEDMONT 2   A 988-12.2.4  .922 -.118.922                        11000
+  307 L  APIEDMONT 3   A 984-12.                          76.0420.28       11000
+  308 L  ACALHOUN FA~1 A1012-11.                                           11000
+  309 L  ACALHOUN FA~2 A1012-11.                          9.03 2.408       11000
+  310 L  AANDERSON 1 0 A1002-14.                                           11000
+  311 L  AANDERSON 1 1 A1001-14.                          43.8311.69       11000
+  312 L  AJACKSON 0    A1019-13.                                           11000
+  313 L  AJACKSON 1    A1019-13.                          12.443.317       11000
+  314 L  ACROSS ANCH~1 A1010-9.6                                           11000
+  315 L  ACROSS ANCH~2 A1010-9.6                          .426 .114        11000
+  316 L  AHICKORY GR~1 A1020.596                                           11000
+  317 L  AHICKORY GR~2 A1019.59                           3.7531.001       11000
+  318 L  AGREAT FALL~3 A1022-.28                                           11000
+  319 L1  GREAT FALL~4 A10341.4542.3 16.24-2.0716.24                       11000
+  320 L  ACOLUMBIA 4 0 A1010-13.                                           11000
+  321 L  ACOLUMBIA 4 1 A1007-13.                          150.440.11       11000
+  322 L  AMAULDIN 0    A 997-11.                                           11000
+  323 L  AMAULDIN 1    A 996-11.                          45.2712.07       11000
+  324 L  AGREENVILLE~4 A 988-12.                                           11000
+  325 L  AGREENVILLE~5 A 986-12.                          103.527.59       11000
+  326 L  ACOLUMBIA 3 0 A1014-11.                                           11000
+  327 L  ACOLUMBIA 3 1 A1012-12.                          121.132.28       11000
+  328 L  APENDLETON 0  A 998-9.4                                           11000
+  329 L  APENDLETON 1  A 998-9.4                          26.026.938       11000
+  330 L  ASPARTANBUR~9 A1015-6.7                                           11000
+  331 L  ASPARTANBU~10 A1014-6.8                          57.1715.25       11000
+  332 L   CONVERSE 0   A1029-4.3                                           11000
+  333 L  ACONVERSE 1   A1021-5.9                                           11000
+  334 L  ACONVERSE 2   A1021-5.9                          .501 .134        11000
+  335 L  ACONVERSE 3   A1021-5.9                          .834 .222        11000
+  336 L  ABLACKSTOCK 0 A1016-1.6                                           11000
+  337 L  ABLACKSTOCK 1 A1016-1.6                          5.6731.513       11000
+  338 L  AFORT MILL ~5 A10118.58                                           11000
+  339 L  AFORT MILL ~6 A10108.43                          75.1120.03       11000
+  340 L  ALANDRUM 0    A1002-8.4                                           11000
+  341 L  ALANDRUM 1    A1001-8.4                          24.226.459       11000
+  342 L  ASILVERSTRE~1 A1011-11.                                           11000
+  343 L  ASILVERSTRE~2 A1011-11.                          2.511.67         11000
+  344 L  ASILVERSTRE~3 A1011-11.                          2.43 .648        11000
+  345 L  AORANGEBURG 0 A1002-11.                                           11000
+  346 L  AORANGEBURG 1 A1001-12.                          47.5812.69       11000
+  347 L  AGREENVILLE~2 A 988-12.                                           11000
+  348 L  AGREENVILLE~3 A 986-12.                          86.4 23.04       11000
+  349 L  ACHAPPELLS ~1 A1019-9.9                                           11000
+  350 L1  CHAPPELLS ~2 A1024-9.415.  5.76 -.7355.76                        11000
+  351 L1  CHAPPELLS ~3 A1022-9.76.2  2.381-.3042.381                       11000
+  352 L1  CHAPPELLS ~4 A1024-9.414.4 5.53 -.7065.53                        11000
+  353 L1  CHAPPELLS ~5 A1040-7.174.  28.42-3.6328.42                       11000
+  354 L  ARIDGEWAY 2 0 A1022-5.7                                           11000
+  355 L  ARIDGEWAY 2 1 A1022-5.8                          19.965.324       11000
+  356 L  AFOUNTAIN I~1 A1005-14.                                           11000
+  357 L  AFOUNTAIN I~2 A1004-14.                          55.7314.86       11000
+  358 L  ASTARR 0      A1002-14.                                           11000
+  359 L  ASTARR 1      A1002-14.                          14.593.89        11000
+  360 L  ASPARTANBUR~4 A1002-9.2                                           11000
+  361 L1  SPARTANBUR~5 A1002-9.2          0.   0.                          11000
+  362 L1  SPARTANBUR~6 A1002-9.2          0.   0.                          11000
+  363 L1  SPARTANBUR~7 A1002-9.2          0.   0.                          11000
+  364 L  ASPARTANBUR~8 A1002-9.3                          30.448.117       11000
+  365 L  AGASTON 2 0   A1008-11.                                           11000
+  366 L  AGASTON 2 1   A1007-11.                          56.4915.06       11000
+  367 L  ASIX MILE 0   A1014-4.3                                           11000
+  368 L  ASIX MILE 1   A1014-4.3                          11.453.054       11000
+  369 L  ASENECA 1 0   A1018-3.1                                           11000
+  370 L  ASENECA 1 1   A1017-3.1                          35.6 9.494       11000
+  371 L   GILBERT 0    A1028-5.1                                           11000
+  372 L  AGILBERT 1    A1019-8.7                                           11000
+  373 L  AGILBERT 2    A1019-8.7                          28.847.69        11000
+  374 L  ASWANSEA 0    A1005-11.                                           11000
+  375 L  ASWANSEA 1    A1005-11.                          24.776.604       11000
+  376 L  AINMAN 0      A1007-7.9                                           11000
+  377 L  AINMAN 1      A1006-8.                           90.3924.1        11000
+  378 L  AGREAT FALL~1 A1020-.61                                           11000
+  379 L  AGREAT FALL~2 A1020-.64                          13.013.47        11000
+  380 L  AWHITMIRE 0   A1008-6.8                                           11000
+  381 L  AWHITMIRE 1   A1008-6.8                          10.132.702       11000
+  382 L  AGRAY COURT 0 A1007-14.                                           11000
+  383 L  AGRAY COURT 1 A1007-14.                          29.957.986       11000
+  384 L  AWILLIAMSTO~6 A 994-11.                                           11000
+  385 L  AWILLIAMSTO~7 A 994-11.                          36.629.766       11000
+  386 L   CLEMSON 0    A1027-1.2                                           11000
+  387 L  ACLEMSON 1    A1021-3.                                            11000
+  388 L1  CLEMSON 2    A1027-1.2          0.   0.                          11000
+  389 L1  CLEMSON 3    A1027-1.2          0.   0.                          11000
+  390 L1  CLEMSON 4    A1027-1.2          0.   0.                          11000
+  391 L1  CLEMSON 5    A1027-1.2          0.   0.                          11000
+  392 L1  CLEMSON 6    A1027-1.2          0.   0.                          11000
+  393 L1  CLEMSON 7    A1027-1.2          0.   0.                          11000
+  394 L1  CLEMSON 8    A1027-1.2          0.   0.                          11000
+  395 L1  CLEMSON 9    A1027-1.2          0.   0.                          11000
+  396 L1  CLEMSON 10   A1027-1.2          0.   0.                          11000
+  397 L  ACLEMSON 11   A1020-3.1                          39.9510.65       11000
+  398 L  ACLEMSON 12   A1020-3.                           16.774.471       11000
+  399 L  ABEECH ISLA~9 A1023-11.                                           11000
+  400 L  ABEECH ISL~10 A1022-11.                          23.026.14        11000
+  401 L  ACLOVER 0     A10085.35                                           11000
+  402 L  ACLOVER 1     A10075.17                          88.3523.56       11000
+  403 L  ANINETY SIX 0 A1012-11.                                           11000
+  404 L  ANINETY SIX 1 A1012-11.                          19.775.272       11000
+  405 L  AMC CONNELL~1 A1005-1.9                                           11000
+  406 L  AMC CONNELL~2 A1005-1.9                          5.25 1.4         11000
+  407 L   BEECH ISLA~1 A1034-7.6                                           11000
+  408 L  ABEECH ISLA~2 A1028-9.8                                           11000
+  409 L1  BEECH ISLA~3 A1034-7.6          0.   0.                          11000
+  410 L1  BEECH ISLA~4 A1040-5.979.4314.93-15.269.71                       11000
+  411 L1  BEECH ISLA~5 A1040-6.679.4325.53-15.269.71                       11000
+  412 L1  BEECH ISLA~6 A1040-6.579.4322.34-15.269.71                       11000
+  413 L1  BEECH ISLA~7 A1040-6.361.6 14.63-15.269.71                       11000
+  414 L1  BEECH ISLA~8 A1034-7.6          0.   0.                          11000
+  415 L  AGADSDEN 0    A1009-10.                                           11000
+  416 L  AGADSDEN 1    A1009-10.                          6.0631.617       11000
+  417 L  ATRAVELERS ~1 A 998-11.                                           11000
+  418 L  ATRAVELERS ~2 A 997-11.                          63.6216.96       11000
+  419 L  ADUE WEST 0   A1002-14.                                           11000
+  420 L  ADUE WEST 1   A1002-14.                          5.2261.394       11000
+  421 L  ABLYTHEWOOD 0 A1013-7.1                                           11000
+  422 L  ABLYTHEWOOD 1 A1013-7.2                          49.1813.11       11000
+  423 L  AROCK HILL ~1 A 9974.52                                           11000
+  424 L  AROCK HILL ~2 A 9954.19                          157.141.89       11000
+  425 L   HODGES 0     A1018-7.2                                           11000
+  426 L  AHODGES 1     A1012-9.5                                           11000
+  427 L  AHODGES 2     A1012-9.6                          14.433.849       11000
+  428 L   CHESNEE 2 0  A1031-4.1                                           11000
+  429 L  ACHESNEE 2 1  A1021-6.                                            11000
+  430 L1  CHESNEE 2 2  A1031-4.11.   .384 -.049.384                        11000
+  431 L1  CHESNEE 2 3  A1031-4. 3.3  1.267-.1621.267                       11000
+  432 L1  CHESNEE 2 4  A1031-4.11.2  .461 -.059.461                        11000
+  433 L1  CHESNEE 2 5  A1033-3.86.7  2.573-.3282.573                       11000
+  434 L1  CHESNEE 2 6  A1031-4. 4.3  1.651-.2111.651                       11000
+  435 L1  CHESNEE 2 7  A1031-4.1          0.   0.                          11000
+  436 L1  CHESNEE 2 8  A1031-4.1          0.   0.                          11000
+  437 L1  CHESNEE 2 9  A1040-2.2197. 52.67-9.6575.65                       11000
+  438 L1  CHESNEE 2 10 A1040-1.7197. 40.09-9.6575.65                       11000
+  439 L1  CHESNEE 2 11 A1040-2.6197. 65.56-9.6575.65                       11000
+  440 L   WILLIAMSTO~1 A1015-5.5                                           11000
+  441 L  AWILLIAMSTO~2 A 999-9.7                                           11000
+  442 L1  WILLIAMSTO~3 A1015-5.5          0.   0.                          11000
+  443 L1  WILLIAMSTO~4 A1015-5.5          0.   0.                          11000
+  444 L1  WILLIAMSTO~5 A1015-5.5          0.   0.                          11000
+  445 L  AEASLEY 2 0   A1007-7.2                                           11000
+  446 L  AEASLEY 2 1   A1006-7.4                          88.6823.65       11000
+  447 L  AUNION 2 0    A1010-6.9                                           11000
+  448 L  AUNION 2 1    A1009-7.1                          57.5615.35       11000
+  449 L  AARCADIA 0    A1012-7.2                                           11000
+  450 L  AARCADIA 1    A1012-7.2                          1.122.299        11000
+  451 L  AARCADIA 2    A1012-7.2                          2.211.59         11000
+  452 L  ACATAWBA 0    A10174.67                          11.162.977       11000
+  453 L   GASTON 1 0   A1031-5.4                                           11000
+  454 L  AGASTON 1 1   A1015-9.7                                           11000
+  455 L1  GASTON 1 2   A1040-4.866.8556.46-24.7113.4                       11000
+  456 L1  GASTON 1 3   A1040-4.2133.755.6 -49.5226.8                       11000
+  457 L  AEASTOVER 1 0 A1022-5.8                                           11000
+  458 L1  EASTOVER 1 1 A1021-1.5109.60.   0.   0.                          11000
+  459 L  AFORT MILL ~4 A10098.11                          74.4719.86       11000
+  460 L  ACAMPOBELLO 0 A1004-8.3                          26.347.025       11000
+  461 L  AEASLEY 1 0   A1002-7.2                          91.7224.46       11000
+  462 L  AUNION 1 0    A1019-6.6                                           11000
+  463 L1  UNION 1 1    A1019-6.6          0.   0.                          11000
+  464 L   JONESVILLE 0 A1028-4.4                                           11000
+  465 L  AJONESVILLE 1 A1024-5.6                          12.523.339       11000
+  466 L  ACHESNEE 1 0  A1019-6.2                          43.3411.56       11000
+  467 L  ANORRIS 0     A1015-4.4                          .807 .215        11000
+  468 L  ACLEVELAND 0  A1004-7.2                          3.7621.003       11000
+  469 L  AGREER 2 0    A 991-11.                          128.534.27       11000
+  470 L  ACENTRAL 0    A1016-4.                           42.5611.35       11000
+  471 L   SPARTANBUR~2 A1029-4.1                                           11000
+  472 L  ASPARTANBUR~3 A1022-5.6                          49.7113.26       11000
+  473 L  ALONG CREEK 0 A1016-3.5                          .999 .266        11000
+  474 L  AGREENVILLE~1 A 984-11.                                           11000
+  475 L  APEAK 0       A1017-4.5                          .162 .043        11000
+  476 L  ACOLUMBIA 2 0 A1017-9.9                          59.8615.96       11000
+  477 L  AROEBUCK 0    A1011-8.1                                           11000
+  478 L  ASHARON 0     A1016-3.2                                           11000
+  479 L  ARIDGEWAY 1 0 A1033-4.                                            11000
+  480 L1  RIDGEWAY 1 1 A1040-2.256.  9.617-2.7421.5                        11000
+  481 L1  RIDGEWAY 1 2 A1040-2.745.  12.1 -2.2117.28                       11000
+  482 L1  RIDGEWAY 1 3 A1039-3.345.  17.28-2.2117.28                       11000
+  483 L1  RIDGEWAY 1 4 A1040-2.824.  6.247-1.189.216                       11000
+  484 L1  RIDGEWAY 1 5 A1039-3.228.  10.75-1.3710.75                       11000
+  485 L  AWEST COLUM~2 A1012-11.                          27.887.434       11000
+  486 L  AWEST COLUM~1 A1015-9.7                          68.5318.28       11000
+  487 L  ATOWNVILLE 0  A1009-13.                          11.673.111       11000
+  488 L  AGREER 1 0    A 992-11.                          97.9 26.11       11000
+  489 L  APLUM BRANC~1 A1020-10.                                           11000
+  490 L  AHONEA PATH~1 A 998-11.                          29.817.95        11000
+  491 L  ACOLUMBIA 1 0 A1017-12.                          119.531.87       11000
+  492 L  ACHESTER 0    A1004-2.6                          59.5415.88       11000
+  493 L  ACARLISLE 0   A1014-5.3                          4.0471.079       11000
+  494 L1  CARLISLE 1   A1014-5.3          0.   0.                          11000
+  495 L  ASPARTANBUR~1 A1009-7.6                          75.1720.05       11000
+  496 L  AFORT MILL ~1 A10138.37                                           11000
+  497 L1  FORT MILL ~2 A102710.560.  23.04-2.9423.04                       11000
+  498 L1  FORT MILL ~3 A10219.5318.  6.912-.8826.912                       11000
+  499 L  ALEXINGTON ~1 A1003-12.                          122.332.62       11000
+  500 L  AMC CORMICK 0 A1017-10.                                           11000
+99999
+DLIN
+(De )d O d(Pa )NcEP ( R% )( X% )(Mvar)(Tap)(Tmn)(Tmx)(Phs)(Bc  )(Cn)(Ce)Ns(Cq)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
+    2         1 1   .0531 .31397                                  76          
+    3       479 1   .725856.96992.25                             320          
+    4         3 1   .06921.35184                                 225          
+    6         5 1   .05559.3563                                    4          
+    7       232 1   .111911.480831.205                          1493          
+    7       262 1   .094671.374923.994                          1493          
+    8       287 1   .372683.57861.1552                           320          
+    8       457 1   .197391.8955.61188                           320          
+    8         7 1   .035511.29        1.                         567          
+    9         7 1   .012  1.362       1.                         680          
+    9         7 2   .012  1.362       1.                         680          
+   10       349 1   .140171.3459.43449                           320          
+   11        10 1   .0655 .32008                                   3          
+   12       216 1   .396233.80481.2282                           320          
+   12       304 1   .231012.1191.75098                           320          
+   12       441 1   .156471.5025.48502                           320          
+   13        12 1   .06231.31341                                  65          
+   15        91 1   .479934.60851.4877                           320          
+   15       230 1   1.089410.4613.3769                           320          
+   15       369 1   .185441.7011.60281                           320          
+   15       473 1   .922488.46222.9988                           320          
+   15        14 1   .020791.122       1.                         682          
+   16        14 1   .032591.202       1.                         596          
+   17        14 1   .027871.438       1.                         674          
+   17        14 2   .035391.438       1.                         674          
+   18        14 1   .141725.115       1.                         340          
+   19       112 1   .472224.53451.4638                           320          
+   19       272 1   .229312.202 .71083                           320          
+   20        19 1   .05412.38858                                   7          
+   21       112 1   .5092 4.88971.5784                           320          
+   21       196 1   .220722.0247.71751                           320          
+   22        21 1   .05872.3174                                  254          
+   23       386 1   .1642 2.385141.623                          1493          
+   23       464 1   .094721.253226.41                           1493          
+   23       471 1   .05321.7040514.837                          1493          
+   24       360 1   .236542.2714.73323                           320          
+   24        23 1   .033  1.764       1.                         626          
+   25        24 1   .06131.36289                                   3          
+   26        24 1   .0563 .37294                                  29          
+   27        68 1   .560745.38451.7382                           320          
+   27       382 1   .336983.09121.0954                           320          
+   28        27 1   .06867.3963                                  108          
+   29       491 1   .5607 5.38371.7379                           320          
+   30        29 1   .06164.32985                                 156          
+   31        85 1   .530345.09261.644                            320          
+   31       189 1   .570685.48  1.769                            320          
+   31       205 1   .779687.48692.4169                           320          
+   31       218 1   .827347.94462.5646                           320          
+   32        31 1   .06252.34292                                  15          
+   34        33 1   .06244.32836                                  43          
+   35       399 1   .5636 5.41231.7472                           320          
+   36        35 1   .0583 .30301                                  62          
+   37       176 1   .303872.918 .94195                           320          
+   38        37 1   .05458.38229                                   0          
+   39       332 1   .04034.5786210.355                          1493          
+   39       428 1   .05214.6898514.538                          1493          
+   40       131 1   .290862.6681.94553                           320          
+   40        39 1   .07   2.531       1.                         428          
+   41        40 1   .06312.39226                                  97          
+   42       191 1   .636855.842 2.0703                           320          
+   43        42 1   .05416.31189                                   7          
+   44         1 1   .547865.02571.781                            320          
+   44       200 1   .210521.9311.68435                           320          
+   45        44 1   .06365.38764                                   2          
+   46       156 1   .6611 6.34822.0493                           320          
+   47        46 1   .06022.34541                                  63          
+   49        48 1   1.331 27.853      1.                          57          
+   50        48 1   .715  16.356      1.                          70          
+   51        48 1   .06578.36722                                   0          
+   52        48 1   .062  .33423                                  37          
+   53       276 1   .150211.4424.46562                           320          
+   54        53 1   .06805.30613                                  51          
+   55        66 1   .432964.15751.3421                           320          
+   55       500 1   .448064.11021.4566                           320          
+   56        55 1   .0641 .331                                     3          
+   57       123 1   .1682 2.442742.627                          1493          
+   58       253 1   .453214.352 1.4049                           320          
+   58        57 1   .012  1.762       1.                         675          
+   58        57 2   .012  1.762       1.                         675          
+   59        58 1   .06204.38484                                 252          
+   60       131 1   .198491.8208.64525                           320          
+   61        60 1   .05288.35179                                   0          
+   62         3 1   .271782.6098.84247                           320          
+   62       457 1   .726756.97862.2528                           320          
+   63        62 1   .32   16.353      1.                          70          
+   64        62 1   .06612.32739                                  45          
+   65       297 1   .091961.319223.607                          1493          
+   66       308 1   .718046.895 2.2258                           320          
+   66        65 1   .080793.088       1.                         405          
+   67        66 1   .06614.33586                                   6          
+   68       295 1   .4469 4.09951.4528                           320          
+   68       314 1   .180511.7334.55955                           320          
+   69        68 1   .06688.39982                                  27          
+   70       490 1   .2127 1.9512.69144                           320          
+   71        70 1   .103  4.472       1.                         133          
+   72        70 1   .292  14.481      1.                          60          
+   73        70 1   1.269627.303      1.                          49          
+   74       189 1   .563235.40841.7459                           320          
+   75        74 1   .05844.33391                                   8          
+   76        37 1   .147411.4155.45696                           320          
+   77        76 1   .0695 .33127                                  12          
+   78       328 1   .5432 4.98291.7658                           320          
+   78       387 1   .235452.2609.72984                           320          
+   79        78 1   .06223.32785                                   0          
+   80        65 1   .096021.377324.648                          1493          
+   81        42 1   .236122.166 .76759                           320          
+   81        80 1   .065  3.481       1.                         529          
+   82        80 1   .043  3.113       1.                         628          
+   83        33 1   .528655.07641.6387                           320          
+   83       342 1   .411563.952 1.2758                           320          
+   84        83 1   .06376.36552                                 105          
+   86        85 1   .06523.39011                                  30          
+   87       141 1   .184611.7727.57225                           320          
+   87       143 1   .382023.50431.2419                           320          
+   88        87 1   .06225.35686                                   7          
+   89       187 1   .211632.0322.656                             320          
+   89       457 1   .9012 8.26662.9295                           320          
+   90        89 1   .05541.3864                                   10          
+   91       133 1   .504054.84021.5624                           320          
+   92        91 1   .05717.36172                                 104          
+   94        93 1   .0536 .32815                                   8          
+   95       170 1   .211072.0268.65427                           320          
+   95       369 1   .409443.93161.2692                           320          
+   96        95 1   .05627.32534                                  56          
+   98        97 1   .05688.3986                                   66          
+   99       465 1   .268892.582 .83351                           320          
+  100        99 1   .06444.36203                                  22          
+  101        99 1   .06995.32939                                   1          
+  102       308 1   .564995.42541.7514                           320          
+  103       102 1   .0614 .3874                                   64          
+  104        31 1   .552585.30621.7129                           320          
+  104       191 1   .517654.74851.6828                           320          
+  105       104 1   .06725.3751                                  144          
+  106       191 1   .446794.29041.385                            320          
+  107       106 1   .05746.32063                                  24          
+  108       472 1   .203291.9521.63017                           320          
+  108       495 1   .361073.46721.1193                           320          
+  109       108 1   .0658 .30096                                  62          
+  110       316 1   .343923.30251.0661                           320          
+  111       110 1   .05268.37083                                  87          
+  112        33 1   .706146.78082.1889                           320          
+  112       236 1   .632926.07771.9619                           320          
+  112       283 1   .861858.276 2.6716                           320          
+  112       499 1   .557655.11551.8128                           320          
+  113       112 1   .06444.31194                                  72          
+  114       191 1   .555725.33641.7226                           320          
+  114       312 1   .660896.34622.0486                           320          
+  115       114 1   .05062.33604                                   6          
+  116       114 1   .0505 .34105                                   5          
+  117       426 1   .317222.90991.0312                           320          
+  118       117 1   .06338.3851                                   12          
+  119       129 1   .234972.1554.76382                           320          
+  120       119 1   .05561.3059                                   46          
+  121       276 1   .254762.4463.7897                            320          
+  121       287 1   .708756.80582.197                            320          
+  122       121 1   .05549.38464                                  70          
+  124       260 1   .203951.8709.66301                           320          
+  124       369 1   .769287.05682.5008                           320          
+  124       123 1   .02   1.438       1.                         488          
+  125       123 1   .028  4.064       1.                         346          
+  126       123 1   .015  2.189       1.                         352          
+  127       123 1   .038  4.792       1.                         378          
+  128       123 1   .016  1.585       1.                         391          
+  130       129 1   .0698 .3221                                  165          
+  131       333 1   .222712.1386.69035                           320          
+  132       131 1   .06733.36152                                  41          
+  133       226 1   .644015.90772.0936                           320          
+  133       369 1   .615515.64622.0009                           320          
+  134       133 1   .0515 .30826                                  66          
+  135       287 1   .756786.94212.4601                           320          
+  135       457 1   .686496.29732.2316                           320          
+  136       135 1   .05488.36604                                  45          
+  137       214 1   .312012.9961.96718                           320          
+  137       426 1   .299842.8792.92944                           320          
+  137       426 2   .3    2.879 .929                             320          
+  138       137 1   .05556.3788                                  122          
+  139       376 1   .2676 2.5697.82952                           320          
+  140       139 1   .06002.31821                                   0          
+  142       141 1   .06867.34167                                 209          
+  143       338 1   .211581.9409.68781                           320          
+  143       401 1   .4057 3.89571.2576                           320          
+  143       452 1   .753657.237 2.3362                           320          
+  144       143 1   .152  7.66        1.                         336          
+  144       143 2   .152  7.66        1.                         336          
+  145       143 1   .119  3.37        1.                         322          
+  145       143 2   .119  3.37        1.                         322          
+  146       162 1   .02846.408317.3069                          1493          
+  146       195 1   .03275.4333 9.1312                          1493          
+  147       146 1   .1007 5.565       1.                         272          
+  148       147 1   .05927.39351                                 102          
+  149        81 1   .287912.6411.93592                           320          
+  150       149 1   .068  .36931                                   2          
+  151        23 1   .01817.260664.6646                          1493          
+  152       151 1   .034192.03        1.                         570          
+  153       152 1   .05295.31124                                 130          
+  154       429 1   .211952.0352.65699                           320          
+  154       488 1   .8007 7.345 2.6029                           320          
+  155       154 1   .05326.30051                                  89          
+  157       156 1   .05974.35789                                 164          
+  158       233 1   .609665.59251.9818                           320          
+  158       291 1   .513334.92931.5912                           320          
+  159       158 1   .06008.38732                                  31          
+  160       212 1   .2567 2.465 .79573                           320          
+  160       399 1   .401473.68281.3051                           320          
+  161       160 1   .05555.35678                                  44          
+  162       195 1   .02255.327555.7159                          1493          
+  162       220 1   .138971.838838.751                          1493          
+  162       232 1   .05294.7593613.589                          1493          
+  163       162 1   .034461.982       1.                         510          
+  163       162 2   .036561.982       1.                         510          
+  164       163 1   .065  .39874                                 174          
+  165       123 1   .0216 .313765.4753                          1493          
+  165       386 1   .071761.042318.188                          1493          
+  166       228 1   .484514.44451.575                            320          
+  166       289 1   .211342.0294.65512                           320          
+  166       165 1   .01832.871        1.                         606          
+  167       165 1   .046312.157       1.                         411          
+  168       165 1   .029  3.549       1.                         445          
+  169       165 1   .035  2.558       1.                         543          
+  170       226 1   .463124.24841.5055                           320          
+  171       170 1   .05126.37741                                  20          
+  172       244 1   .329073.15991.02                             320          
+  173       172 1   .06754.31339                                   4          
+  174       172 1   .05859.30389                                  12          
+  175       220 1   .109881.595927.851                          1493          
+  176       175 1   .039  3.857       1.                         273          
+  177       176 1   .05572.36491                                  12          
+  178       176 1   .06844.31557                                  10          
+  179       291 1   .5964 5.727 1.8487                           320          
+  179       374 1   .377363.62361.1698                           320          
+  180       179 1   .0694 .33022                                  25          
+  181        97 1   .299242.8734.92758                           320          
+  181       487 1   .275142.6421.85289                           320          
+  182       181 1   .06311.37153                                 145          
+  183       247 1   .196491.8868.60908                           320          
+  183       274 1   .367253.52661.1384                           320          
+  184       183 1   .05418.30082                                  40          
+  185       467 1   .201631.8496.65545                           320          
+  186       185 1   .05618.30657                                  76          
+  187       454 1   1.384812.7044.5018                           320          
+  188       187 1   .06698.31448                                  19          
+  190       189 1   .06895.30102                                  22          
+  191        35 1   .4038 3.70421.3127                           320          
+  191       205 1   .532585.11411.6509                           320          
+  191       293 1   .516454.95921.6009                           320          
+  192       191 1   .06838.37637                                  27          
+  193        19 1   .222052.1323.68832                           320          
+  193       112 1   .286732.7534.88882                           320          
+  194       193 1   .06957.38021                                  49          
+  196       195 1   .023  1.443       1.                         560          
+  197       195 1   .06   3.102       1.                         597          
+  198       195 1   .038612.185       1.                         527          
+  199       196 1   .06932.33123                                 123          
+  200       163 1   .326652.99651.0619                           320          
+  201       200 1   .0686 .31742                                  14          
+  202       172 1   .407313.91121.2626                           320          
+  203       202 1   .06435.36176                                   6          
+  204       202 1   .05531.38893                                  72          
+  205       312 1   .676666.20722.1997                           320          
+  206       205 1   .05544.30281                                   4          
+  207       205 1   .06532.37004                                  30          
+  209       208 1   .05136.36009                                 141          
+  210        24 1   .221772.0344.72094                           320          
+  211       210 1   .06788.37829                                  54          
+  212       399 1   .334433.21141.0367                           320          
+  213       212 1   .06278.36853                                 155          
+  214       403 1   .4217 4.04941.3072                           320          
+  215       214 1   .05784.38132                                 124          
+  216        70 1   .259562.3811.84379                           320          
+  217       216 1   .06   .31293                                  71          
+  218       399 1   .4545 4.36471.409                            320          
+  219       218 1   .05806.36575                                   0          
+  220       471 1   .097811.420524.789                          1493          
+  221       447 1   .396973.81191.2305                           320          
+  221       478 1   .303622.9155.94116                           320          
+  221       493 1   .341293.27731.0579                           320          
+  221       220 1   .0872 2.901       1.                         556          
+  222       220 1   .048462.225       1.                         228          
+  223       220 1   .057463.062       1.                         248          
+  224       220 1   .054342.404       1.                         588          
+  224       220 2   .043  2.404       1.                         588          
+  225       220 1   .018  1.242       1.                         628          
+  225       220 2   .018  1.242       1.                         628          
+  227       226 1   .06668.33473                                   8          
+  228       468 1   .489164.69721.5163                           320          
+  228       474 1   .651345.97492.1174                           320          
+  229       228 1   .05896.35892                                  77          
+  231       230 1   .368  18.877      1.                          65          
+  232       371 1   .04937.6531913.765                          1493          
+  232       453 1   .03244.429239.0454                          1493          
+  233        53 1   .2362 2.1667.76783                           320          
+  233       486 1   .226592.1759.70239                           320          
+  233       232 1   .046  2.07        1.                         628          
+  234       233 1   .05511.34148                                  95          
+  235       271 1   .03126.413598.7158                          1493          
+  235       407 1   .1237 1.636634.489                          1493          
+  236       106 1   .311532.9915.96569                           320          
+  236       235 1   .024  2.788       1.                         507          
+  237       236 1   .06964.33483                                   4          
+  238        46 1   .313383.0093.97143                           320          
+  238       152 1   .215462.069 .66789                           320          
+  239       238 1   .05127.36185                                  64          
+  240        74 1   .443354.067 1.4412                           320          
+  240       272 1   1.164510.6823.7854                           320          
+  241       240 1   .05403.39831                                  27          
+  242       287 1   .705166.77132.1859                           320          
+  242       320 1   .3028 2.9073.9385                            320          
+  243       242 1   .06059.37024                                 130          
+  244       426 1   .370013.39411.2028                           320          
+  245       244 1   .05978.31526                                  15          
+  246       332 1   .0921 1.337 23.332                          1493          
+  246       471 1   .108641.437430.292                          1493          
+  247       246 1   .123  6.785       1.                         271          
+  248       246 1   .131425.441       1.                         336          
+  249       246 1   .138555.427       1.                         333          
+  250       246 1   .041022.016       1.                         628          
+  250       246 2   .039262.016       1.                         628          
+  251       360 1   .4529 4.15461.4723                           320          
+  252       251 1   .06609.38631                                 171          
+  253       119 1   .149441.435 .46323                           320          
+  253       347 1   .255022.4489.79052                           320          
+  253       417 1   .533254.89161.7335                           320          
+  254       253 1   .422  13.453      1.                         134          
+  255       253 1   .273  10.598      1.                          75          
+  256       253 1   .659  18.871      1.                          65          
+  257       253 1   .255  8.097       1.                         142          
+  258       253 1   .935  25.929      1.                          52          
+  259       253 1   .0652 .35788                                  11          
+  260       166 1   .198951.825 .64675                           320          
+  261       260 1   .05741.33158                                  31          
+  262       232 1   .02528.362686.4904                          1493          
+  263       276 1   .08639.82957.2678                            320          
+  263       326 1   .252322.4229.78215                           320          
+  263       476 1   .180611.7343.55984                           320          
+  263       491 1   .346273.32511.0734                           320          
+  263       262 1   .038431.827       1.                         656          
+  264       262 1   .052  5.005       1.                         255          
+  265       262 1   .023  3.379       1.                         241          
+  266       263 1   .05706.34057                                 107          
+  267        31 1   .489674.70211.5179                           320          
+  268       267 1   .05023.35746                                 206          
+  269        93 1   .392063.59651.2745                           320          
+  270       269 1   .05736.39766                                  10          
+  272        85 1   .441174.04691.4341                           320          
+  272       271 1   .100623.765       1.                         484          
+  273       272 1   .05674.39974                                  15          
+  274       110 1   .312613.0018.96902                           320          
+  275       274 1   .12   4.081       1.                         225          
+  276       320 1   .321013.0825.99506                           320          
+  276       485 1   .262912.4118.85468                           320          
+  277       276 1   .05389.36625                                   0          
+  278       276 1   .05292.38501                                   8          
+  279       340 1   .5965 5.72791.849                            320          
+  279       468 1   .3204 3.0766.99317                           320          
+  280       279 1   .0691 .30813                                  24          
+  281       328 1   .496664.556 1.6145                           320          
+  281       384 1   .383033.67811.1873                           320          
+  282       281 1   .05389.3617                                  203          
+  283       236 1   .451594.14251.468                            320          
+  284       283 1   .06452.39884                                  48          
+  285       230 1   .2749 2.6397.85214                           320          
+  285       487 1   .323813.10941.0037                           320          
+  286       285 1   .06672.32658                                  13          
+  287        62 1   .545325.23651.6904                           320          
+  287       415 1   .428143.92741.3918                           320          
+  287       476 1   .744146.82622.419                            320          
+  288       287 1   .05065.3818                                   89          
+  290       289 1   .05426.38066                                   5          
+  292       291 1   .05817.32212                                  12          
+  293       149 1   .438554.21121.3594                           320          
+  294       293 1   .06452.32903                                  35          
+  295       447 1   .341973.13691.1117                           320          
+  296       295 1   .05311.34335                                  10          
+  297       440 1   .06516.9346216.726                          1493          
+  298       426 1   .324063.11181.0045                           320          
+  298       297 1   .058763.135       1.                         348          
+  299       298 1   .05401.36341                                  20          
+  300       141 1   .267032.4495.86804                           320          
+  300       478 1   .836398.03142.5926                           320          
+  301       300 1   .245  8.126       1.                          67          
+  302       300 1   .367  7.834       1.                          75          
+  303       300 1   .06457.39968                                 139          
+  304       129 1   .3063 2.9412.94946                           320          
+  305       304 1   2.066 53.593      1.                          28          
+  306       304 1   .522  24.992      1.                          63          
+  307       304 1   .05469.34665                                 122          
+  308       500 1   .694456.66852.1526                           320          
+  309       308 1   .06577.39954                                  13          
+  310       281 1   .225092.1614.69773                           320          
+  311       310 1   .06172.35867                                  60          
+  312       267 1   .447634.29841.3876                           320          
+  313       312 1   .06422.39764                                  17          
+  314       295 1   .319263.0657.98966                           320          
+  315       314 1   .05359.3143                                    0          
+  316         5 1   .244522.348 .75796                           320          
+  317       316 1   .06712.30454                                   5          
+  318       176 1   .342723.29091.0623                           320          
+  318       336 1   .546745.01541.7774                           320          
+  319       318 1   .159  7.586       1.                         120          
+  321       320 1   .06258.36186                                 269          
+  322        58 1   .201881.9385.62578                           320          
+  322        58 2   .202  1.939 .626                             320          
+  322       208 1   .285962.746 .88642                           320          
+  323       322 1   .06582.31093                                  75          
+  324       129 1   .187841.7231.61064                           320          
+  324       322 1   .157191.4419.51099                           320          
+  325       324 1   .05367.37123                                 146          
+  327       326 1   .05709.31932                                 159          
+  329       328 1   .05538.3034                                   40          
+  331       330 1   .05703.38818                                  77          
+  332       471 1   .02581.341477.196                           1493          
+  333       330 1   .151771.4574.47046                           320          
+  333       332 1   .074  2.644       1.                         508          
+  334       333 1   .06622.31959                                   0          
+  335       333 1   .06269.35518                                   1          
+  336        93 1   .579455.31551.8837                           320          
+  337       336 1   .05628.3904                                    9          
+  338       459 1   .195151.7902.63439                           320          
+  339       338 1   .05581.36293                                  98          
+  341       340 1   .06177.38475                                  43          
+  342        10 1   .282452.7123.87555                           320          
+  343       342 1   .05757.36278                                   3          
+  344       342 1   .05715.38761                                   3          
+  345       179 1   .508094.66081.6517                           320          
+  345       415 1   .709936.51242.3078                           320          
+  346       345 1   .05566.31862                                  72          
+  347       417 1   .555115.09221.8045                           320          
+  348       347 1   .05787.3119                                  138          
+  349       403 1   .261722.5132.81127                           320          
+  350       349 1   .27   7.16        1.                         183          
+  351       349 1   .389  7.925       1.                         142          
+  352       349 1   .304577.211       1.                         150          
+  353       349 1   .27   7.22        1.                         206          
+  355       354 1   .06885.37601                                  28          
+  356       208 1   .2554 2.4525.79169                           320          
+  356       382 1   .284852.7352.88297                           320          
+  357       356 1   .05522.34248                                  84          
+  358        48 1   .450044.12831.463                            320          
+  358        97 1   .267652.4552.87006                           320          
+  358       310 1   .2931 2.6886.95279                           320          
+  359       358 1   .06699.35064                                  25          
+  360       417 1   .812377.80082.5182                           320          
+  361       360 1   1.388 33.724      1.                          52          
+  362       360 1   .354  11.798      1.                         162          
+  363       360 1   .224  11.593      1.                          75          
+  364       360 1   .05134.35579                                  40          
+  365       374 1   .283582.7231.87906                           320          
+  365       454 1   .2302 2.2105.71359                           320          
+  366       365 1   .0541 .39154                                 101          
+  367        15 1   .191791.8416.5945                            320          
+  367       461 1   .632585.80282.0564                           320          
+  367       468 1   .8321 7.63312.705                            320          
+  368       367 1   .05166.32143                                  17          
+  370       369 1   .05691.30634                                  62          
+  371       195 1   .04509.5966312.573                          1493          
+  372       112 1   .200651.9267.62198                           320          
+  372       371 1   .025  3.602       1.                         508          
+  373       372 1   .05813.31808                                  48          
+  375       374 1   .05011.30074                                  43          
+  376       429 1   .274532.6362.851                             320          
+  376       460 1   .224582.1565.69614                           320          
+  376       469 1   .490934.50341.5959                           320          
+  376       495 1   .332583.19361.0309                           320          
+  377       376 1   .05019.33547                                 162          
+  378       318 1   .130141.2497.40341                           320          
+  378       336 1   .507884.87691.5743                           320          
+  379       378 1   .05866.38189                                  20          
+  380       202 1   .536  5.147 1.6615                           320          
+  381       380 1   .05288.35903                                  14          
+  383       382 1   .05409.35732                                  44          
+  385       384 1   .05682.31481                                  48          
+  386        14 1   .0317 .454658.1363                          1493          
+  386        14 2   .032  .455  8.136                           1493          
+  387       467 1   .315072.89031.0242                           320          
+  387       470 1   .213791.9612.69499                           320          
+  387       386 1   .016  1.653       1.                         658          
+  387       386 2   .016  1.653       1.                         658          
+  388       386 1   .036  4.243       1.                         255          
+  389       386 1   .043  3.576       1.                         374          
+  390       386 1   .021  2.728       1.                         389          
+  391       386 1   .023  2.451       1.                         399          
+  392       386 1   .029  3.299       1.                         297          
+  393       386 1   .024  3.349       1.                         283          
+  394       386 1   .039  2.2         1.                         318          
+  395       386 1   .104  5.624       1.                         312          
+  396       386 1   .015  2.168       1.                         313          
+  397       387 1   .0514 .33                                     66          
+  398       387 1   .06921.31055                                  24          
+  399       312 1   .482164.62991.4946                           320          
+  400       399 1   .06944.39662                                  31          
+  401         5 1   .488624.692 1.5146                           320          
+  402       401 1   .05111.37121                                 123          
+  404       403 1   .06159.34663                                  26          
+  405       300 1   .3374 3.23991.0459                           320          
+  406       405 1   .05835.35511                                   8          
+  407        80 1   .0818 1.082522.813                          1493          
+  408       212 1   .287922.7648.8925                            320          
+  408       399 1   .161811.5538.50159                           320          
+  408       407 1   .036  1.366       1.                         595          
+  409       407 1   .054  6.11        1.                         326          
+  410       407 1   .027  4.197       1.                         445          
+  411       407 1   .016  2.349       1.                         441          
+  412       407 1   .02   2.693       1.                         431          
+  413       407 1   .056  4.036       1.                         436          
+  414       407 1   .099954.423       1.                         342          
+  416       415 1   .05303.38337                                   8          
+  417       251 1   .426254.093 1.3213                           320          
+  417       468 1   .356133.26691.1577                           320          
+  417       469 1   .4887 4.48291.5887                           320          
+  417       474 1   .345673.31931.0715                           320          
+  418       417 1   .06478.35167                                 109          
+  419        48 1   .463684.45251.4373                           320          
+  419       102 1   .363843.49381.1278                           320          
+  420       419 1   .0565 .37534                                   8          
+  421         1 1   .536895.15551.6643                           320          
+  421       354 1   .476644.577 1.4775                           320          
+  422       421 1   .06282.31057                                  65          
+  423        87 1   .183571.7627.56903                           320          
+  423       496 1   .374333.59451.1603                           320          
+  424       423 1   .06831.38638                                 273          
+  425       297 1   .02752.399736.9757                          1493          
+  426       425 1   .086983.219       1.                         554          
+  427       426 1   .06762.30266                                  18          
+  428       151 1   .04543.6011412.668                          1493          
+  428       246 1   .110061.456330.689                          1493          
+  429       139 1   .146771.4094.45496                           320          
+  429       466 1   .185251.6994.60221                           320          
+  429       428 1   .013  .868        1.                         646          
+  430       428 1   .118  6.355       1.                         207          
+  431       428 1   .037  3.646       1.                         225          
+  432       428 1   .023  3.175       1.                         204          
+  433       428 1   .08   9.098       1.                         218          
+  434       428 1   .03   2.264       1.                         231          
+  435       428 1   .029  2.826       1.                         458          
+  436       428 1   .022  1.431       1.                         457          
+  437       428 1   .014  1.844       1.                         471          
+  438       428 1   .052442.322       1.                         492          
+  439       428 1   .012  1.452       1.                         474          
+  440        57 1   .06008.8725615.227                          1493          
+  440       386 1   .0855 1.226521.949                          1493          
+  441       384 1   .293622.8195.91016                           320          
+  441       440 1   .058  2.873       1.                         649          
+  442       440 1   .05   4.469       1.                         267          
+  443       440 1   .018  2.669       1.                         385          
+  444       440 1   .108  8.953       1.                         202          
+  445       185 1   .307422.8201.99936                           320          
+  445       461 1   .331013.17851.0261                           320          
+  446       445 1   .06804.35793                                 130          
+  448       447 1   .05777.38421                                  76          
+  449       330 1   .207331.9909.64269                           320          
+  450       449 1   .05214.33278                                   1          
+  451       449 1   .05248.31931                                   3          
+  452        76 1   .201221.9322.62375                           320          
+  454        29 1   .246982.2656.80289                           320          
+  454       453 1   .02   3.057       1.                         634          
+  455       453 1   .026  1.616       1.                         551          
+  456       453 1   .015  1.668       1.                         651          
+  458       457 1   .201  7.218       1.                         207          
+  459       496 1   .207141.9002.67338                           320          
+  460       340 1   .369823.55121.1464                           320          
+  462       465 1   .327143.14141.0141                           320          
+  462       477 1   .501344.81411.5541                           320          
+  463       462 1   .181  9.575       1.                          80          
+  465       464 1   .036  2.723       1.                         384          
+  466        60 1   .201131.9314.62348                           320          
+  468       289 1   .576995.54061.7885                           320          
+  470       467 1   .163161.4967.53041                           320          
+  471       464 1   .04272.6127710.966                          1493          
+  472        99 1   .331833.18641.0286                           320          
+  472       471 1   .016  1.869       1.                         501          
+  473       133 1   .475474.56571.4738                           320          
+  475       147 1   .3185 3.0585.9873                            320          
+  475       269 1   .353423.39371.0955                           320          
+  476       486 1   .250122.4018.77531                           320          
+  477       295 1   .348563.347 1.0805                           320          
+  479       354 1   .437624.20231.3565                           320          
+  480       479 1   .242  6.304       1.                         221          
+  481       479 1   .104  5.504       1.                         160          
+  482       479 1   .123  3.182       1.                         187          
+  483       479 1   .343  10.067      1.                         187          
+  484       479 1   .146  5.489       1.                         140          
+  485       454 1   .205031.9688.63556                           320          
+  485       499 1   .377363.46161.2267                           320          
+  488       156 1   .186131.7074.60508                           320          
+  488       210 1   .371163.56411.1505                           320          
+  489       149 1   .244382.3466.75752                           320          
+  490       117 1   .299872.7508.97482                           320          
+  491       326 1   .238932.2943.74063                           320          
+  492       336 1   .632076.06951.9593                           320          
+  492       405 1   .432134.14961.3395                           320          
+  493       380 1   .340933.27381.0568                           320          
+  494       493 1   .119  6.43        1.                          75          
+  495       449 1   .176251.6168.57294                           320          
+  496       143 1   .203911.9581.63208                           320          
+  497       496 1   .147  6.47        1.                         204          
+  498       496 1   .4006111.755      1.                         150          
+  500       489 1   .469554.30731.5264                           320          
+99999
+DCSC
+(De ) O  (Pa )NcEP       (Xmin)(Xmax)( Xv )C ( Vsp) (Ext)Nst(1)(2)(3)(4)(5)(6)
+99999
+DCAI
+(Num) O  Gr E (U) UOp ( P ) ( Q ) (A) (B) (C) (D) (Vfl) (Vf)
+  474     1 L   1   1 7.002 1.867                 80.   1000
+  474     2 L   1   1 77.06 20.55                 80.   1000
+  474     3 L   1   1 83.17 22.18                 80.   1000
+  477     1 L   1   1 10.6  2.827                 80.   1000
+  477     2 L   1   1 20.73 5.527                 80.   1000
+  478     1 L   1   1 1.776 .474                  80.   1000
+  478     2 L   1   1 7.38  1.968                 80.   1000
+  489     1 L   1   1 .369  .098                  80.   1000
+  489     2 L   1   1 3.312 .883                  80.   1000
+  500     1 L   1   1 3.732 .995                  80.   1000
+  500     2 L   1   1 19.7  5.253                 80.   1000
+99999
+DGEI
+(Num) OA Gr E(U)UOpUOn( Pg)( Qg)( Qn)( Qm)(Xtrf) ( Xd)( Xq)( Xl) (fp)( Sn)(Ptu)
+99999
+DBSH
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+   27            F 0990 1000    27 50.    C        
+(G  O E (U) UOp (Sht )
+10        1   1 80.   
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+   31            F 0990 1000    31 100.   C        
+(G  O E (U) UOp (Sht )
+10        1   1 100.  
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+  110            F 0990 1000   110 50.    C        
+(G  O E (U) UOp (Sht )
+10        1   1 50.   
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+  141            F 0990 1000   141 50.    C        
+(G  O E (U) UOp (Sht )
+10        1   1 50.   
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+  152            F 0990 1000   152 70.    C        
+(G  O E (U) UOp (Sht )
+10        1   1 30.   
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+  181            F 0990 1000   181 60.    C        
+(G  O E (U) UOp (Sht )
+10        1   1 100.  
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+  208            F 0990 1000   208 80.    C        
+(G  O E (U) UOp (Sht )
+10        1   1 80.   
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+  242            F 0990 1000   242 70.    C        
+(G  O E (U) UOp (Sht )
+10        1   1 30.   
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+  263            F 0990 1000   263 120.   C        
+(G  O E (U) UOp (Sht )
+10        1   1 100.  
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+  300            F 0990 1000   300 40.    C        
+(G  O E (U) UOp (Sht )
+10        1   1 40.   
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+  310            F 0990 1000   310 50.    C        
+(G  O E (U) UOp (Sht )
+10        1   1 50.   
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+  417            F 0990 1000   417 110.   C        
+(G  O E (U) UOp (Sht )
+10        1   1 50.   
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+  426            F 0990 1000   426 50.    C        
+(G  O E (U) UOp (Sht )
+10        1   1 50.   
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+  445            F 0990 1000   445 40.    C        
+(G  O E (U) UOp (Sht )
+10        1   1 40.   
+FBAN
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+  491            F 0990 1000   491 50.    C        
+(G  O E (U) UOp (Sht )
+10        1   1 50.   
+FBAN
+99999
+DSHL
+(De ) O  (Pa )Nc (Shde)(Shpa) ED EP
+99999
+DGER
+    9          771.8        1.   
+   16          444.45       1.   
+   17          888.9        1.   
+   18          157.6        1.   
+   49          1.3          1.   
+   50          2.6          1.   
+   71          4.           1.   
+   72          2.           1.   
+   73          1.4          1.   
+   82          361.9        1.   
+  127          162.         1.   
+  128          162.         1.   
+  144          602.55       1.   
+  145          602.55       1.   
+  167          193.5        1.   
+  168          193.5        1.   
+  169          387.         1.   
+  197          293.6        1.   
+  198          207.3        1.   
+  222          5.2          1.   
+  223          18.          1.   
+  224          511.2        1.   
+  225          514.8        1.   
+  231          2.9          1.   
+  258          1.1          1.   
+  301          2.9          1.   
+  302          2.9          1.   
+  305          1.           1.   
+  306          2.4          1.   
+  319          42.3         1.   
+  350          15.          1.   
+  351          6.2          1.   
+  352          14.4         1.   
+  353          74.          1.   
+  410          136.95       1.   
+  411          136.95       1.   
+  412          136.95       1.   
+  413          136.95       1.   
+  430          1.           1.   
+  431          3.3          1.   
+  432          1.2          1.   
+  433          6.7          1.   
+  434          4.3          1.   
+  437          197.         1.   
+  438          197.         1.   
+  439          197.         1.   
+  455          222.83       1.   
+  456          445.67       1.   
+  480          56.          1.   
+  481          45.          1.   
+  482          45.          1.   
+  483          24.          1.   
+  484          28.          1.   
+  497          60.          1.   
+  498          18.          1.   
+99999
+DCAR
+(tp) (no ) C (tp) (no ) C (tp) (no ) C (tp) (no ) O (A) (B) (C) (D) (Vfl)
+99999
+DCER
+(No ) O Gr Un (Kb ) (Incl) ( Qg)( Qn)( Qm) C E
+99999
+DCTR
+(Nf ) O (Nt ) Nc Vmin Vmax C M (Fmin) (Fmax) C ( Vsp) (Ext) Ns
+99999
+DGLT
+(G (Vmn) (Vmx) (Vmne (Vmxe
+ A .9    1.1   .9    1.1  
+99999
+DARE
+(Ar    (Xchg)     (      Identificacao da area       ) (Xmin) (Xmax)
+  1               SouthCarol
+99999
+DTPF CIRC
+(De ) (Pa ) Nc (De ) (Pa ) Nc (De ) (Pa ) Nc (De ) (Pa ) Nc (De ) (Pa ) Nc O
+99999
+DMTE
+(tp) (no ) C (tp) (no ) C (tp) (no ) C (tp) (no ) O F
+99999
+DMFL CIRC
+(De ) (Pa ) Nc (De ) (Pa ) Nc (De ) (Pa ) Nc (De ) (Pa ) Nc (De ) (Pa ) Nc O
+99999
+DGBT
+(G ( kV)
+ A 138. 
+99999
+DINJ
+99999
+FIM 
