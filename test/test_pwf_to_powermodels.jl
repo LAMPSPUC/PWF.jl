@@ -85,7 +85,6 @@
         end
 
         @testset "DCline" begin
-
             pwf_dc = open(joinpath(@__DIR__,"data/pwf/300bus.pwf"))
             pwf_data_dc = ParserPWF.parse_pwf_to_powermodels(pwf_dc)
 
@@ -96,7 +95,6 @@
             raw_data_dc = PowerModels.parse_file(raw_dc)
 
             @test check_same_dict(pwf_data_dc, raw_data_dc, "dcline")   
-                
         end
 
     end
