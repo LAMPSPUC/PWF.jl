@@ -503,6 +503,10 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
         pwf_data[section][i]["TRANSFORMER"] = false
     end
 
+    if section == "DBAR" && component == "CONTROLLED BUS"
+    pwf_data[section][i][component] = pwf_data[section][i]["NUMBER"] # Default: the bus itself
+    end
+
 end
 
 _handle_transformer_default!(pwf_data::Dict{String, Any}, section::String, i::Int) =
