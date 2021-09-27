@@ -497,6 +497,7 @@ function _pwf2pm_fixed_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data["bs"] =  bus["TOTAL REACTIVE POWER"] 
 
     sub_data["shunt_type"] = 1
+    sub_data["shunt_type_orig"] = 1
     sub_data["bsmin"] = sub_data["bs"]
     sub_data["bsmax"] = sub_data["bs"]
     @assert sub_data["bsmin"] <= sub_data["bsmax"]
@@ -525,6 +526,7 @@ function _pwf2pm_continuous_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
     sub_data["bs"] = shunt["REACTIVE GENERATION"]
 
     sub_data["shunt_type"] = 2
+    sub_data["shunt_type_orig"] = 2
     sub_data["bsmin"] = shunt["MINIMUM REACTIVE GENERATION"]
     sub_data["bsmax"] = shunt["MAXIMUM REACTIVE GENERATION"]
     @assert sub_data["bsmin"] <= sub_data["bsmax"]
@@ -563,6 +565,7 @@ function _pwf2pm_discrete_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
         sub_data["bs"] = _handle_bs(shunt)
 
         sub_data["shunt_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : 2
+        sub_data["shunt_type_orig"] = shunt["CONTROL MODE"] == 'F' ? 1 : 2
         bs_bounds = _handle_bs_bounds(shunt)
         sub_data["bsmin"] = bs_bounds[1]
         sub_data["bsmax"] = bs_bounds[2]

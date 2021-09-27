@@ -244,6 +244,7 @@ element corresponds to a section, divided by the delimiter 99999.
 """
 function _split_sections(io::IO)
     file_lines = readlines(io)
+    file_lines = replace.(file_lines, repeat([Char(65533) => ' '], length(file_lines)))
     sections = Vector{String}[]
 
     section_titles_idx = findall(line -> line == title_identifier, file_lines)
@@ -266,7 +267,16 @@ function _split_sections(io::IO)
     for i in 1:num_sections
         section_begin_idx = section_delim[i] + 1
         section_end_idx   = section_delim[i + 1] - 1
-        push!(sections, file_lines[section_begin_idx:section_end_idx])
+
+        # Account for multiple sections in the same pwf
+        section_i = findall(x -> x[1] == file_lines[section_begin_idx], sections)
+        @assert length(section_i) < 2
+        if length(section_i) == 0
+            push!(sections, file_lines[section_begin_idx:section_end_idx])
+        else
+            section_i = section_i[1]
+            sections[section_i] = vcat(sections[section_i], file_lines[section_begin_idx + 2:section_end_idx])
+        end
     end
 
     return sections
