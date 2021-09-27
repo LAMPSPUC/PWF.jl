@@ -269,7 +269,7 @@ function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
     pm_data["gen"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
         for bus in pwf_data["DBAR"]
-            if bus["ACTIVE GENERATION"] > 0.0 || bus["REACTIVE GENERATION"] != 0.0
+            if bus["ACTIVE GENERATION"] > 0.0 || bus["REACTIVE GENERATION"] != 0.0 || bus["TYPE"] == bus_type_raw_to_pwf[bus_type_str_to_num["PV"]]
                 _pwf2pm_generator!(pm_data, pwf_data, bus)
             end
         end
