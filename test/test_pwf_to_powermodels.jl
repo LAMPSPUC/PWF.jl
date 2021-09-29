@@ -23,6 +23,7 @@
                 @test haskey(bus, "va")
                 @test haskey(bus, "vm")
                 @test haskey(bus, "base_kv")
+                @test haskey(bus, "voltage_controlled_bus")
 
                 @test isa(bus["zone"], Int)
                 @test isa(bus["bus_i"], Int)
@@ -36,6 +37,7 @@
                 @test isa(bus["va"], Float64)
                 @test isa(bus["vm"], Float64)
                 @test isa(bus["base_kv"], Float64)
+                @test isa(bus["voltage_controlled_bus"], Int)
             end
         end
 
@@ -188,5 +190,32 @@
             "3" => Dict("va" => -0.02834, "vm" => 0.999)
         );
         @test check_same_dict(parse_result["solution"]["bus"], result)
+    end
+
+    @testset "Newly created fields" begin
+        file = open(joinpath(@__DIR__,"data/pwf/3bus_new_fields.pwf"))
+        pm_data = ParserPWF.parse_pwf_to_powermodels(file)
+
+        @test length(pm_data["bus"]) == 3
+        @test occursin("B s 1", pm_data["bus"]["1"]["name"])
+        @test pm_data["bus"]["2"]["voltage_controlled_bus"] == 3
+
+        @test length(pm_data["shunt"]) == 3
+        
+        @test pm_data["shunt"]["1"]["shunt_type"] == 1
+        @test pm_data["shunt"]["1"]["shunt_type_orig"] == 1
+        @test pm_data["shunt"]["1"]["bsmin"] == -0.1
+        @test pm_data["shunt"]["1"]["bsmax"] == -0.1
+
+        @test pm_data["shunt"]["2"]["shunt_type"] == 2
+        @test pm_data["shunt"]["2"]["shunt_type_orig"] == 2
+        @test pm_data["shunt"]["2"]["bsmin"] == -0.5
+        @test pm_data["shunt"]["2"]["bsmax"] == 1.
+
+        @test pm_data["shunt"]["3"]["shunt_type"] == 2
+        @test pm_data["shunt"]["3"]["shunt_type_orig"] == 2
+        @test pm_data["shunt"]["3"]["bsmin"] == -0.3
+        @test pm_data["shunt"]["3"]["bsmax"] == 0.6
+
     end
 end

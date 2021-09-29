@@ -276,7 +276,7 @@ function _split_sections(io::IO)
             push!(sections, file_lines[section_begin_idx:section_end_idx])
         else
             section_i = section_i[1]
-            sections[section_i] = vcat(sections[section_i], file_lines[section_begin_idx + 2:section_end_idx])
+            sections[section_i] = vcat(sections[section_i], file_lines[section_begin_idx + 1:section_end_idx])
         end
     end
 
@@ -505,7 +505,10 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
     end
 
     if section == "DBAR" && component == "CONTROLLED BUS"
-    pwf_data[section][i][component] = pwf_data[section][i]["NUMBER"] # Default: the bus itself
+        pwf_data[section][i][component] = pwf_data[section][i]["NUMBER"] # Default: the bus itself
+    end
+    if section == "DLIN" && component == "CONTROLLED BUS"
+        pwf_data[section][i][component] = pwf_data[section][i]["FROM BUS"] # Default: the bus itself
     end
 
 end

@@ -486,7 +486,7 @@ function _handle_bs_bounds(shunt::Dict{String, Any})
             bsmin += el["UNITIES"]*el["REACTANCE"]
         end
     end
-    return bsmin/100, bsmax/100 # PowerModels correcting function won't change it to p.u.
+    return bsmin, bsmax
 end
 
 function _pwf2pm_fixed_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
@@ -716,8 +716,8 @@ function _correct_pwf_network_data(pm_data::Dict)
 
     rescale        = x -> x/mva_base
 
-    if haskey(data, "shunt")
-        for (i, shunt) in data["shunt"]
+    if haskey(pm_data, "shunt")
+        for (i, shunt) in pm_data["shunt"]
             PowerModels._apply_func!(shunt, "bsmin", rescale)
             PowerModels._apply_func!(shunt, "bsmax", rescale)
         end
@@ -751,6 +751,7 @@ function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true)
     _pwf2pm_corrections!(pm_data, pwf_data)
 
     if validate
+        _correct_pwf_network_data(pm_data)
         PowerModels.correct_network_data!(pm_data)
     end
     
