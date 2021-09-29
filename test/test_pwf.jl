@@ -71,7 +71,7 @@
                 @test isa(item["REACTIVE GENERATION"], Float64)
                 @test isa(item["MINIMUM REACTIVE GENERATION"], Float64)
                 @test isa(item["MAXIMUM REACTIVE GENERATION"], Float64)
-                #@test isa(item["CONTROLLED BUS"], Int)
+                @test isa(item["CONTROLLED BUS"], Int)
                 @test isa(item["ACTIVE CHARGE"], Float64)
                 @test isa(item["REACTIVE CHARGE"], Float64)
                 @test isa(item["TOTAL REACTIVE POWER"], Float64)
@@ -99,7 +99,7 @@
                 @test isa(item["MINIMUM TAP"], Nothing)
                 @test isa(item["MAXIMUM TAP"], Nothing)
                 @test isa(item["LAG"], Float64)
-                #@test isa(item["CONTROLLED BUS"], Int)
+                @test isa(item["CONTROLLED BUS"], Int)
                 @test isa(item["NORMAL CAPACITY"], Float64)
                 @test isa(item["EMERGENCY CAPACITY"], Float64)
                 @test isa(item["NUMBER OF TAPS"], Int)
@@ -122,6 +122,10 @@
                 @test isa(value, Char)
                 @test length(key) == 4
             end
+        end
+
+        @testset "TITU" begin
+            @test occursin("Caso do Anderson - P gina 38", dict["TITU"])
         end
     end
 end
