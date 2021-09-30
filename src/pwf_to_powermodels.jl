@@ -91,6 +91,8 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data["vmin"] = _handle_vmin(pwf_data, bus)
     sub_data["vmax"] = _handle_vmax(pwf_data, bus)
 
+    sub_data["voltage_controlled_bus"] = pop!(bus, "CONTROLLED BUS")
+
     idx = string(sub_data["index"])
     pm_data["bus"][idx] = sub_data
 end
@@ -267,7 +269,7 @@ function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
     pm_data["gen"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
         for bus in pwf_data["DBAR"]
-            if bus["ACTIVE GENERATION"] > 0.0 || bus["REACTIVE GENERATION"] != 0.0
+            if bus["ACTIVE GENERATION"] > 0.0 || bus["REACTIVE GENERATION"] != 0.0 || bus["TYPE"] == bus_type_raw_to_pwf[bus_type_str_to_num["PV"]]
                 _pwf2pm_generator!(pm_data, pwf_data, bus)
             end
         end
@@ -475,12 +477,30 @@ function _create_new_shunt(sub_data::Dict, pm_data::Dict)
     return true    
 end
 
+function _handle_bs_bounds(shunt::Dict{String, Any})
+    bsmin, bsmax = 0.0, 0.0
+    for el in shunt["REACTANCE GROUPS"]
+        if el["REACTANCE"] > 0.0
+            bsmax += el["UNITIES"]*el["REACTANCE"]
+        elseif el["REACTANCE"] < 0.0
+            bsmin += el["UNITIES"]*el["REACTANCE"]
+        end
+    end
+    return bsmin, bsmax
+end
+
 function _pwf2pm_fixed_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data = Dict{String,Any}()
 
     sub_data["shunt_bus"] = bus["NUMBER"]
     sub_data["gs"] = 0.0        
     sub_data["bs"] =  bus["TOTAL REACTIVE POWER"] 
+
+    sub_data["shunt_type"] = 1
+    sub_data["shunt_type_orig"] = 1
+    sub_data["bsmin"] = sub_data["bs"]
+    sub_data["bsmax"] = sub_data["bs"]
+    @assert sub_data["bsmin"] <= sub_data["bsmax"]
 
     if bus["STATUS"] == 'L'
         sub_data["status"] = 1
@@ -504,6 +524,12 @@ function _pwf2pm_continuous_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
     sub_data["shunt_bus"] = shunt["BUS"]
     sub_data["gs"] = 0.0
     sub_data["bs"] = shunt["REACTIVE GENERATION"]
+
+    sub_data["shunt_type"] = 2
+    sub_data["shunt_type_orig"] = 2
+    sub_data["bsmin"] = shunt["MINIMUM REACTIVE GENERATION"]
+    sub_data["bsmax"] = shunt["MAXIMUM REACTIVE GENERATION"]
+    @assert sub_data["bsmin"] <= sub_data["bsmax"]
 
     status = filter(x -> x["NUMBER"] == sub_data["shunt_bus"], pwf_data["DBAR"])[1]["STATUS"]
     if status == 'L'
@@ -537,6 +563,13 @@ function _pwf2pm_discrete_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
         sub_data["gs"] = 0.0
         
         sub_data["bs"] = _handle_bs(shunt)
+
+        sub_data["shunt_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : 2
+        sub_data["shunt_type_orig"] = shunt["CONTROL MODE"] == 'F' ? 1 : 2
+        bs_bounds = _handle_bs_bounds(shunt)
+        sub_data["bsmin"] = bs_bounds[1]
+        sub_data["bsmax"] = bs_bounds[2]
+        @assert sub_data["bsmin"] <= sub_data["bsmax"]
 
         status = filter(x -> x["NUMBER"] == sub_data["shunt_bus"], pwf_data["DBAR"])[1]["STATUS"]
         if status == 'L'
@@ -678,6 +711,20 @@ function _pwf2pm_corrections!(pm_data::Dict, pwf_data::Dict)
     return 
 end
 
+function _correct_pwf_network_data(pm_data::Dict)
+    mva_base = pm_data["baseMVA"]
+
+    rescale        = x -> x/mva_base
+
+    if haskey(pm_data, "shunt")
+        for (i, shunt) in pm_data["shunt"]
+            PowerModels._apply_func!(shunt, "bsmin", rescale)
+            PowerModels._apply_func!(shunt, "bsmax", rescale)
+        end
+    end
+
+end
+
 function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true)
     pm_data = Dict{String,Any}()
 
@@ -704,6 +751,7 @@ function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true)
     _pwf2pm_corrections!(pm_data, pwf_data)
 
     if validate
+        _correct_pwf_network_data(pm_data)
         PowerModels.correct_network_data!(pm_data)
     end
     

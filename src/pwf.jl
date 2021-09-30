@@ -69,7 +69,7 @@ const _dcli_dtypes = [("FROM BUS", Int64, 1:4), ("OPERATION", Int64, 6), ("TO BU
 
 const _dcnv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("AC BUS", Int64, 8:12),
     ("DC BUS", Int64, 14:17), ("NEUTRAL BUS", Int64, 19:22), ("OPERATION MODE", Char, 24),
-    ("BRIDGES", Int64, 26), ("CURRENTS", Float64, 28:32), ("COMMUTATION REACTANCE", Float64, 24:38),
+    ("BRIDGES", Int64, 26), ("CURRENTS", Float64, 28:32), ("COMMUTATION REACTANCE", Float64, 34:38),
     ("SECONDARY VOLTAGE", Float64, 40:44), ("TRANSFORMER POWER", Float64, 46:50),
     ("REACTOR RESISTANCE", Float64, 52:56), ("REACTOR INDUCTANCE", Float64, 58:62),
     ("CAPACITANCE", Float64, 64:68), ("FREQUENCY", Float64, 70:71)]
@@ -244,6 +244,8 @@ element corresponds to a section, divided by the delimiter 99999.
 """
 function _split_sections(io::IO)
     file_lines = readlines(io)
+    filter!(x -> x[1] != '(', file_lines) # Ignore commented lines
+    file_lines = replace.(file_lines, repeat([Char(65533) => ' '], length(file_lines)))
     sections = Vector{String}[]
 
     section_titles_idx = findall(line -> line == title_identifier, file_lines)
@@ -266,7 +268,16 @@ function _split_sections(io::IO)
     for i in 1:num_sections
         section_begin_idx = section_delim[i] + 1
         section_end_idx   = section_delim[i + 1] - 1
-        push!(sections, file_lines[section_begin_idx:section_end_idx])
+
+        # Account for multiple sections in the same pwf
+        section_i = findall(x -> x[1] == file_lines[section_begin_idx], sections)
+        @assert length(section_i) < 2
+        if length(section_i) == 0
+            push!(sections, file_lines[section_begin_idx:section_end_idx])
+        else
+            section_i = section_i[1]
+            sections[section_i] = vcat(sections[section_i], file_lines[section_begin_idx + 1:section_end_idx])
+        end
     end
 
     return sections
@@ -333,15 +344,6 @@ function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, se
     end
 end
 
-function _first_data_line(section_lines::Vector{String})
-    section_name = section_lines[1]
-    if section_name == "DGER" # Sections which don't have a column index
-        return 2
-    else
-        return 3
-    end
-end
-
 """
     _parse_section_element!(data, section_lines, section)
 Internal function. Parses a section containing a system component.
@@ -354,8 +356,7 @@ function _parse_section_element!(data::Vector{Dict{String, Any}}, section_lines:
         return
     end
 
-    first_line = _first_data_line(section_lines)
-    for line in section_lines[first_line:end]
+    for line in section_lines[2:end]
 
         line_data = Dict{String, Any}()
         _parse_line_element!(line_data, line, section)
@@ -373,10 +374,10 @@ function _parse_dbsh_section!(data::Vector{Dict{String, Any}}, section_lines::Ve
 
         if idx != sub_titles_idx[end]
             next_idx = sub_titles_idx[i + 1]
-            _parse_section_element!(data, section_lines[idx:idx + 2], "BUS AND VOLTAGE CONTROL")
+            _parse_section_element!(data, section_lines[idx:idx + 1], "BUS AND VOLTAGE CONTROL")
 
             rc = Dict{String, Any}[]
-            _parse_section_element!(rc, section_lines[idx + 2:next_idx - 1], "REACTORS AND CAPACITORS BANKS")
+            _parse_section_element!(rc, section_lines[idx + 1:next_idx - 1], "REACTORS AND CAPACITORS BANKS")
             data[end]["REACTANCE GROUPS"] = rc
         end
 
@@ -396,7 +397,7 @@ function _parse_section!(data::Dict{String, Any}, section_lines::Vector{String})
 
     elseif section in keys(_mnemonic_pairs)
         section_data = Dict{String, Any}()
-        _parse_line_element!(section_data, section_lines[3:end], section)
+        _parse_line_element!(section_data, section_lines[2:end], section)
 
     elseif section in keys(_pwf_dtypes)
         section_data = Dict{String, Any}[]
@@ -501,6 +502,13 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
 
     if section == "DLIN" && component == "TAP"
         pwf_data[section][i]["TRANSFORMER"] = false
+    end
+
+    if section == "DBAR" && component == "CONTROLLED BUS"
+        pwf_data[section][i][component] = pwf_data[section][i]["NUMBER"] # Default: the bus itself
+    end
+    if section == "DLIN" && component == "CONTROLLED BUS"
+        pwf_data[section][i][component] = pwf_data[section][i]["FROM BUS"] # Default: the bus itself
     end
 
 end
