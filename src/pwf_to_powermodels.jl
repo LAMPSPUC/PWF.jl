@@ -119,6 +119,8 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
     sub_data["g_to"] = 0.0
     sub_data["b_to"] = _handle_b_to(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"])
     sub_data["tap"] = pop!(branch, "TAP")
+    sub_data["tapmin"] = pop!(branch, "MINIMUM TAP")
+    sub_data["tapmax"] = pop!(branch, "MAXIMUM TAP")
     sub_data["shift"] = -pop!(branch, "LAG")
     sub_data["angmin"] = -360.0 # No limit
     sub_data["angmax"] = 360.0 # No limit
