@@ -38,8 +38,8 @@
             @test isa(dict["TITU"], String)
             @test isa(dict["DOPC"], Dict)
             @test isa(dict["DCTE"], Dict)
-            @test isa(dict["DBAR"], Vector{Dict{String, Any}})
-            @test isa(dict["DLIN"], Vector{Dict{String, Any}})
+            @test isa(dict["DBAR"], Dict)
+            @test isa(dict["DLIN"], Dict)
         end
 
         @testset "Lengths" begin
@@ -48,16 +48,16 @@
             @test length(dict["DBAR"]) == 9
             @test length(dict["DLIN"]) == 7
 
-            for item in dict["DBAR"]
+            for (idx,item) in dict["DBAR"]
                 @test length(item) == 30
             end
-            for item in dict["DLIN"]
+            for (idx,item) in dict["DLIN"]
                 @test length(item) == 31
             end
         end
 
         @testset "DBAR" begin
-            for item in dict["DBAR"]
+            for (idx,item) in dict["DBAR"]
                 @test isa(item["NUMBER"], Int)
                 @test isa(item["OPERATION"], Char)
                 @test isa(item["STATUS"], Char)
@@ -83,7 +83,7 @@
         end
 
         @testset "DLIN" begin
-            for item in dict["DLIN"]
+            for (idx,item) in dict["DLIN"]
                 @test isa(item["FROM BUS"], Int)
                 @test isa(item["OPENING FROM BUS"], Char)
                 @test isa(item["OPERATION"], Char)

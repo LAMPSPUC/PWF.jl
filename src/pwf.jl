@@ -349,36 +349,45 @@ end
 Internal function. Parses a section containing a system component.
 Returns a Vector of Dict, where each entry corresponds to a single element.
 """
-function _parse_section_element!(data::Vector{Dict{String, Any}}, section_lines::Vector{String}, section::AbstractString)
+function _parse_section_element!(data::Dict{String, Any}, section_lines::Vector{String}, section::AbstractString, idx::Int64=1)
 
     if section == "DBSH"
         _parse_dbsh_section!(data, section_lines)
-        return
+
+    elseif section == "DBAR"
+        for line in section_lines[2:end]
+
+            line_data = Dict{String, Any}()
+            _parse_line_element!(line_data, line, section)
+
+            bus_i = line_data["NUMBER"]
+            data["$bus_i"] = line_data
+        end
+
+    else
+        for line in section_lines[2:end]
+
+            line_data = Dict{String, Any}()
+            _parse_line_element!(line_data, line, section)
+
+            data["$idx"] = line_data            
+            idx += 1
+        end
     end
-
-    for line in section_lines[2:end]
-
-        line_data = Dict{String, Any}()
-        _parse_line_element!(line_data, line, section)
-
-        push!(data, line_data)        
-        
-    end
-
 end
 
-function _parse_dbsh_section!(data::Vector{Dict{String, Any}}, section_lines::Vector{String})
+function _parse_dbsh_section!(data::Dict{String, Any}, section_lines::Vector{String})
 
     sub_titles_idx = vcat(1, findall(x -> x == "FBAN", section_lines))
     for (i, idx) in enumerate(sub_titles_idx)
 
         if idx != sub_titles_idx[end]
             next_idx = sub_titles_idx[i + 1]
-            _parse_section_element!(data, section_lines[idx:idx + 1], "BUS AND VOLTAGE CONTROL")
+            _parse_section_element!(data, section_lines[idx:idx + 1], "BUS AND VOLTAGE CONTROL", i)
 
-            rc = Dict{String, Any}[]
-            _parse_section_element!(rc, section_lines[idx + 1:next_idx - 1], "REACTORS AND CAPACITORS BANKS")
-            data[end]["REACTANCE GROUPS"] = rc
+            rc = Dict{String, Any}()
+            _parse_section_element!(rc, section_lines[idx + 1:next_idx - 1], "REACTORS AND CAPACITORS BANKS", i)
+            data["$i"]["REACTANCE GROUPS"] = rc
         end
 
     end
@@ -392,22 +401,21 @@ transforms it into a Dict and saves it into `data::Dict`.
 """
 function _parse_section!(data::Dict{String, Any}, section_lines::Vector{String})
     section = split(section_lines[1], " ")[1]
+    section_data = Dict{String, Any}()
+
     if section == title_identifier
         section_data = section_lines[end]
 
     elseif section in keys(_mnemonic_pairs)
-        section_data = Dict{String, Any}()
         _parse_line_element!(section_data, section_lines[2:end], section)
 
     elseif section in keys(_pwf_dtypes)
-        section_data = Dict{String, Any}[]
         _parse_section_element!(section_data, section_lines, section)
 
     else
         @warn "Currently there is no support for $section parsing"
         section_data = nothing
     end
-
     data[section] = section_data
 end
 
@@ -422,16 +430,20 @@ function _populate_defaults!(pwf_data::Dict{String, Any})
         if !haskey(_pwf_defaults, section)
             @warn "Parser doesn't have default values for section $(section)."
         else
-            _populate_section_defaults!(pwf_data, section, section_data)
+            if section in keys(_pwf_dtypes)
+                _populate_section_defaults!(pwf_data, section, section_data)
+            elseif section in keys(_mnemonic_pairs)
+                _populate_mnemonic_defaults!(pwf_data, section, section_data)
+            end
         end
     end
 
 end
 
-function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::String, section_data::Vector{Dict{String, Any}})
+function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::String, section_data::Dict{String, Any})
     component_defaults = _pwf_defaults[section]
 
-    for (i, element) in enumerate(section_data)
+    for (i, element) in section_data
         for (component, default) in component_defaults
             if haskey(element, component)
                 component_value = element[component]
@@ -454,7 +466,7 @@ function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::Strin
     end
 end
 
-function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::String, section_data::Dict{String, Any})
+function _populate_mnemonic_defaults!(pwf_data::Dict{String, Any}, section::String, section_data::Dict{String, Any})
     component_defaults = _pwf_defaults[section]
 
     for (component, default) in component_defaults
@@ -471,11 +483,7 @@ function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::Strin
     end
 end
 
-function _populate_section_defaults!(pwf_data::Dict{String, Any}, section::String, section_data::AbstractString)
-    # Filename indicator, does not need a default
-end
-
-function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String, i::Int, component::String)
+function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String, i::String, component::String)
     
     if section == "DBAR" && component == "MINIMUM REACTIVE GENERATION"
         bus_type = pwf_data[section][i]["TYPE"]
@@ -513,7 +521,7 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
 
 end
 
-_handle_transformer_default!(pwf_data::Dict{String, Any}, section::String, i::Int) =
+_handle_transformer_default!(pwf_data::Dict{String, Any}, section::String, i::String) =
     section == "DLIN" ? !haskey(pwf_data[section][i], "TRANSFORMER") ?
     pwf_data[section][i]["TRANSFORMER"] = true :
     @assert(!pwf_data[section][i]["TRANSFORMER"]) : nothing
@@ -531,7 +539,6 @@ function _parse_pwf_data(data_io::IO)
     for section in sections
         _parse_section!(pwf_data, section)
     end
-
     _populate_defaults!(pwf_data)
     
     return pwf_data
