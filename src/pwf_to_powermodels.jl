@@ -117,7 +117,7 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data["vmin"] = _handle_vmin(pwf_data, bus, dict_dglt)
     sub_data["vmax"] = _handle_vmax(pwf_data, bus, dict_dglt)
 
-    sub_data["voltage_controlled_bus"] = pop!(bus, "CONTROLLED BUS")
+    sub_data["voltage_controlled_bus"] = bus["CONTROLLED BUS"]
 
     idx = string(sub_data["index"])
     pm_data["bus"][idx] = sub_data
@@ -162,6 +162,8 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
     sub_data["b_to"] = _handle_b_to(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"], branch["CIRCUIT"], dshl_dict)
 
     sub_data["tap"] = pop!(branch, "TAP")
+    sub_data["tapmin"] = sub_data["tap"]
+    sub_data["tapmax"] = sub_data["tap"]
     sub_data["shift"] = -pop!(branch, "LAG")
     sub_data["angmin"] = -360.0 # No limit
     sub_data["angmax"] = 360.0 # No limit
@@ -379,6 +381,8 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two
     sub_data["g_fr"] = 0.0
     sub_data["g_to"] = 0.0
     sub_data["tap"] = pop!(branch, "TAP")
+    sub_data["tapmin"] = pop!(branch, "MINIMUM TAP")
+    sub_data["tapmax"] = pop!(branch, "MAXIMUM TAP")
     sub_data["shift"] = -pop!(branch, "LAG")
     sub_data["angmin"] = -360.0 # No limit
     sub_data["angmax"] = 360.0 # No limit
@@ -555,15 +559,27 @@ function _pwf2pm_fixed_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
 
     sub_data["shunt_type"] = 1
     sub_data["shunt_type_orig"] = 1
+    sub_data["shunt_control_type"] = 1
     sub_data["bsmin"] = sub_data["bs"]
     sub_data["bsmax"] = sub_data["bs"]
     @assert sub_data["bsmin"] <= sub_data["bsmax"]
 
+    sub_data["vm_min"] = bus["VOLTAGE"]
+    sub_data["vm_max"] = bus["VOLTAGE"]
+    sub_data["controlled_bus"] = bus["CONTROLLED BUS"]
+
+    bus_type = pm_data["bus"]["$(sub_data["shunt_bus"])"]["bus_type"]
     if bus["STATUS"] == 'L'
-        sub_data["status"] = 1
+        if bus_type == 2 || bus_type == 3
+            @warn("Active shunt connected in $(bus_type_num_to_str[bus_type]) bus $bus_i found."
+            *" Switching shunt status to off.")
+            sub_data["status"] = 0
+        else
+            sub_data["status"] = 1
+        end
     elseif bus["STATUS"] == 'D'
         sub_data["status"] = 0
-    end
+    end    
 
     n = count(x -> x["shunt_bus"] == sub_data["shunt_bus"], values(pm_data["shunt"])) 
     sub_data["source_id"] = ["fixed shunt", sub_data["shunt_bus"], "0$(n+1)"]
@@ -584,13 +600,25 @@ function _pwf2pm_continuous_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
 
     sub_data["shunt_type"] = 2
     sub_data["shunt_type_orig"] = 2
+    sub_data["shunt_control_type"] = 3 
     sub_data["bsmin"] = shunt["MINIMUM REACTIVE GENERATION"]
     sub_data["bsmax"] = shunt["MAXIMUM REACTIVE GENERATION"]
     @assert sub_data["bsmin"] <= sub_data["bsmax"]
 
+    sub_data["vm_min"] = pm_data["bus"]["$(sub_data["shunt_bus"])"]["vm"]
+    sub_data["vm_max"] = pm_data["bus"]["$(sub_data["shunt_bus"])"]["vm"]
+    sub_data["controlled_bus"] = shunt["CONTROLLED BUS"]
+
+    bus_type = pm_data["bus"]["$(sub_data["shunt_bus"])"]["bus_type"]
     status = pwf_data["DBAR"]["$(sub_data["shunt_bus"])"]["STATUS"]
     if status == 'L'
-        sub_data["status"] = 1
+        if bus_type == 2 || bus_type == 3
+            @warn("Active shunt connected in $(bus_type_num_to_str[bus_type]) bus $(sub_data["shunt_bus"]) found."
+            *" Switching shunt status to off.")
+            sub_data["status"] = 0
+        else
+            sub_data["status"] = 1
+        end
     elseif status == 'D'
         sub_data["status"] = 0
     end    
@@ -623,6 +651,18 @@ function _pwf2pm_discrete_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
 
         sub_data["shunt_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : 2
         sub_data["shunt_type_orig"] = shunt["CONTROL MODE"] == 'F' ? 1 : 2
+        sub_data["shunt_control_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : shunt["CONTROL MODE"] == 'D' ? 2 : 3 
+
+        bus_type = pm_data["bus"]["$(sub_data["shunt_bus"])"]["bus_type"]
+        if bus_type == 1 && sub_data["shunt_control_type"] == 2
+            sub_data["vm_min"] = shunt["MINIMUM VOLTAGE"] / 1000
+            sub_data["vm_max"] = shunt["MAXIMUM VOLTAGE"] / 1000
+        else
+            sub_data["vm_min"] = pm_data["bus"]["$(sub_data["shunt_bus"])"]["vm"]
+            sub_data["vm_max"] = pm_data["bus"]["$(sub_data["shunt_bus"])"]["vm"]
+        end
+
+        sub_data["controlled_bus"] = shunt["CONTROLLED BUS"]
         bs_bounds = _handle_bs_bounds(shunt)
         sub_data["bsmin"] = bs_bounds[1]
         sub_data["bsmax"] = bs_bounds[2]
@@ -630,7 +670,13 @@ function _pwf2pm_discrete_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
 
         status = pwf_data["DBAR"]["$(sub_data["shunt_bus"])"]["STATUS"]
         if status == 'L'
-            sub_data["status"] = 1
+            if bus_type == 2 || bus_type == 3
+                @warn("Active shunt connected in $(bus_type_num_to_str[bus_type]) bus $(sub_data["shunt_bus"]) found."
+                *" Switching shunt status to off.")
+                sub_data["status"] = 0
+            else
+                sub_data["status"] = 1
+            end
         elseif status == 'D'
             sub_data["status"] = 0
         end    
