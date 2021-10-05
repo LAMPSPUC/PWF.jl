@@ -204,18 +204,30 @@
         
         @test pm_data["shunt"]["1"]["shunt_type"] == 1
         @test pm_data["shunt"]["1"]["shunt_type_orig"] == 1
+        @test pm_data["shunt"]["1"]["shunt_control_type"] == 1
         @test pm_data["shunt"]["1"]["bsmin"] == -0.1
         @test pm_data["shunt"]["1"]["bsmax"] == -0.1
+        @test pm_data["shunt"]["1"]["controlled_bus"] == 3
+        @test pm_data["shunt"]["1"]["vm_min"] == 1.03
+        @test pm_data["shunt"]["1"]["vm_max"] == 1.03
 
         @test pm_data["shunt"]["2"]["shunt_type"] == 2
         @test pm_data["shunt"]["2"]["shunt_type_orig"] == 2
+        @test pm_data["shunt"]["2"]["shunt_control_type"] == 3
         @test pm_data["shunt"]["2"]["bsmin"] == -0.5
         @test pm_data["shunt"]["2"]["bsmax"] == 1.
+        @test pm_data["shunt"]["2"]["controlled_bus"] == 1
+        @test pm_data["shunt"]["2"]["vm_min"] == 1.03
+        @test pm_data["shunt"]["2"]["vm_max"] == 1.03
 
         @test pm_data["shunt"]["3"]["shunt_type"] == 2
         @test pm_data["shunt"]["3"]["shunt_type_orig"] == 2
+        @test pm_data["shunt"]["3"]["shunt_control_type"] == 2
         @test pm_data["shunt"]["3"]["bsmin"] == -0.3
         @test pm_data["shunt"]["3"]["bsmax"] == 0.6
+        @test pm_data["shunt"]["3"]["controlled_bus"] == 72
+        @test pm_data["shunt"]["3"]["vm_min"] == 0.9
+        @test pm_data["shunt"]["3"]["vm_max"] == 1.1
 
     end
 end

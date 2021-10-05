@@ -564,8 +564,8 @@ function _pwf2pm_fixed_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data["bsmax"] = sub_data["bs"]
     @assert sub_data["bsmin"] <= sub_data["bsmax"]
 
-    sub_data["vm_min"] = bus["VOLTAGE"]
-    sub_data["vm_max"] = bus["VOLTAGE"]
+    sub_data["vm_min"] = bus["VOLTAGE"] / 1000
+    sub_data["vm_max"] = bus["VOLTAGE"] / 1000
     sub_data["controlled_bus"] = bus["CONTROLLED BUS"]
 
     bus_type = pm_data["bus"]["$(sub_data["shunt_bus"])"]["bus_type"]
