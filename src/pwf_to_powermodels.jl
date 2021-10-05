@@ -22,42 +22,46 @@ function _handle_base_kv(pwf_data::Dict, bus::Dict, dict_dgbt)
         if length(pwf_data["DGBT"]) == 1 && pwf_data["DGBT"]["1"]["GROUP"] != group_identifier
             @warn "Only one base voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGBT"]["1"]["GROUP"])"
             return pwf_data["DGBT"]["1"]["VOLTAGE"]
-        else
-            group = dict_dgbt[group_identifier]
-            @assert length(group) == 1
-            return group["VOLTAGE"]
+        elseif haskey(dict_dgbt, group_identifier)
+                group = dict_dgbt[group_identifier]
+                @assert length(group) == 1
+                return group["VOLTAGE"]
         end
     else
-        return 1.0 # Default value for this field in .pwf
+        return 1.0
     end
 end
 
 function _handle_vmin(pwf_data::Dict, bus::Dict, dict_dglt)
     group_identifier = bus["VOLTAGE LIMIT GROUP"]
     if haskey(pwf_data, "DGLT") 
-        group = dict_dglt[group_identifier]
-        if length(group) == 1
-            return group["LOWER BOUND"]
-        elseif length(pwf_data["DGLT"]) == 1
-            @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"]["1"]["GROUP"])"
-            return pwf_data["DGLT"]["1"]["LOWER BOUND"]
+        if haskey(dict_dglt, group_identifier)
+            group = dict_dglt[group_identifier]
+            if length(group) == 1
+                return group["LOWER BOUND"]
+            elseif length(pwf_data["DGLT"]) == 1
+                @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"]["1"]["GROUP"])"
+                return pwf_data["DGLT"]["1"]["LOWER BOUND"]
+            end
         end
     end
-    return 0.9 # Default value given in the PSS(R)E specification    
+    return 0.9    
 end
 
 function _handle_vmax(pwf_data::Dict, bus::Dict, dict_dglt)
     group_identifier = bus["VOLTAGE LIMIT GROUP"] 
     if haskey(pwf_data, "DGLT") 
-        group = dict_dglt[group_identifier]
-        if length(group) == 1
-            return group["UPPER BOUND"]
-        elseif length(pwf_data["DGLT"]) == 1
-            @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"]["1"]["GROUP"])"
-            return pwf_data["DGLT"]["1"]["UPPER BOUND"]
+        if haskey(dict_dglt, group_identifier)
+            group = dict_dglt[group_identifier]
+            if length(group) == 1
+                return group["UPPER BOUND"]
+            elseif length(pwf_data["DGLT"]) == 1
+                @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"]["1"]["GROUP"])"
+                return pwf_data["DGLT"]["1"]["UPPER BOUND"]
+            end
         end
     end
-    return 1.1 # Default value given in the PSS(R)E specification    
+    return 1.1    
 end
 
 function _handle_bus_type(bus::Dict)
