@@ -1,0 +1,106 @@
+# Analyzing PowerModels' raw parser, it was concluded that b_to & b_fr data was present in DSHL section
+function _handle_b_fr(pm_data::Dict, pwf_data::Dict, f_bus::Int, t_bus::Int, susceptance::Float64, circuit::Int, dict_dshl)
+    b_fr = susceptance / 2.0
+    if haskey(pwf_data, "DSHL")
+        if haskey(dict_dshl, (f_bus, t_bus))
+            if haskey(dict_dshl[(f_bus, t_bus)], circuit)
+                group = dict_dshl[(f_bus, t_bus)][circuit]
+                if group["SHUNT FROM"] !== nothing
+                    b_fr = group["SHUNT FROM"] / 100
+                end
+            end
+        end
+    end
+    return b_fr / 100
+end
+
+function _handle_b_to(pm_data, pwf_data::Dict, f_bus::Int, t_bus::Int, susceptance::Float64, circuit::Int, dict_dshl)
+    b_to = susceptance / 2.0
+    if haskey(pwf_data, "DSHL")
+        if haskey(dict_dshl, (f_bus, t_bus))
+            if haskey(dict_dshl[(f_bus, t_bus)], circuit)
+                group = dict_dshl[(f_bus, t_bus)][circuit]
+                if group["SHUNT TO"] !== nothing
+                    b_to = group["SHUNT TO"] / 100
+                end
+            end
+        end
+    end
+    return b_to / 100
+end
+
+function _create_dict_dshl(data::Dict)
+    dshl_dict = Dict{Tuple, Any}()
+
+    for (k,v) in data
+        sub_data = Dict{String, Any}()
+        sub_data["SHUNT FROM"] = v["SHUNT FROM"]
+        sub_data["SHUNT TO"] = v["SHUNT TO"]
+        current_value = get(dshl_dict, (v["FROM BUS"], v["TO BUS"]), Dict{Int, Any}())
+        current_value[v["CIRCUIT"]] = sub_data
+        dshl_dict[(v["FROM BUS"], v["TO BUS"])] = current_value
+    end
+    return dshl_dict
+end
+
+function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
+    sub_data = Dict{String,Any}()
+
+    sub_data["f_bus"] = pop!(branch, "FROM BUS")
+    sub_data["t_bus"] = pop!(branch, "TO BUS")
+    sub_data["br_r"] = pop!(branch, "RESISTANCE") / 100
+    sub_data["br_x"] = pop!(branch, "REACTANCE") / 100
+
+    dshl_dict = haskey(pwf_data, "DSHL") ? _create_dict_dshl(pwf_data["DSHL"]) : nothing
+    sub_data["g_fr"] = 0.0
+    sub_data["b_fr"] = _handle_b_fr(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"], branch["CIRCUIT"], dshl_dict)
+    sub_data["g_to"] = 0.0
+    sub_data["b_to"] = _handle_b_to(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"], branch["CIRCUIT"], dshl_dict)
+
+    sub_data["tap"] = pop!(branch, "TAP")
+    sub_data["tapmin"] = sub_data["tap"]
+    sub_data["tapmax"] = sub_data["tap"]
+    sub_data["shift"] = -pop!(branch, "LAG")
+    sub_data["angmin"] = -360.0 # No limit
+    sub_data["angmax"] = 360.0 # No limit
+    sub_data["transformer"] = false
+
+    if branch["STATUS"] == 'D'
+        sub_data["br_status"] = 0
+    else
+        sub_data["br_status"] = 1
+    end
+
+    sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
+    sub_data["index"] = length(pm_data["branch"]) + 1
+
+    sub_data["rate_a"] = pop!(branch, "NORMAL CAPACITY")
+    sub_data["rate_b"] = pop!(branch, "EMERGENCY CAPACITY")
+    sub_data["rate_c"] = pop!(branch, "EQUIPAMENT CAPACITY")
+
+    if sub_data["rate_a"] >= 9999
+        delete!(sub_data, "rate_a")
+    end
+    if sub_data["rate_b"] >= 9999
+        delete!(sub_data, "rate_b")
+    end
+    if sub_data["rate_c"] >= 9999
+        delete!(sub_data, "rate_c")
+    end
+
+    idx = string(sub_data["index"])
+    pm_data["branch"][idx] = sub_data
+
+end
+
+function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
+
+    pm_data["branch"] = Dict{String, Any}()
+    if haskey(pwf_data, "DLIN")
+        for (i,branch) in pwf_data["DLIN"]
+            if !branch["TRANSFORMER"]
+                _pwf2pm_branch!(pm_data, pwf_data, branch)
+            end
+        end
+    end
+end
