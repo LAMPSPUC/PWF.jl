@@ -98,7 +98,7 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data["index"] = bus["NUMBER"]
 
     dict_dglt = haskey(pwf_data, "DGLT") ? _create_dict_dglt(pwf_data["DGLT"]) : nothing
-    dict_dgbt = haskey(pwf_data, "DGLT") ? _create_dict_dgbt(pwf_data["DGBT"]) : nothing
+    dict_dgbt = haskey(pwf_data, "DGBT") ? _create_dict_dgbt(pwf_data["DGBT"]) : nothing
     sub_data["base_kv"] = _handle_base_kv(pwf_data, bus, dict_dgbt)
     sub_data["vmin"] = _handle_vmin(pwf_data, bus, dict_dglt)
     sub_data["vmax"] = _handle_vmax(pwf_data, bus, dict_dglt)
