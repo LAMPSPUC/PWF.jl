@@ -102,6 +102,8 @@ const _fban_2_dtypes = [("GROUP", Int64, 1:2), ("OPERATION", Char, 5), ("STATUS"
     ("UNITIES", Int64, 9:11), ("OPERATING UNITIES", Int64, 13:15),
     ("REACTANCE", Float64, 17:22)]
 
+const _dcsc_dtypes = [] #todo
+
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes, "DGBT" => _dgbt_dtypes,
     "DGLT" => _dglt_dtypes, "DGER" => _dger_dtypes, "DSHL" => _dshl_dtypes, "DCBA" => _dcba_dtypes, 
     "DCLI" => _dcli_dtypes, "DCNV" => _dcnv_dtypes, "DCCV" => _dccv_dtypes, "DELO" => _delo_dtypes, 
@@ -214,6 +216,8 @@ const _default_fban_1 = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS"
     "MAXIMUM VOLTAGE" => nothing, "CONTROLLED BUS" => nothing,
     "INITIAL REACTIVE INJECTION" => 0.0, "CONTROL TYPE" => 'C', "ERASE DBAR" => 'N',
     "EXTREMITY" => nothing, "REACTANCE GROUPS" => _default_fban_2)
+
+const _default_dcsc = Dict() #todo
 
 const _default_titu = ""
 

@@ -75,14 +75,24 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
 
 end
 
-function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
+function _pwf2pm_DCSC_branch!(pm_data, pwf_data, branch)
+    # linha ja existe ? warning linha duplicada : segue NORMAL
+    # criar nova linha de/para/circuito do DCSC
+    # todos os parametros iguais a zero exceto o  X (pegar do  Xv)
+end
 
+function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
     pm_data["branch"] = Dict{String, Any}()
     if haskey(pwf_data, "DLIN")
         for (i,branch) in pwf_data["DLIN"]
             if !branch["TRANSFORMER"]
                 _pwf2pm_branch!(pm_data, pwf_data, branch)
             end
+        end
+    end
+    if haskey(pwf_data, "DCSC")
+        for (i,csc) in pwf_data["DCSC"]
+            _pwf2pm_DCSC_branch!(pm_data, pwf_data, branch)
         end
     end
 end
