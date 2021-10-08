@@ -102,13 +102,21 @@ const _fban_2_dtypes = [("GROUP", Int64, 1:2), ("OPERATION", Char, 5), ("STATUS"
     ("UNITIES", Int64, 9:11), ("OPERATING UNITIES", Int64, 13:15),
     ("REACTANCE", Float64, 17:22)]
 
-const _dcsc_dtypes = [] #todo
+const _dcsc_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Char, 7), ("TO BUS", Int64, 10:14),
+    ("CIRCUIT", Int64, 15:16), ("STATUS", Char, 17), ("OWNER", Char, 18), ("BYPASS", Char, 19),
+    ("MINIMUM VALUE", Float64, 26:31), ("MAXIMUM VALUE", Float64, 32:37), ("INITIAL VALUE", Float64, 38:43),
+    ("CONTROL MODE", Char, 44), ("SPECIFIED VALUE", Float64, 46:51), ("MEASUREMENT EXTREMITY", Int64, 53:57),
+    ("NUMBER OF STAGES", Int64, 58:60), ("NORMAL CAPACITY", Float64, 61:64),
+    ("EMERGENCY CAPACITY", Float64, 65:68), ("EQUIPAMENT CAPACITY", Float64, 69:72), ("AGGREGATOR 1", Int64, 73:75),
+    ("AGGREGATOR 2", Int64, 76:78), ("AGGREGATOR 3", Int64, 79:81), ("AGGREGATOR 4", Int64, 82:84),
+    ("AGGREGATOR 5", Int64, 85:87), ("AGGREGATOR 6", Int64, 88:90), ("AGGREGATOR 7", Int64, 91:93), 
+    ("AGGREGATOR 8", Int64, 94:96), ("AGGREGATOR 9", Int64, 97:99), ("AGGREGATOR 10", Int64, 100:102)]
 
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes, "DGBT" => _dgbt_dtypes,
     "DGLT" => _dglt_dtypes, "DGER" => _dger_dtypes, "DSHL" => _dshl_dtypes, "DCBA" => _dcba_dtypes, 
     "DCLI" => _dcli_dtypes, "DCNV" => _dcnv_dtypes, "DCCV" => _dccv_dtypes, "DELO" => _delo_dtypes, 
     "DCER" => _dcer_dtypes, "BUS AND VOLTAGE CONTROL" => _fban_1_dtypes, "REACTORS AND CAPACITORS BANKS" => _fban_2_dtypes,
-    "DBSH" => [_fban_1_dtypes, _fban_2_dtypes])
+    "DBSH" => [_fban_1_dtypes, _fban_2_dtypes], "DCSC" => _dcsc_dtypes)
     
 const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
                         filter(x -> x%7 == 6, 1:69), Char)
@@ -217,7 +225,13 @@ const _default_fban_1 = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS"
     "INITIAL REACTIVE INJECTION" => 0.0, "CONTROL TYPE" => 'C', "ERASE DBAR" => 'N',
     "EXTREMITY" => nothing, "REACTANCE GROUPS" => _default_fban_2)
 
-const _default_dcsc = Dict() #todo
+const _default_dcsc = Dict("FROM BUS" => nothing, "OPERATION" => nothing, "TO BUS" => nothing,
+    "CIRCUIT" => nothing, "STATUS" => 'L', "OWNER" => 'F', "BYPASS" => 'D',
+    "MINIMUM VALUE" => -9999.0, "MAXIMUM VALUE" => 9999.0, "INITIAL VALUE" => nothing,
+    "CONTROL MODE" => 'X', "SPECIFIED VALUE" => nothing, "MEASUREMENT EXTREMITY" => nothing,
+    "NUMBER OF STAGES" => nothing, "AGGREGATOR 1" => nothing, "AGGREGATOR 2" => nothing,
+    "AGGREGATOR 3" => nothing, "AGGREGATOR 4" => nothing, "AGGREGATOR 5" => nothing, 
+    "AGGREGATOR 6" => nothing)
 
 const _default_titu = ""
 
@@ -227,7 +241,8 @@ const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DC
     "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name, "DGER" => _default_dger,
     "DGBT" => _default_dgbt, "DGLT" => _default_dglt, "DSHL" => _default_dshl, "DCER" => _default_dcer,
     "DBSH" => _default_fban_1, "REACTANCE GROUPS" => _default_fban_2, "DCBA" => _default_dcba,
-    "DBLI" => _default_dcli, "DCNV" => _default_dcnv, "DCCV" => _default_dccv, "DELO" => _default_delo)
+    "DBLI" => _default_dcli, "DCNV" => _default_dcnv, "DCCV" => _default_dccv, "DELO" => _default_delo,
+    "DCSC" => _default_dcsc)
 
 
 const title_identifier = "TITU"

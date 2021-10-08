@@ -75,10 +75,58 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
 
 end
 
-function _pwf2pm_DCSC_branch!(pm_data, pwf_data, branch)
-    # linha ja existe ? warning linha duplicada : segue NORMAL
-    # criar nova linha de/para/circuito do DCSC
-    # todos os parametros iguais a zero exceto o  X (pegar do  Xv)
+function _pwf2pm_DCSC_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
+    sub_data = Dict{String,Any}()
+
+    sub_data["f_bus"] = pop!(branch, "FROM BUS")
+    sub_data["t_bus"] = pop!(branch, "TO BUS")
+    sub_data["br_r"] = 0
+    sub_data["br_x"] = pop!(branch, "INITIAL VALUE") / 100
+
+    sub_data["g_fr"] = 0.0
+    sub_data["b_fr"] = 0.0
+    sub_data["g_to"] = 0.0
+    sub_data["b_to"] = 0.0
+
+    sub_data["tap"] = 0
+    sub_data["tapmin"] = 0
+    sub_data["tapmax"] = 0
+    sub_data["shift"] = 0
+    sub_data["angmin"] = -360.0
+    sub_data["angmax"] = 360.0
+    sub_data["transformer"] = false
+
+    if branch["STATUS"] == 'L'
+        sub_data["br_status"] = 1
+    else
+        sub_data["br_status"] = 0
+    end
+
+    sub_data["circuit"] = branch["CIRCUIT"]
+    sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
+    sub_data["index"] = length(pm_data["branch"]) + 1
+
+    sub_data["rate_a"] = pop!(branch, "NORMAL CAPACITY")
+    sub_data["rate_b"] = pop!(branch, "EMERGENCY CAPACITY")
+    sub_data["rate_c"] = pop!(branch, "EQUIPAMENT CAPACITY")
+
+    if sub_data["rate_a"] >= 9999
+        delete!(sub_data, "rate_a")
+    end
+    if sub_data["rate_b"] >= 9999
+        delete!(sub_data, "rate_b")
+    end
+    if sub_data["rate_c"] >= 9999
+        delete!(sub_data, "rate_c")
+    end
+
+    rep = findall(x -> x["f_bus"] == sub_data["f_bus"] && x["t_bus"] == sub_data["t_bus"] && x["circuit"] == sub_data["circuit"], pm_data["branch"])
+    if length(rep) > 0
+        @warn "Branch from $(sub_data["f_bus"]) to $(sub_data["t_bus"]) in circuit $(sub_data["circuit"]) is duplicated"
+    end
+    idx = string(sub_data["index"])
+    pm_data["branch"][idx] = sub_data
+
 end
 
 function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
@@ -92,7 +140,7 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
     end
     if haskey(pwf_data, "DCSC")
         for (i,csc) in pwf_data["DCSC"]
-            _pwf2pm_DCSC_branch!(pm_data, pwf_data, branch)
+            _pwf2pm_DCSC_branch!(pm_data, pwf_data, csc)
         end
     end
 end
