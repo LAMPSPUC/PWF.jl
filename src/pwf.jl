@@ -229,7 +229,8 @@ const _default_dcsc = Dict("FROM BUS" => nothing, "OPERATION" => nothing, "TO BU
     "CIRCUIT" => nothing, "STATUS" => 'L', "OWNER" => 'F', "BYPASS" => 'D',
     "MINIMUM VALUE" => -9999.0, "MAXIMUM VALUE" => 9999.0, "INITIAL VALUE" => nothing,
     "CONTROL MODE" => 'X', "SPECIFIED VALUE" => nothing, "MEASUREMENT EXTREMITY" => nothing,
-    "NUMBER OF STAGES" => nothing, "AGGREGATOR 1" => nothing, "AGGREGATOR 2" => nothing,
+    "NUMBER OF STAGES" => nothing, "NORMAL CAPACITY" => Inf, "EMERGENCY CAPACITY" => Inf,
+    "EQUIPAMENT CAPACITY" => Inf, "AGGREGATOR 1" => nothing, "AGGREGATOR 2" => nothing,
     "AGGREGATOR 3" => nothing, "AGGREGATOR 4" => nothing, "AGGREGATOR 5" => nothing, 
     "AGGREGATOR 6" => nothing)
 
