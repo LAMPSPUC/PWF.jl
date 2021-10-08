@@ -12,13 +12,13 @@ A list of data file sections in the order that they appear in a PWF file
 const _dbar_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Int64, 6), 
     ("STATUS", Char, 7), ("TYPE", Int64, 8), ("BASE VOLTAGE GROUP", String, 9:10),
     ("NAME", String, 11:22), ("VOLTAGE LIMIT GROUP", String, 23:24),
-    ("VOLTAGE", Float64, 25:28), ("ANGLE", Float64, 29:32),
+    ("VOLTAGE", Float64, 25:28, 25), ("ANGLE", Float64, 29:32),
     ("ACTIVE GENERATION", Float64, 33:37), ("REACTIVE GENERATION", Float64, 38:42),
     ("MINIMUM REACTIVE GENERATION", Float64, 43:47),
     ("MAXIMUM REACTIVE GENERATION",Float64, 48:52), ("CONTROLLED BUS", Int64, 53:58),
     ("ACTIVE CHARGE", Float64, 59:63), ("REACTIVE CHARGE", Float64, 64:68),
     ("TOTAL REACTIVE POWER", Float64, 69:73), ("AREA", Int64, 74:76),
-    ("CHARGE DEFINITION VOLTAGE", Float64, 77:80), ("VISUALIZATION", Int64, 81),
+    ("CHARGE DEFINITION VOLTAGE", Float64, 77:80, 77), ("VISUALIZATION", Int64, 81),
     ("AGGREGATOR 1", Int64, 82:84), ("AGGREGATOR 2", Int64, 85:87),
     ("AGGREGATOR 3", Int64, 88:90), ("AGGREGATOR 4", Int64, 91:93),
     ("AGGREGATOR 5", Int64, 94:96), ("AGGREGATOR 6", Int64, 97:99),
@@ -28,10 +28,10 @@ const _dbar_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Int64, 6),
 const _dlin_dtypes = [("FROM BUS", Int64, 1:5), ("OPENING FROM BUS", Char, 6),
     ("OPERATION", Int64, 8), ("OPENING TO BUS", Char, 10), ("TO BUS", Int64, 11:15),
     ("CIRCUIT", Int64, 16:17), ("STATUS", Char, 18), ("OWNER", Char, 19),
-    ("RESISTANCE", Float64, 21:26), ("REACTANCE", Float64, 27:32),
-    ("SHUNT SUSCEPTANCE", Float64, 33:38), ("TAP", Float64, 39:43),
-    ("MINIMUM TAP", Float64, 44:48), ("MAXIMUM TAP", Float64, 49:53),
-    ("LAG", Float64, 54:58), ("CONTROLLED BUS", Int64, 59:64),
+    ("RESISTANCE", Float64, 21:26, 24), ("REACTANCE", Float64, 27:32, 30),
+    ("SHUNT SUSCEPTANCE", Float64, 33:38, 35), ("TAP", Float64, 39:43, 40),
+    ("MINIMUM TAP", Float64, 44:48, 45), ("MAXIMUM TAP", Float64, 49:53, 50),
+    ("LAG", Float64, 54:58, 56), ("CONTROLLED BUS", Int64, 59:64),
     ("NORMAL CAPACITY", Float64, 65:68), ("EMERGENCY CAPACITY", Float64, 69:72),
     ("NUMBER OF TAPS", Int64, 73:74), ("EQUIPAMENT CAPACITY", Float64, 75:78),
     ("AGGREGATOR 1", Int64, 79:81), ("AGGREGATOR 2", Int64, 82:84),
@@ -94,7 +94,7 @@ const _dcer_dtypes = [("BUS", Int, 1:5), ("OPERATION", Char, 7), ("GROUP", Int64
 
 const _fban_1_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
     ("TO BUS", Int64, 10:14), ("CIRCUIT", Int64, 15:16), ("CONTROL MODE", Char, 18),
-    ("MINIMUM VOLTAGE", Float64, 20:23), ("MAXIMUM VOLTAGE", Float64, 25:28),
+    ("MINIMUM VOLTAGE", Float64, 20:23, 20), ("MAXIMUM VOLTAGE", Float64, 25:28, 25),
     ("CONTROLLED BUS", Int64, 30:34), ("INITIAL REACTIVE INJECTION", Float64, 36:41),
     ("CONTROL TYPE", Char, 43), ("ERASE DBAR", Char, 45), ("EXTREMITY", Int64, 47:51)]
 
@@ -283,6 +283,14 @@ function _split_sections(io::IO)
     return sections
 end
 
+function _handle_implicit_decimal_point!(
+    data::Dict, pwf_section::Vector, field::String, dtype, cols, element::String)
+    
+    field_idx     = findfirst(x -> x[1:3] == (field, dtype, cols), pwf_section)
+    decimal_point = length(pwf_section[field_idx]) == 4 ? cols[end] - pwf_section[field_idx][4] : 0
+    data[field]   = parse(dtype, element) / 10^decimal_point
+end
+
 """
     _parse_line_element!(data, line, section)
 
@@ -302,7 +310,11 @@ function _parse_line_element!(data::Dict{String, Any}, line::String, section::Ab
 
         try
             if dtype != String && dtype != Char
-                data[field] = parse(dtype, element)
+                if dtype == Float64 && !('.' in element) # Implicit decimal point
+                    _handle_implicit_decimal_point!(data, _pwf_dtypes[section], field, dtype, cols, element)
+                else
+                    data[field] = parse(dtype, element)
+                end
             else
                 data[field] = element
             end

@@ -230,4 +230,17 @@
         @test pm_data["shunt"]["3"]["vm_max"] == 1.1
 
     end
+
+    @testset "Line shunt" begin
+        file = open(joinpath(@__DIR__,"data/pwf/test_line_shunt.pwf"))
+        pm_data = ParserPWF.parse_pwf_to_powermodels(file)
+
+        @test pm_data["branch"]["1"]["b_fr"] == 4.5
+        @test pm_data["branch"]["1"]["b_to"] == 7.8
+        @test pm_data["branch"]["2"]["b_fr"] == -80
+        @test pm_data["branch"]["2"]["b_to"] == -0.07
+        @test pm_data["branch"]["3"]["b_fr"] == -1.5
+        @test pm_data["branch"]["3"]["b_to"] == 0.0
+        @test length(pwf_final["shunt"]) == 0
+    end
 end

@@ -25,19 +25,21 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two
     sub_data["angmax"] = 360.0 # No limit
     sub_data["transformer"] = true
 
-    if branch["STATUS"] == 'D'
-        sub_data["br_status"] = 0
-    else
+    if branch["STATUS"] == branch["OPENING FROM BUS"] == branch["OPENING TO BUS"] == 'L'
         sub_data["br_status"] = 1
+    else
+        sub_data["br_status"] = 0
     end
 
+    sub_data["circuit"] = branch["CIRCUIT"]
     n = 0 # count(x -> x["f_bus"] == sub_data["f_bus"] && x["t_bus"] == sub_data["t_bus"], values(pm_data["branch"])) 
     sub_data["source_id"] = ["transformer", sub_data["f_bus"], sub_data["t_bus"], 0, "0$(n + 1)", 0]
     sub_data["index"] = length(pm_data["branch"]) + 1
 
     dict_dshl = haskey(pwf_data, "DSHL") ? _create_dict_dshl(pwf_data["DSHL"]) : nothing
-    sub_data["b_fr"] = _handle_b_fr(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"], branch["CIRCUIT"], dict_dshl)
-    sub_data["b_to"] = _handle_b_to(pm_data, pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"], branch["CIRCUIT"], dict_dshl)
+    b = _handle_b(pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"], branch["CIRCUIT"], dict_dshl)
+    sub_data["b_fr"] = b[1]
+    sub_data["b_to"] = b[2]
 
     sub_data["rate_a"] = pop!(branch, "NORMAL CAPACITY")
     sub_data["rate_b"] = pop!(branch, "EMERGENCY CAPACITY")

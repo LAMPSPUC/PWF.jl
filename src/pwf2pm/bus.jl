@@ -89,7 +89,7 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data["bus_i"] = bus["NUMBER"]
     sub_data["bus_type"] = _handle_bus_type(bus)
     sub_data["area"] = pop!(bus, "AREA")
-    sub_data["vm"] = bus["VOLTAGE"]/1000 # Implicit decimal point ignored
+    sub_data["vm"] = bus["VOLTAGE"]
     sub_data["va"] = pop!(bus, "ANGLE")
     sub_data["zone"] = 1
     sub_data["name"] = pop!(bus, "NAME")

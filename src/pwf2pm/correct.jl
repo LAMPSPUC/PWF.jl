@@ -79,9 +79,36 @@ function _pwf2pm_corrections_PQ!(pm_data::Dict)
     return
 end
 
+function _switch_shunt_status!(shunt::Dict, bus_type)
+    @warn("Active shunt connected in $(bus_type_num_to_str[bus_type]) bus $(shunt["shunt_bus"]) found."
+                                                    *" Switching shunt status to off.")
+    shunt["status"] = 0
+end
+
+function _fix_shunt_voltage_bounds(shunt::Dict, pm_data::Dict)
+    shunt["vm_min"] = pm_data["bus"]["$(shunt["shunt_bus"])"]["vm"]
+    shunt["vm_max"] = pm_data["bus"]["$(shunt["shunt_bus"])"]["vm"]
+end
+
+function _pwf2pm_corrections_shunt!(pm_data::Dict)
+    for (s, shunt) in pm_data["shunt"]
+        bus = pm_data["bus"]["$(shunt["shunt_bus"])"]
+        bus_type = bus["bus_type"]
+        
+        if bus_type_num_to_str[bus_type] in ["PV", "Vθ"]
+            _switch_shunt_status!(shunt, bus_type)
+        end
+
+        if !(bus_type_num_to_str[bus_type] == "PQ" && shunt["shunt_control_type"] == 2) # Discrete
+           _fix_shunt_voltage_bounds(shunt, pm_data)
+        end
+    end
+end
+
 function _pwf2pm_corrections!(pm_data::Dict, pwf_data::Dict)
     _pwf2pm_corrections_PV!(pm_data, pwf_data)
     _pwf2pm_corrections_PQ!(pm_data)
+    _pwf2pm_corrections_shunt!(pm_data)
     
     return 
 end
