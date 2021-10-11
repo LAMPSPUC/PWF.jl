@@ -241,6 +241,6 @@
         @test pm_data["branch"]["2"]["b_to"] == -0.07
         @test pm_data["branch"]["3"]["b_fr"] == -1.5
         @test pm_data["branch"]["3"]["b_to"] == 0.0
-        @test length(pwf_final["shunt"]) == 0
+        @test length(pm_data["shunt"]) == 0
     end
 end

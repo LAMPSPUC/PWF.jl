@@ -3,8 +3,8 @@ function _handle_b(pwf_data::Dict, f_bus::Int, t_bus::Int, susceptance::Float64,
     b_fr, b_to = susceptance / 200, susceptance / 200
     if haskey(pwf_data, "DSHL") && haskey(dict_dshl, (f_bus, t_bus)) && haskey(dict_dshl[(f_bus, t_bus)], circuit)
         group = dict_dshl[(f_bus, t_bus)][circuit]
-        b_fr += group["SHUNT FROM"] !== nothing ? group["SHUNT FROM"] / 100 : 0
-        b_to += group["SHUNT TO"] !== nothing ? group["SHUNT TO"] / 100 : 0
+        b_fr += group["SHUNT FROM"] !== nothing && group["STATUS FROM"] == " L" ? group["SHUNT FROM"] / 100 : 0
+        b_to += group["SHUNT TO"] !== nothing && group["STATUS TO"] == " L" ? group["SHUNT TO"] / 100 : 0
     end
     return b_fr, b_to
 end
@@ -16,6 +16,8 @@ function _create_dict_dshl(data::Dict)
         sub_data = Dict{String, Any}()
         sub_data["SHUNT FROM"] = v["SHUNT FROM"]
         sub_data["SHUNT TO"] = v["SHUNT TO"]
+        sub_data["STATUS FROM"] = v["STATUS FROM"]
+        sub_data["STATUS TO"] = v["STATUS TO"]
         current_value = get(dshl_dict, (v["FROM BUS"], v["TO BUS"]), Dict{Int, Any}())
         current_value[v["CIRCUIT"]] = sub_data
         dshl_dict[(v["FROM BUS"], v["TO BUS"])] = current_value
