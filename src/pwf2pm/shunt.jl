@@ -41,6 +41,8 @@ function _pwf2pm_DBSH_bus_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
 
         sub_data = Dict{String,Any}()
 
+        sub_data["section"] = "DBSH"
+
         sub_data["shunt_bus"] = shunt["FROM BUS"]
         
         sub_data["shunt_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : 2
@@ -112,6 +114,8 @@ function _pwf2pm_DCER_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
     n = count(x -> x["shunt_bus"] == shunt["BUS"], values(pm_data["shunt"])) 
 
     sub_data = Dict{String,Any}()
+    
+    sub_data["section"] = "DCER"
 
     sub_data["shunt_bus"] = shunt["BUS"]
     sub_data["gs"]        = 0.0
@@ -164,6 +168,8 @@ end
 function _pwf2pm_DBAR_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data = Dict{String,Any}()
 
+    sub_data["section"] = "DBAR"
+    
     sub_data["shunt_bus"] = bus["NUMBER"]
     sub_data["gs"] = 0.0        
     sub_data["bs"] =  bus["TOTAL REACTIVE POWER"] 
@@ -171,6 +177,7 @@ function _pwf2pm_DBAR_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data["shunt_type"] = 1
     sub_data["shunt_type_orig"] = 1
     sub_data["shunt_control_type"] = 1
+    
     sub_data["bsmin"] = sub_data["bs"]
     sub_data["bsmax"] = sub_data["bs"]
     @assert sub_data["bsmin"] <= sub_data["bsmax"]
