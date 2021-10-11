@@ -95,7 +95,7 @@ function _pwf2pm_corrections_shunt!(pm_data::Dict)
         bus = pm_data["bus"]["$(shunt["shunt_bus"])"]
         bus_type = bus["bus_type"]
         
-        if bus_type_num_to_str[bus_type] in ["PV", "Vθ"] && shunt["section"] != "DBAR"
+        if bus_type_num_to_str[bus_type] in ["PV"] && shunt["section"] != "DBAR"
             _switch_shunt_status!(shunt, bus_type)
         end
 
