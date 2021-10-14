@@ -25,8 +25,8 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict, i1::Int)
     # Assumption - vf & vt are directly the voltage for each bus, instead of what is indicated in DELO section
     bus_f = pwf_data["DBAR"]["$(sub_data["f_bus"])"]
     bus_t = pwf_data["DBAR"]["$(sub_data["t_bus"])"]
-    sub_data["vf"] = bus_f["VOLTAGE"]/1000
-    sub_data["vt"] = bus_t["VOLTAGE"]/1000
+    sub_data["vf"] = bus_f["VOLTAGE"]
+    sub_data["vt"] = bus_t["VOLTAGE"]
 
     # Assumption - the power demand sign is derived from the field looseness
     sub_data["pmaxf"] = pwf_data["DCCV"]["$(i2[1])"]["LOOSENESS"] == 'N' ? power_demand : -power_demand
