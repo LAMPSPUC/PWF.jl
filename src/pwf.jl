@@ -69,7 +69,7 @@ const _dcli_dtypes = [("FROM BUS", Int64, 1:4), ("OPERATION", Int64, 6), ("TO BU
 
 const _dcnv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("AC BUS", Int64, 8:12),
     ("DC BUS", Int64, 14:17), ("NEUTRAL BUS", Int64, 19:22), ("OPERATION MODE", Char, 24),
-    ("BRIDGES", Int64, 26), ("CURRENTS", Float64, 28:32), ("COMMUTATION REACTANCE", Float64, 34:38),
+    ("BRIDGES", Int64, 26), ("CURRENT", Float64, 28:32), ("COMMUTATION REACTANCE", Float64, 34:38),
     ("SECONDARY VOLTAGE", Float64, 40:44), ("TRANSFORMER POWER", Float64, 46:50),
     ("REACTOR RESISTANCE", Float64, 52:56), ("REACTOR INDUCTANCE", Float64, 58:62),
     ("CAPACITANCE", Float64, 64:68), ("FREQUENCY", Float64, 70:71)]
@@ -81,7 +81,7 @@ const _dccv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("LOOSENE
     ("MINIMUM CONVERTER ANGLE", Float64, 36:40), ("MAXIMUM CONVERTER ANGLE", Float64, 42:46),
     ("MINIMUM TRANSFORMER TAP", Float64, 48:52), ("MAXIMUM TRANSFORMER TAP", Float64, 54:58),
     ("TRANSFORMER TAP NUMBER OF STEPS", Int64, 60:61),
-    ("MINIMUM DC VOLTAGE FOR POWER CONTROL", Float64, 63:66),
+    ("MINIMUM DC VOLTAGE FOR POWER CONTROL", Float64, 63:66, 63),
     ("TAP HI MVAR MODE", Float64, 68:72), ("TAP REDUCED VOLTAGE MODE", Float64, 74:78)]
 
 const _delo_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("VOLTAGE", Float64, 8:12),
@@ -195,7 +195,7 @@ const _default_dcli = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" =
 
 const _default_dcnv = Dict("NUMBER" => nothing, "OPERATION" => 'A', "AC BUS" => nothing,
     "DC BUS" => nothing, "NEUTRAL BUS" => nothing, "OPERATION MODE" => nothing,
-    "BRIDGES" => nothing, "CURRENTS" => nothing, "COMMUTATION REACTANCE" => nothing,
+    "BRIDGES" => nothing, "CURRENT" => nothing, "COMMUTATION REACTANCE" => nothing,
     "SECONDARY VOLTAGE" => nothing, "TRANSFORMER POWER" => nothing, "REACTOR RESISTANCE" => 0.0,
     "REACTOR INDUCTANCE" => 0.0, "CAPACITANCE" => Inf, "FREQUENCY" => 60.0)
 
