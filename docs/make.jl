@@ -15,6 +15,15 @@ makedocs(
             "Overview" => "pwf_overview.md",
             "DBAR" => "dbar.md",
             "DLIN" => "dlin.md",
+            "DGER" => "dger.md",
+            "DGBT" => "dgbt.md",
+            "DGLT" => "dglt.md",
+            "DSHL" => "dshl.md",
+            "DELO" => "delo.md",
+            "DCBA" => "dcba.md",
+            "DCLI" => "dcli.md",
+            "DCNV" => "dcnv.md",
+            "DCCV" => "dccv.md",
         ],
     ]
 )
