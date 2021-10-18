@@ -1,18 +1,4 @@
-<img src="images/lampspucpptreduced.png" align="right" width=300>
-<h1>ParserPWF.jl</h1>
-
-<br>
-<br>
-
----
-
-ParserPWF.jl is a Julia package for converting ANAREDE data format (".pwf") into a Julia dictionary.
-
-Additionaly, ParserPWF provides parsing .pwf file directly to [PowerModels.jl](https://github.com/lanl-ansi/PowerModels.jl) network data dictionary.
-
-The implementations were made based on the ANAREDE user guide manual (v09).
-
-**Quickstart**
+# Quick Start Guide
 
 Parsing a .pwf file to Julia dictionary is as simple as:
 
@@ -54,38 +40,6 @@ Dict{String, Any} with 6 entries:
   "DOPC" => Dict{String, Any}("CONT"=>'L', "CELO"=>'L' "MOST"=>'L', "MOSF"=>'L', "RCVG"=>'…
 ```
 
-**PWF Sections Available:**
-
-- DBAR
-- DLIN
-- DGBT
-- DGLT
-- DGER
-- DSHL
-- DCBA
-- DCLI
-- DCNV
-- DCCV
-- DELO
-- DCER
-- DBSH (fban)
-- DOPC
-- DCTE
-
-**Incoming Sections:**
-
-- DARE
-- DCAI
-- DCAR
-- DCSC
-- DGEI
-- DGLT
-- DINJ
-- DMFL
-- DMOT
-- DMTE
-- TITU
-
 ## PowerModels.jl converter
 
 The package also allow converting .pwf file directly into PowerModels.jl network data structure:
@@ -107,22 +61,3 @@ Dict{String, Any} with 13 entries:
   "shunt"          => Dict{String, Any}()
   "load"           => Dict{String, Any}("1"=>Dict{String, Any}("source_id"=>Any["load", 3, …
 ```
-
-**Network Data Sections Available:**
-
-- bus
-- gen
-- load
-- branch
-- dcline
-- shunt
-
-**Incoming Network Data Sections:**
-
-- switch
-- storage
-
-## Contributing
-
-- PRs such as adding new sections and fixing bugs are very welcome!
-- For nontrivial changes, you'll probably want to first discuss the changes via issue.

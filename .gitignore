@@ -1,3 +1,4 @@
 script.jl
 .vscode/
 Manifest.toml
+*.txt
