@@ -24,6 +24,11 @@ makedocs(
             "DCLI" => "dcli.md",
             "DCNV" => "dcnv.md",
             "DCCV" => "dccv.md",
+            "DBSH" => "dbsh.md",
+            "DCER" => "dcer.md",
+            "DCSC" => "dcsc.md",
+            "DOPC" => "dopc.md",
+            "DCTE" => "dcte.md",
         ],
     ]
 )

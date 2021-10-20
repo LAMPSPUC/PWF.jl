@@ -1,6 +1,6 @@
 # DSHL
 ## Description
-AC circuit shunt data.
+AC circuit shunt data. This section enables association between shunt devices and AC circuits, facilitating failure simultation. This devices are automatically removed or inserted alongside the associated circuit.
 ## Usage
 Column   |   Description
 ---   |   ---

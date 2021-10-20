@@ -1,6 +1,6 @@
 # DGER
 ## Description
-Active generation bounds and participation factors data.
+Active generation bounds and participation factors data. Active power inbalance is distributed based on participation factors and active generation bounds
 ## Usage
 Column   |   Description
 ---   |   ---
