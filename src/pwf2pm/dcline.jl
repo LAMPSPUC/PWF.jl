@@ -1,24 +1,53 @@
-function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict, i1::Int)
-    i2 = 2*(i1 - 1) + 1, 2*i1
-    i4 = 4*(i1 - 1) + 1, 4*(i1 - 1) + 2, 4*(i1 - 1) + 3, 4*i1 
+function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict, link::Dict)
 
     sub_data = Dict{String, Any}()
 
-    @assert pwf_data["DCCV"]["$(i2[1])"]["CONVERTER CONTROL TYPE"] == pwf_data["DCCV"]["$(i2[2])"]["CONVERTER CONTROL TYPE"]
-    mdc  = pwf_data["DCCV"]["$(i2[1])"]["CONVERTER CONTROL TYPE"]
-
-    setvl = pwf_data["DCCV"]["$(i2[1])"]["SPECIFIED VALUE"]
-    vschd = pwf_data["DCBA"]["$(i4[1])"]["VOLTAGE"]
-    power_demand = mdc == 'P' ? abs(setvl) : mdc == 'C' ? abs(setvl / vschd / 1000) : 0
-
-    sub_data["f_bus"] = pwf_data["DCNV"]["$(i2[1])"]["AC BUS"]
-    sub_data["t_bus"] = pwf_data["DCNV"]["$(i2[2])"]["AC BUS"]
-
     # Assumption - bus status is defined on DELO section
-    sub_data["br_status"] = pwf_data["DELO"]["$i1"]["STATUS"] == 'L' ? 1 : 0
+    sub_data["br_status"] = link["STATUS"] == 'L' ? 1 : 0
 
-    sub_data["pf"] = power_demand
-    sub_data["pt"] = power_demand
+    dcba_keys = findall(x -> x["DC LINK"] == link["NUMBER"], pwf_data["DCBA"])
+    @assert length(dcba_keys) == 4
+    dict_dcba = Dict{Int,Dict}()
+    for key in dcba_keys
+        dc_bus = pwf_data["DCBA"][key]
+        dict_dcba[dc_bus["NUMBER"]] = dc_bus
+    end
+
+    dcnv_keys = findall(x -> x["DC BUS"] in keys(dict_dcba), pwf_data["DCNV"])
+    @assert length(dcnv_keys) == 2
+    dict_dcnv = Dict{Int,Dict}()
+    for key in dcnv_keys
+        converter = pwf_data["DCNV"][key]
+        dict_dcnv[converter["NUMBER"]] = converter
+    end
+
+    dccv_keys = findall(x -> x["NUMBER"] in keys(dict_dcnv), pwf_data["DCCV"])
+    @assert length(dccv_keys) == 2
+    dict_dccv = Dict{Char,Dict}()
+    for key in dccv_keys
+        converter_control = pwf_data["DCCV"][key]
+        number = pwf_data["DCCV"][key]["NUMBER"]
+        dict_dccv[dict_dcnv[number]["OPERATION MODE"]] = converter_control
+    end
+
+    @assert dict_dccv['R']["CONVERTER CONTROL TYPE"] == dict_dccv['I']["CONVERTER CONTROL TYPE"]
+    mdc  = dict_dccv['R']["CONVERTER CONTROL TYPE"]
+
+    setvl = dict_dccv['R']["SPECIFIED VALUE"], dict_dccv['I']["SPECIFIED VALUE"]
+
+    rect, inv = dict_dccv['R']["NUMBER"], dict_dccv['I']["NUMBER"]
+    rect_bus, inv_bus = dict_dcnv[rect]["DC BUS"], dict_dcnv[inv]["DC BUS"]
+    vschd = dict_dcba[rect_bus]["VOLTAGE"], dict_dcba[inv_bus]["VOLTAGE"]
+
+    # Assumption - rectifier power has negative value, inverter has a positive one
+    pf = mdc == 'P' ? - abs(setvl[1]) : mdc == 'C' ? - abs(setvl[1] / vschd[1] / 1000) : 0
+    pt = mdc == 'P' ? abs(setvl[2]) : mdc == 'C' ? abs(setvl[2] / vschd[2] / 1000) : 0
+
+    sub_data["f_bus"] = dict_dcnv[rect]["AC BUS"]
+    sub_data["t_bus"] = dict_dcnv[inv]["AC BUS"]
+
+    sub_data["pf"] = pf
+    sub_data["pt"] = pt
     sub_data["qf"] = 0.0
     sub_data["qt"] = 0.0
 
@@ -29,15 +58,15 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict, i1::Int)
     sub_data["vt"] = bus_t["VOLTAGE"]
 
     # Assumption - the power demand sign is derived from the field looseness
-    sub_data["pmaxf"] = pwf_data["DCCV"]["$(i2[1])"]["LOOSENESS"] == 'N' ? power_demand : -power_demand
-    sub_data["pmint"] = pwf_data["DCCV"]["$(i2[1])"]["LOOSENESS"] == 'N' ? -power_demand : power_demand
+    sub_data["pmaxf"] = dict_dccv['R']["LOOSENESS"] == 'N' ? pf : -pf
+    sub_data["pmint"] = dict_dccv['I']["LOOSENESS"] == 'N' ? -pt : pt
 
     sub_data["pminf"] = 0.0
     sub_data["pmaxt"] = 0.0
 
     anmn = []
-    for idx in i2
-        angle = pwf_data["DCCV"]["$idx"]["MINIMUM CONVERTER ANGLE"]
+    for idx in ['R', 'I']
+        angle = dict_dccv[idx]["MINIMUM CONVERTER ANGLE"]
         if abs(angle) <= 90.0
             push!(anmn, angle)
         else
@@ -62,10 +91,10 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict, i1::Int)
     sub_data["cost"] = [0.0, 0.0, 0.0]
     sub_data["model"] = 2
 
-    sub_data["source_id"] = ["two-terminal dc", sub_data["f_bus"], sub_data["t_bus"], pwf_data["DCBA"]["$(i4[1])"]["NAME"]]
-    sub_data["index"] = i1
+    sub_data["source_id"] = ["two-terminal dc", sub_data["f_bus"], sub_data["t_bus"], link["NAME"]]
+    sub_data["index"] = link["NUMBER"]
 
-    pm_data["dcline"]["$i1"] = sub_data
+    pm_data["dcline"]["$(link["NUMBER"])"] = sub_data
 end
 
 function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict)
@@ -78,7 +107,7 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict)
     end
     @assert length(pwf_data["DCBA"]) == 4*length(pwf_data["DCLI"]) == 2*length(pwf_data["DCNV"]) == 2*length(pwf_data["DCCV"]) == 4*length(pwf_data["DELO"])
 
-    for i1 in 1:length(pwf_data["DCLI"])
-        _pwf2pm_dcline!(pm_data, pwf_data, i1)
+    for (i,link) in pwf_data["DELO"]
+        _pwf2pm_dcline!(pm_data, pwf_data, link)
     end
 end
