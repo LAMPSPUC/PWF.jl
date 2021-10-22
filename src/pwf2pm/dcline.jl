@@ -40,8 +40,8 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict, link::Dict)
     vschd = dict_dcba[rect_bus]["VOLTAGE"], dict_dcba[inv_bus]["VOLTAGE"]
 
     # Assumption - rectifier power has negative value, inverter has a positive one
-    pf = mdc == 'P' ? - abs(setvl[1]) : mdc == 'C' ? - abs(setvl[1] / vschd[1] / 1000) : 0
-    pt = mdc == 'P' ? abs(setvl[2]) : mdc == 'C' ? abs(setvl[2] / vschd[2] / 1000) : 0
+    pf = mdc == 'P' ? abs(setvl[1]) : mdc == 'C' ? - abs(setvl[1] / vschd[1] / 1000) : 0
+    pt = mdc == 'P' ? - abs(setvl[2]) : mdc == 'C' ? abs(setvl[2] / vschd[2] / 1000) : 0
 
     sub_data["f_bus"] = dict_dcnv[rect]["AC BUS"]
     sub_data["t_bus"] = dict_dcnv[inv]["AC BUS"]
