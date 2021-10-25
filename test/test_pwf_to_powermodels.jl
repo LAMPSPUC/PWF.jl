@@ -95,6 +95,7 @@
 
             raw_dc = joinpath(@__DIR__,"data/raw/300bus.raw")
             raw_data_dc = PowerModels.parse_file(raw_dc)
+            raw_data_dc["dcline"]["1"]["pt"] *= -1 # Possible PowerModels error
 
             @test check_same_dict(pwf_data_dc, raw_data_dc, "dcline")   
         end
@@ -241,6 +242,6 @@
         @test pm_data["branch"]["2"]["b_to"] == -0.07
         @test pm_data["branch"]["3"]["b_fr"] == -1.5
         @test pm_data["branch"]["3"]["b_to"] == 0.0
-        @test length(pm_data["shunt"]) == 0
+        @test length(pm_data["shunt"]) == 1
     end
 end
