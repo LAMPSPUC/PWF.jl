@@ -1,0 +1,74 @@
+function _handle_base_mva(pwf_data::Dict)
+    baseMVA = 100.0 # Default value for this field in .pwf
+    if haskey(pwf_data, "DCTE")
+        if haskey(pwf_data["DCTE"], "BASE")
+            baseMVA = pwf_data["DCTE"]["BASE"]
+        end
+    end
+    return baseMVA
+end
+
+function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two-winding transformer
+    sub_data = Dict{String,Any}()
+
+    sub_data["f_bus"] = pop!(branch, "FROM BUS")
+    sub_data["t_bus"] = pop!(branch, "TO BUS")
+    sub_data["br_r"] = pop!(branch, "RESISTANCE") / 100
+    sub_data["br_x"] = pop!(branch, "REACTANCE") / 100
+    sub_data["g_fr"] = 0.0
+    sub_data["g_to"] = 0.0
+    sub_data["tap"] = pop!(branch, "TAP")
+    sub_data["tapmin"] = pop!(branch, "MINIMUM TAP")
+    sub_data["tapmax"] = pop!(branch, "MAXIMUM TAP")
+    sub_data["shift"] = -pop!(branch, "LAG")
+    sub_data["angmin"] = -360.0 # No limit
+    sub_data["angmax"] = 360.0 # No limit
+    sub_data["transformer"] = true
+
+    if branch["STATUS"] == branch["OPENING FROM BUS"] == branch["OPENING TO BUS"] == 'L'
+        sub_data["br_status"] = 1
+    else
+        sub_data["br_status"] = 0
+    end
+
+    sub_data["circuit"] = branch["CIRCUIT"]
+    n = 0 # count(x -> x["f_bus"] == sub_data["f_bus"] && x["t_bus"] == sub_data["t_bus"], values(pm_data["branch"])) 
+    sub_data["source_id"] = ["transformer", sub_data["f_bus"], sub_data["t_bus"], 0, "0$(n + 1)", 0]
+    sub_data["index"] = length(pm_data["branch"]) + 1
+
+    dict_dshl = haskey(pwf_data, "DSHL") ? _create_dict_dshl(pwf_data["DSHL"]) : nothing
+    b = _handle_b(pwf_data, sub_data["f_bus"], sub_data["t_bus"], branch["SHUNT SUSCEPTANCE"], branch["CIRCUIT"], dict_dshl)
+    sub_data["b_fr"] = b[1]
+    sub_data["b_to"] = b[2]
+
+    sub_data["rate_a"] = pop!(branch, "NORMAL CAPACITY")
+    sub_data["rate_b"] = pop!(branch, "EMERGENCY CAPACITY")
+    sub_data["rate_c"] = pop!(branch, "EQUIPAMENT CAPACITY")
+
+    if sub_data["rate_a"] >= 9999
+        delete!(sub_data, "rate_a")
+    end
+    if sub_data["rate_b"] >= 9999
+        delete!(sub_data, "rate_b")
+    end
+    if sub_data["rate_c"] >= 9999
+        delete!(sub_data, "rate_c")
+    end
+
+    idx = string(sub_data["index"])
+    pm_data["branch"][idx] = sub_data
+end
+
+function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding transformer
+    if !haskey(pm_data, "branch")
+        pm_data["branch"] = Dict{String, Any}()
+    end
+
+    if haskey(pwf_data, "DLIN")
+        for (i,branch) in pwf_data["DLIN"]
+            if branch["TRANSFORMER"]
+                _pwf2pm_transformer!(pm_data, pwf_data, branch)
+            end
+        end
+    end
+end
