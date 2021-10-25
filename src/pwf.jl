@@ -12,13 +12,13 @@ A list of data file sections in the order that they appear in a PWF file
 const _dbar_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Int64, 6), 
     ("STATUS", Char, 7), ("TYPE", Int64, 8), ("BASE VOLTAGE GROUP", String, 9:10),
     ("NAME", String, 11:22), ("VOLTAGE LIMIT GROUP", String, 23:24),
-    ("VOLTAGE", Float64, 25:28), ("ANGLE", Float64, 29:32),
+    ("VOLTAGE", Float64, 25:28, 25), ("ANGLE", Float64, 29:32),
     ("ACTIVE GENERATION", Float64, 33:37), ("REACTIVE GENERATION", Float64, 38:42),
     ("MINIMUM REACTIVE GENERATION", Float64, 43:47),
     ("MAXIMUM REACTIVE GENERATION",Float64, 48:52), ("CONTROLLED BUS", Int64, 53:58),
     ("ACTIVE CHARGE", Float64, 59:63), ("REACTIVE CHARGE", Float64, 64:68),
     ("TOTAL REACTIVE POWER", Float64, 69:73), ("AREA", Int64, 74:76),
-    ("CHARGE DEFINITION VOLTAGE", Float64, 77:80), ("VISUALIZATION", Int64, 81),
+    ("CHARGE DEFINITION VOLTAGE", Float64, 77:80, 77), ("VISUALIZATION", Int64, 81),
     ("AGGREGATOR 1", Int64, 82:84), ("AGGREGATOR 2", Int64, 85:87),
     ("AGGREGATOR 3", Int64, 88:90), ("AGGREGATOR 4", Int64, 91:93),
     ("AGGREGATOR 5", Int64, 94:96), ("AGGREGATOR 6", Int64, 97:99),
@@ -28,10 +28,10 @@ const _dbar_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Int64, 6),
 const _dlin_dtypes = [("FROM BUS", Int64, 1:5), ("OPENING FROM BUS", Char, 6),
     ("OPERATION", Int64, 8), ("OPENING TO BUS", Char, 10), ("TO BUS", Int64, 11:15),
     ("CIRCUIT", Int64, 16:17), ("STATUS", Char, 18), ("OWNER", Char, 19),
-    ("RESISTANCE", Float64, 21:26), ("REACTANCE", Float64, 27:32),
-    ("SHUNT SUSCEPTANCE", Float64, 33:38), ("TAP", Float64, 39:43),
-    ("MINIMUM TAP", Float64, 44:48), ("MAXIMUM TAP", Float64, 49:53),
-    ("LAG", Float64, 54:58), ("CONTROLLED BUS", Int64, 59:64),
+    ("RESISTANCE", Float64, 21:26, 24), ("REACTANCE", Float64, 27:32, 30),
+    ("SHUNT SUSCEPTANCE", Float64, 33:38, 35), ("TAP", Float64, 39:43, 40),
+    ("MINIMUM TAP", Float64, 44:48, 45), ("MAXIMUM TAP", Float64, 49:53, 50),
+    ("LAG", Float64, 54:58, 56), ("CONTROLLED BUS", Int64, 59:64),
     ("NORMAL CAPACITY", Float64, 65:68), ("EMERGENCY CAPACITY", Float64, 69:72),
     ("NUMBER OF TAPS", Int64, 73:74), ("EQUIPAMENT CAPACITY", Float64, 75:78),
     ("AGGREGATOR 1", Int64, 79:81), ("AGGREGATOR 2", Int64, 82:84),
@@ -57,7 +57,7 @@ const _dger_dtypes = [("NUMBER", Int, 1:5), ("OPERATION", Char, 7),
 
 const _dshl_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
     ("TO BUS", Int64, 10:14), ("CIRCUIT", Int64, 15:16), ("SHUNT FROM", Float64, 18:23),
-    ("SHUNT TO", Float64, 24:29), ("STATUS FROM", Char, 31:32, ("STATUS TO", Char, 34:35))]
+    ("SHUNT TO", Float64, 24:29), ("STATUS FROM", String, 31:32), ("STATUS TO", String, 34:35)]
 
 const _dcba_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("TYPE", Int64, 8),
     ("POLARITY", String, 9), ("NAME", String, 10:21), ("VOLTAGE LIMIT GROUP", String, 22:23),
@@ -69,7 +69,7 @@ const _dcli_dtypes = [("FROM BUS", Int64, 1:4), ("OPERATION", Int64, 6), ("TO BU
 
 const _dcnv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("AC BUS", Int64, 8:12),
     ("DC BUS", Int64, 14:17), ("NEUTRAL BUS", Int64, 19:22), ("OPERATION MODE", Char, 24),
-    ("BRIDGES", Int64, 26), ("CURRENTS", Float64, 28:32), ("COMMUTATION REACTANCE", Float64, 34:38),
+    ("BRIDGES", Int64, 26), ("CURRENT", Float64, 28:32), ("COMMUTATION REACTANCE", Float64, 34:38),
     ("SECONDARY VOLTAGE", Float64, 40:44), ("TRANSFORMER POWER", Float64, 46:50),
     ("REACTOR RESISTANCE", Float64, 52:56), ("REACTOR INDUCTANCE", Float64, 58:62),
     ("CAPACITANCE", Float64, 64:68), ("FREQUENCY", Float64, 70:71)]
@@ -81,7 +81,7 @@ const _dccv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("LOOSENE
     ("MINIMUM CONVERTER ANGLE", Float64, 36:40), ("MAXIMUM CONVERTER ANGLE", Float64, 42:46),
     ("MINIMUM TRANSFORMER TAP", Float64, 48:52), ("MAXIMUM TRANSFORMER TAP", Float64, 54:58),
     ("TRANSFORMER TAP NUMBER OF STEPS", Int64, 60:61),
-    ("MINIMUM DC VOLTAGE FOR POWER CONTROL", Float64, 63:66),
+    ("MINIMUM DC VOLTAGE FOR POWER CONTROL", Float64, 63:66, 63),
     ("TAP HI MVAR MODE", Float64, 68:72), ("TAP REDUCED VOLTAGE MODE", Float64, 74:78)]
 
 const _delo_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("VOLTAGE", Float64, 8:12),
@@ -94,7 +94,7 @@ const _dcer_dtypes = [("BUS", Int, 1:5), ("OPERATION", Char, 7), ("GROUP", Int64
 
 const _fban_1_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
     ("TO BUS", Int64, 10:14), ("CIRCUIT", Int64, 15:16), ("CONTROL MODE", Char, 18),
-    ("MINIMUM VOLTAGE", Float64, 20:23), ("MAXIMUM VOLTAGE", Float64, 25:28),
+    ("MINIMUM VOLTAGE", Float64, 20:23, 20), ("MAXIMUM VOLTAGE", Float64, 25:28, 25),
     ("CONTROLLED BUS", Int64, 30:34), ("INITIAL REACTIVE INJECTION", Float64, 36:41),
     ("CONTROL TYPE", Char, 43), ("ERASE DBAR", Char, 45), ("EXTREMITY", Int64, 47:51)]
 
@@ -102,11 +102,21 @@ const _fban_2_dtypes = [("GROUP", Int64, 1:2), ("OPERATION", Char, 5), ("STATUS"
     ("UNITIES", Int64, 9:11), ("OPERATING UNITIES", Int64, 13:15),
     ("REACTANCE", Float64, 17:22)]
 
+const _dcsc_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Char, 7), ("TO BUS", Int64, 10:14),
+    ("CIRCUIT", Int64, 15:16), ("STATUS", Char, 17), ("OWNER", Char, 18), ("BYPASS", Char, 19),
+    ("MINIMUM VALUE", Float64, 26:31), ("MAXIMUM VALUE", Float64, 32:37), ("INITIAL VALUE", Float64, 38:43),
+    ("CONTROL MODE", Char, 44), ("SPECIFIED VALUE", Float64, 46:51), ("MEASUREMENT EXTREMITY", Int64, 53:57),
+    ("NUMBER OF STAGES", Int64, 58:60), ("NORMAL CAPACITY", Float64, 61:64),
+    ("EMERGENCY CAPACITY", Float64, 65:68), ("EQUIPAMENT CAPACITY", Float64, 69:72), ("AGGREGATOR 1", Int64, 73:75),
+    ("AGGREGATOR 2", Int64, 76:78), ("AGGREGATOR 3", Int64, 79:81), ("AGGREGATOR 4", Int64, 82:84),
+    ("AGGREGATOR 5", Int64, 85:87), ("AGGREGATOR 6", Int64, 88:90), ("AGGREGATOR 7", Int64, 91:93), 
+    ("AGGREGATOR 8", Int64, 94:96), ("AGGREGATOR 9", Int64, 97:99), ("AGGREGATOR 10", Int64, 100:102)]
+
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes, "DGBT" => _dgbt_dtypes,
     "DGLT" => _dglt_dtypes, "DGER" => _dger_dtypes, "DSHL" => _dshl_dtypes, "DCBA" => _dcba_dtypes, 
     "DCLI" => _dcli_dtypes, "DCNV" => _dcnv_dtypes, "DCCV" => _dccv_dtypes, "DELO" => _delo_dtypes, 
     "DCER" => _dcer_dtypes, "BUS AND VOLTAGE CONTROL" => _fban_1_dtypes, "REACTORS AND CAPACITORS BANKS" => _fban_2_dtypes,
-    "DBSH" => [_fban_1_dtypes, _fban_2_dtypes])
+    "DBSH" => [_fban_1_dtypes, _fban_2_dtypes], "DCSC" => _dcsc_dtypes)
     
 const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
                         filter(x -> x%7 == 6, 1:69), Char)
@@ -173,7 +183,7 @@ const _default_dglt = Dict("GROUP" => nothing,  "LOWER BOUND" => 0.8, "UPPER BOU
 
 const _default_dshl = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" => nothing,
     "CIRCUIT" => nothing, "SHUNT FROM" => nothing, "SHUNT TO" => nothing,
-    "STATUS FROM" => 'L', "STATUS TO" => 'L')
+    "STATUS FROM" => " L", "STATUS TO" => " L")
 
 const _default_dcba = Dict("NUMBER" => nothing, "OPERATION" => 'A', "TYPE" => 0,
     "POLARITY" => nothing, "NAME" => nothing, "VOLTAGE LIMIT GROUP" => nothing,
@@ -185,7 +195,7 @@ const _default_dcli = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" =
 
 const _default_dcnv = Dict("NUMBER" => nothing, "OPERATION" => 'A', "AC BUS" => nothing,
     "DC BUS" => nothing, "NEUTRAL BUS" => nothing, "OPERATION MODE" => nothing,
-    "BRIDGES" => nothing, "CURRENTS" => nothing, "COMMUTATION REACTANCE" => nothing,
+    "BRIDGES" => nothing, "CURRENT" => nothing, "COMMUTATION REACTANCE" => nothing,
     "SECONDARY VOLTAGE" => nothing, "TRANSFORMER POWER" => nothing, "REACTOR RESISTANCE" => 0.0,
     "REACTOR INDUCTANCE" => 0.0, "CAPACITANCE" => Inf, "FREQUENCY" => 60.0)
 
@@ -215,6 +225,15 @@ const _default_fban_1 = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS"
     "INITIAL REACTIVE INJECTION" => 0.0, "CONTROL TYPE" => 'C', "ERASE DBAR" => 'N',
     "EXTREMITY" => nothing, "REACTANCE GROUPS" => _default_fban_2)
 
+const _default_dcsc = Dict("FROM BUS" => nothing, "OPERATION" => nothing, "TO BUS" => nothing,
+    "CIRCUIT" => nothing, "STATUS" => 'L', "OWNER" => 'F', "BYPASS" => 'D',
+    "MINIMUM VALUE" => -9999.0, "MAXIMUM VALUE" => 9999.0, "INITIAL VALUE" => nothing,
+    "CONTROL MODE" => 'X', "SPECIFIED VALUE" => nothing, "MEASUREMENT EXTREMITY" => nothing,
+    "NUMBER OF STAGES" => nothing, "NORMAL CAPACITY" => Inf, "EMERGENCY CAPACITY" => Inf,
+    "EQUIPAMENT CAPACITY" => Inf, "AGGREGATOR 1" => nothing, "AGGREGATOR 2" => nothing,
+    "AGGREGATOR 3" => nothing, "AGGREGATOR 4" => nothing, "AGGREGATOR 5" => nothing, 
+    "AGGREGATOR 6" => nothing)
+
 const _default_titu = ""
 
 const _default_name = ""
@@ -223,7 +242,8 @@ const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DC
     "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name, "DGER" => _default_dger,
     "DGBT" => _default_dgbt, "DGLT" => _default_dglt, "DSHL" => _default_dshl, "DCER" => _default_dcer,
     "DBSH" => _default_fban_1, "REACTANCE GROUPS" => _default_fban_2, "DCBA" => _default_dcba,
-    "DBLI" => _default_dcli, "DCNV" => _default_dcnv, "DCCV" => _default_dccv, "DELO" => _default_delo)
+    "DBLI" => _default_dcli, "DCNV" => _default_dcnv, "DCCV" => _default_dccv, "DELO" => _default_delo,
+    "DCSC" => _default_dcsc)
 
 
 const title_identifier = "TITU"
@@ -283,6 +303,14 @@ function _split_sections(io::IO)
     return sections
 end
 
+function _handle_implicit_decimal_point!(
+    data::Dict, pwf_section::Vector, field::String, dtype, cols, element::String)
+    
+    field_idx     = findfirst(x -> x[1:3] == (field, dtype, cols), pwf_section)
+    decimal_point = length(pwf_section[field_idx]) == 4 ? cols[end] - pwf_section[field_idx][4] : 0
+    data[field]   = parse(dtype, element) / 10^decimal_point
+end
+
 """
     _parse_line_element!(data, line, section)
 
@@ -302,7 +330,11 @@ function _parse_line_element!(data::Dict{String, Any}, line::String, section::Ab
 
         try
             if dtype != String && dtype != Char
-                data[field] = parse(dtype, element)
+                if dtype == Float64 && !('.' in element) # Implicit decimal point
+                    _handle_implicit_decimal_point!(data, _pwf_dtypes[section], field, dtype, cols, element)
+                else
+                    data[field] = parse(dtype, element)
+                end
             else
                 data[field] = element
             end

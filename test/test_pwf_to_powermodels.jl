@@ -95,6 +95,7 @@
 
             raw_dc = joinpath(@__DIR__,"data/raw/300bus.raw")
             raw_data_dc = PowerModels.parse_file(raw_dc)
+            raw_data_dc["dcline"]["1"]["pt"] *= -1 # Possible PowerModels error
 
             @test check_same_dict(pwf_data_dc, raw_data_dc, "dcline")   
         end
@@ -204,18 +205,43 @@
         
         @test pm_data["shunt"]["1"]["shunt_type"] == 1
         @test pm_data["shunt"]["1"]["shunt_type_orig"] == 1
+        @test pm_data["shunt"]["1"]["shunt_control_type"] == 1
         @test pm_data["shunt"]["1"]["bsmin"] == -0.1
         @test pm_data["shunt"]["1"]["bsmax"] == -0.1
+        @test pm_data["shunt"]["1"]["controlled_bus"] == 3
+        @test pm_data["shunt"]["1"]["vm_min"] == 1.03
+        @test pm_data["shunt"]["1"]["vm_max"] == 1.03
 
         @test pm_data["shunt"]["2"]["shunt_type"] == 2
         @test pm_data["shunt"]["2"]["shunt_type_orig"] == 2
+        @test pm_data["shunt"]["2"]["shunt_control_type"] == 3
         @test pm_data["shunt"]["2"]["bsmin"] == -0.5
         @test pm_data["shunt"]["2"]["bsmax"] == 1.
+        @test pm_data["shunt"]["2"]["controlled_bus"] == 1
+        @test pm_data["shunt"]["2"]["vm_min"] == 1.03
+        @test pm_data["shunt"]["2"]["vm_max"] == 1.03
 
         @test pm_data["shunt"]["3"]["shunt_type"] == 2
         @test pm_data["shunt"]["3"]["shunt_type_orig"] == 2
+        @test pm_data["shunt"]["3"]["shunt_control_type"] == 2
         @test pm_data["shunt"]["3"]["bsmin"] == -0.3
         @test pm_data["shunt"]["3"]["bsmax"] == 0.6
+        @test pm_data["shunt"]["3"]["controlled_bus"] == 72
+        @test pm_data["shunt"]["3"]["vm_min"] == 0.9
+        @test pm_data["shunt"]["3"]["vm_max"] == 1.1
 
+    end
+
+    @testset "Line shunt" begin
+        file = open(joinpath(@__DIR__,"data/pwf/test_line_shunt.pwf"))
+        pm_data = ParserPWF.parse_pwf_to_powermodels(file)
+
+        @test pm_data["branch"]["1"]["b_fr"] == 4.5
+        @test pm_data["branch"]["1"]["b_to"] == 7.8
+        @test pm_data["branch"]["2"]["b_fr"] == -80
+        @test pm_data["branch"]["2"]["b_to"] == -0.07
+        @test pm_data["branch"]["3"]["b_fr"] == -1.5
+        @test pm_data["branch"]["3"]["b_to"] == 0.0
+        @test length(pm_data["shunt"]) == 1
     end
 end
