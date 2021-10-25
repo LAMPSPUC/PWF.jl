@@ -57,34 +57,32 @@ Dict{String, Any} with 6 entries:
 **PWF Sections Available:**
 
 - DBAR
-- DLIN
-- DGBT
-- DGLT
-- DGER
-- DSHL
+- DBSH (fban)
 - DCBA
+- DCCV
+- DCER
 - DCLI
 - DCNV
-- DCCV
-- DELO
-- DCER
-- DBSH (fban)
-- DOPC
+- DCSC
 - DCTE
+- DELO
+- DGBT
+- DGER
+- DGLT
+- DLIN
+- DOPC
+- DSHL
 
-**Incoming Sections:**
+  **Incoming Sections:**
 
 - DARE
 - DCAI
 - DCAR
-- DCSC
 - DGEI
-- DGLT
 - DINJ
 - DMFL
 - DMOT
 - DMTE
-- TITU
 
 ## PowerModels.jl converter
 
@@ -125,4 +123,4 @@ Dict{String, Any} with 13 entries:
 ## Contributing
 
 - PRs such as adding new sections and fixing bugs are very welcome!
-- For nontrivial changes, you'll probably want to first discuss the changes via issue.
+- For nontrivial changes, you'll probably want to first discuss the changes via issue. Suggestions are asuper welcome!
