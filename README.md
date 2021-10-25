@@ -1,4 +1,4 @@
-<img src="images/lampspucpptreduced.png" align="right" width=300>
+<img src="docs/src/assets/lampspucpptreduced.png" align="right" width=300>
 <h1>ParserPWF.jl</h1>
 
 <br>
