@@ -14,7 +14,11 @@ include("pwf2pm/load.jl")
 include("pwf2pm/gen.jl")
 include("pwf2pm/dcline.jl")
 include("pwf2pm/shunt.jl")
-include("pwf2pm/correct.jl")
+
+include("pwf2pm/correct/correct.jl")
+include("pwf2pm/correct/organon.jl")
+include("pwf2pm/correct/anarede.jl")
+
 include("pwf2pm/pwf2pm.jl")
 
 export parse_pwf
