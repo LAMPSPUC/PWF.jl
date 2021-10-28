@@ -6,6 +6,31 @@
 
 # This parser was develop using ANAREDE v09 user manual
 
+const _fban_1_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
+    ("TO BUS", Int64, 9:13), ("CIRCUIT", Int64, 15:16), ("CONTROL MODE", Char, 18),
+    ("MINIMUM VOLTAGE", Float64, 20:23, 20), ("MAXIMUM VOLTAGE", Float64, 25:28, 25),
+    ("CONTROLLED BUS", Int64, 30:34), ("INITIAL REACTIVE INJECTION", Float64, 36:41),
+    ("CONTROL TYPE", Char, 43), ("ERASE DBAR", Char, 45), ("EXTREMITY", Int64, 47:51)]
+
+const _fban_2_dtypes = [("GROUP", Int64, 1:2), ("OPERATION", Char, 5), ("STATUS", Char, 7),
+    ("UNITIES", Int64, 9:11), ("OPERATING UNITIES", Int64, 13:15),
+    ("REACTANCE", Float64, 17:22)]
+
+const _dbsh_dtypes = Dict("first half" => _fban_1_dtypes, "first name" => "BUS AND VOLTAGE CONTROL",
+    "second half" => _fban_2_dtypes, "second name" => "REACTORS AND CAPACITORS BANKS",
+    "separator" => "FBAN", "subgroup" => "REACTANCE GROUPS")
+
+const _fagr_1_dtypes = [("NUMBER", Int64, 1:3), ("DESCRIPTION", String, 5:40)]
+
+const _fagr_2_dtypes = [("NUMBER", Int64, 1:3), ("OPERATION", Char, 5), ("DESCRIPTION", String, 7:42)]
+
+const _dagr_dtypes = Dict("first half" => _fagr_1_dtypes, "first name" => "AGGREGATOR IDENTIFICATION",
+    "second half" => _fagr_2_dtypes, "second name" => "AGGREGATOR OCCURENCES",
+    "separator" => "FAGR", "subgroup" => "OCCURENCES")
+
+const _divided_sections = Dict("DBSH" => _dbsh_dtypes,
+                               "DAGR" => _dagr_dtypes)
+
 """
 A list of data file sections in the order that they appear in a PWF file
 """
@@ -92,16 +117,6 @@ const _dcer_dtypes = [("BUS", Int, 1:5), ("OPERATION", Char, 7), ("GROUP", Int64
     ("REACTIVE GENERATION", Float64, 28:32), ("MINIMUM REACTIVE GENERATION", Float64, 33:37),
     ("MAXIMUM REACTIVE GENERATION", Float64, 38:42), ("CONTROL MODE", Char, 44), ("STATUS", Char, 46)]
 
-const _fban_1_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
-    ("TO BUS", Int64, 9:13), ("CIRCUIT", Int64, 15:16), ("CONTROL MODE", Char, 18),
-    ("MINIMUM VOLTAGE", Float64, 20:23, 20), ("MAXIMUM VOLTAGE", Float64, 25:28, 25),
-    ("CONTROLLED BUS", Int64, 30:34), ("INITIAL REACTIVE INJECTION", Float64, 36:41),
-    ("CONTROL TYPE", Char, 43), ("ERASE DBAR", Char, 45), ("EXTREMITY", Int64, 47:51)]
-
-const _fban_2_dtypes = [("GROUP", Int64, 1:2), ("OPERATION", Char, 5), ("STATUS", Char, 7),
-    ("UNITIES", Int64, 9:11), ("OPERATING UNITIES", Int64, 13:15),
-    ("REACTANCE", Float64, 17:22)]
-
 const _dcsc_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Char, 7), ("TO BUS", Int64, 10:14),
     ("CIRCUIT", Int64, 15:16), ("STATUS", Char, 17), ("OWNER", Char, 18), ("BYPASS", Char, 19),
     ("MINIMUM VALUE", Float64, 26:31), ("MAXIMUM VALUE", Float64, 32:37), ("INITIAL VALUE", Float64, 38:43),
@@ -149,13 +164,40 @@ const _dmfl_circ_dtypes = [("FROM BUS 1", Int64, 1:5), ("TO BUS 1", Int64, 7:11)
     ("CIRCUIT 4", Int64, 58:59), ("FROM BUS 5", Int64, 61:65), ("TO BUS 5", Int64, 67:71),
     ("CIRCUIT 5", Int64, 73:74), ("OPERATION", Char, 76)]
 
+const _dcai_dtypes = [("BUS", Int64, 1:5), ("OPERATION", Char, 7), ("GROUP", Int64, 10:11),
+    ("STATUS", Char, 13), ("UNITIES", Int64, 15:17), ("OPERATING UNITIES", Int64, 19:21),
+    ("ACTIVE CHARGE", Float64, 23:27), ("REACTIVE CHARGE", Float64, 29:33),
+    ("PARAMETER A", Float64, 35:37), ("PARAMETER B", Float64, 39:41),
+    ("PARAMETER C", Float64, 43:45), ("PARAMETER D", Float64, 47:49), ("VOLTAGE", Float64, 51:55),
+    ("VOLTAGE FOR CHARGE DEFINITION", Float64, 57:60)]
+
+const _dgei_dtypes = [("BUS", Int64, 1:5), ("OPERATION", Char, 7), ("AUTOMATIC MODE", Char, 8),
+    ("GROUP", Int64, 10:11), ("STATUS", Char, 13), ("UNITIES", Int64, 14:16),
+    ("OPERATING UNITIES", Int64, 17:19), ("MINIMUM OPERATING UNITIES", Int64, 20:22),
+    ("ACTIVE GENERATION", Float64, 23:27), ("REACTIVE GENERATION", Float64, 28:32),
+    ("MINIMUM REACTIVE GENERATION", Float64, 33:37), ("MAXIMUM REACTIVE GENERATION", Float64, 38:42),
+    ("ELEVATOR TRANSFORMER REACTANCE", Float64, 43:48), ("XD", Float64, 50:54, 53),
+    ("XQ", Float64, 55:59, 58), ("XL", Float64, 60:64, 63), ("POWER FACTOR", Float64, 66:69, 67),
+    ("APARENT POWER", Float64, 70:74, 72), ("MECHANICAL LIMIT", Float64, 75:79, 77)]
+
+const _dmot_dtypes = [("BUS", Int64, 1:5), ("OPERATION", Char, 7), ("STATUS", Char, 8),
+    ("GROUP", Int64, 10:11), ("SIGN", Char, 12), ("LOADING FACTOR", Float64, 13:15),
+    ("UNITIES", Int64, 17:19), ("STATOR RESISTANCE", Float64, 21:25), ("STATOR REACTANCE", Float64, 27:31),
+    ("MAGNETAZING REACTANCE", Float64, 33:37), ("ROTOR RESISTANCE", Float64, 39:43),
+    ("ROTOR REACTANCE", Float64, 45:49), ("BASE POWER", Float64, 51:55),
+    ("ENGINE TYPE", Int64, 57:59), ("ACTIVE CHARGE PORTION", Float64, 60:63),
+    ("BASE POWER DEFINITION PERCENTAGE", Float64, 65:67)]
+
+const _dcmt_dtypes = [("COMMENTS", String, 1:80)]
+
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes, "DGBT" => _dgbt_dtypes,
     "DGLT" => _dglt_dtypes, "DGER" => _dger_dtypes, "DSHL" => _dshl_dtypes, "DCBA" => _dcba_dtypes, 
     "DCLI" => _dcli_dtypes, "DCNV" => _dcnv_dtypes, "DCCV" => _dccv_dtypes, "DELO" => _delo_dtypes, 
     "DCER" => _dcer_dtypes, "BUS AND VOLTAGE CONTROL" => _fban_1_dtypes, "REACTORS AND CAPACITORS BANKS" => _fban_2_dtypes,
-    "DBSH" => [_fban_1_dtypes, _fban_2_dtypes], "DCSC" => _dcsc_dtypes, "DCAR" => _dcar_dtypes,
-    "DCTR" => _dctr_dtypes, "DARE" => _dare_dtypes, "DTPF CIRC" => _dtpf_circ_dtypes, "DMTE" => _dmte_dtypes,
-    "DMFL CIRC" => _dmfl_circ_dtypes)
+    "DCSC" => _dcsc_dtypes, "DCAR" => _dcar_dtypes, "DCTR" => _dctr_dtypes, "DARE" => _dare_dtypes,
+    "DTPF CIRC" => _dtpf_circ_dtypes, "DMTE" => _dmte_dtypes, "DMFL CIRC" => _dmfl_circ_dtypes,
+    "AGGREGATOR IDENTIFICATION" => _fagr_1_dtypes, "AGGREGATOR OCCURENCES" => _fagr_2_dtypes,
+    "DCAI" => _dcai_dtypes, "DGEI" => _dgei_dtypes, "DMOT" => _dmot_dtypes, "DCMT" => _dcmt_dtypes)
     
 const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
                         filter(x -> x%7 == 6, 1:69), Char)
@@ -266,6 +308,10 @@ const _default_fban_1 = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS"
     "INITIAL REACTIVE INJECTION" => 0.0, "CONTROL TYPE" => 'C', "ERASE DBAR" => 'N',
     "EXTREMITY" => nothing, "REACTANCE GROUPS" => _default_fban_2)
 
+const _default_fagr_2 = Dict("NUMBER" => nothing, "OPERATION" => 'A', "DESCRIPTION" => nothing)    
+
+const _default_fagr_1 = Dict("NUMBER" => nothing, "DESCRIPTION" => nothing, "OCCURENCES" => _default_fagr_2)
+
 const _default_dcsc = Dict("FROM BUS" => nothing, "OPERATION" => nothing, "TO BUS" => nothing,
     "CIRCUIT" => nothing, "STATUS" => 'L', "OWNER" => 'F', "BYPASS" => 'D',
     "MINIMUM VALUE" => -9999.0, "MAXIMUM VALUE" => 9999.0, "INITIAL VALUE" => nothing,
@@ -311,6 +357,27 @@ const _default_dmfl_circ = Dict("FROM BUS 1" => nothing, "TO BUS 1" => nothing, 
 
 const _default_dbre = Dict()
 
+const _default_dcai = Dict("BUS" => nothing, "OPERATION" => 'A', "GROUP" => nothing,
+    "STATUS" => 'L', "UNITIES" => 1, "OPERATING UNITIES" => 1, "ACTIVE CHARGE" => 0.0,
+    "REACTIVE CHARGE" => 0.0, "PARAMETER A" => nothing, "PARAMETER B" => nothing,
+    "PARAMETER C" => nothing, "PARAMETER D" => nothing, "VOLTAGE" => 0.7, "CHARGE DEFINITION VOLTAGE" => 1.0)
+
+const _default_dgei = Dict("BUS" => nothing, "OPERATION" => 'A', "AUTOMATIC MODE" => 'N',
+    "GROUP" => nothing, "STATUS" => 'L', "UNITIES" => 1, "OPERATING UNITIES" => 1,
+    "MINIMUM OPERATING UNITIES" => 1, "ACTIVE GENERATION" => 0.0, "REACTIVE GENERATION" => 0.0,
+    "MINIMUM REACTIVE GENERATION" => -9999.0, "MAXIMUM REACTIVE GENERATION" => 99999.0,
+    "TRANSFORMER ELEVATOR REACTANCE" => nothing, "XD" => 0.0, "XQ" => 0.0, "XL" => 0.0,
+    "POWER FACTOR" => 1.0, "APARENT POWER" => 99999.0, "MECHANICAL LIMIT" => 99999.0)
+
+const _default_dmot = Dict("BUS" => nothing, "OPERATION" => 'A', "STATUS" => 'L',
+    "GROUP" => nothing, "SIGN" => '+', "LOADING FACTOR" => 100.0, "UNITIES" => 1,
+    "STATOR RESISTANCE" => nothing, "STATOR REACTANCE" => nothing, "MAGNETAZING REACTANCE" => nothing,
+    "ROTOR RESISTANCE" => nothing, "ROTOR REACTANCE" => nothing, "BASE POWER" => nothing,
+    "ENGINE TYPE" => nothing, "ACTIVE CHARGE PORTION" => nothing,
+    "BASE POWER DEFINITION PERCENTAGE" => nothing)
+
+const _default_dcmt = Dict("COMMENTS" => nothing)
+
 const _default_titu = ""
 
 const _default_name = ""
@@ -322,7 +389,9 @@ const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DC
     "DCLI" => _default_dcli, "DCNV" => _default_dcnv, "DCCV" => _default_dccv, "DELO" => _default_delo,
     "DCSC" => _default_dcsc, "DCAR" => _default_dcar, "DCTR" => _default_dctr, "DARE" => _default_dare,
     "DTPF CIRC" => _default_dtpf_circ, "DMTE" => _default_dmte, "DMFL CIRC" => _default_dmfl_circ,
-    "DBRE" => _default_dbre, "DOPC IMPR" => _default_dopc)
+    "DBRE" => _default_dbre, "DOPC IMPR" => _default_dopc, "DAGR" => _default_fagr_1,
+    "OCCURENCES" => _default_fagr_2, "DCAI" => _default_dcai, "DGEI" => _default_dgei,
+    "DMOT" => _default_dmot, "DCMT" => _default_dcmt)
 
 
 const title_identifier = "TITU"
@@ -462,10 +531,7 @@ Returns a Vector of Dict, where each entry corresponds to a single element.
 """
 function _parse_section_element!(data::Dict{String, Any}, section_lines::Vector{String}, section::AbstractString, idx::Int64=1)
 
-    if section == "DBSH"
-        _parse_dbsh_section!(data, section_lines)
-
-    elseif section == "DBAR"
+    if section == "DBAR"
         for line in section_lines[2:end]
 
             line_data = Dict{String, Any}()
@@ -487,18 +553,21 @@ function _parse_section_element!(data::Dict{String, Any}, section_lines::Vector{
     end
 end
 
-function _parse_dbsh_section!(data::Dict{String, Any}, section_lines::Vector{String})
+function _parse_divided_section!(data::Dict{String, Any}, section_lines::Vector{String}, section::String)
 
-    sub_titles_idx = vcat(1, findall(x -> x == "FBAN", section_lines))
+    separator = _divided_sections[section]["separator"]
+    sub_titles_idx = vcat(1, findall(x -> x == separator, section_lines))
     for (i, idx) in enumerate(sub_titles_idx)
 
         if idx != sub_titles_idx[end]
             next_idx = sub_titles_idx[i + 1]
-            _parse_section_element!(data, section_lines[idx:idx + 1], "BUS AND VOLTAGE CONTROL", i)
+            _parse_section_element!(data, section_lines[idx:idx + 1], _divided_sections[section]["first name"], i)
 
             rc = Dict{String, Any}()
-            _parse_section_element!(rc, section_lines[idx + 1:next_idx - 1], "REACTORS AND CAPACITORS BANKS", i)
-            data["$i"]["REACTANCE GROUPS"] = rc
+            _parse_section_element!(rc, section_lines[idx + 1:next_idx - 1], _divided_sections[section]["second name"], i)
+
+            group = _divided_sections[section]["subgroup"]
+            data["$i"][group] = rc
         end
 
     end
@@ -523,6 +592,9 @@ function _parse_section!(data::Dict{String, Any}, section_lines::Vector{String})
     elseif section in keys(_pwf_dtypes)
         _parse_section_element!(section_data, section_lines, section)
 
+    elseif section in keys(_divided_sections)
+        _parse_divided_section!(section_data, section_lines, section)
+
     else
         @warn "Currently there is no support for $section parsing"
         section_data = nothing
@@ -545,6 +617,8 @@ function _populate_defaults!(pwf_data::Dict{String, Any})
                 _populate_section_defaults!(pwf_data, section, section_data)
             elseif section in keys(_mnemonic_pairs)
                 _populate_mnemonic_defaults!(pwf_data, section, section_data)
+            elseif section in keys(_divided_sections)
+                _populate_section_defaults!(pwf_data, section, section_data)
             end
         end
     end
