@@ -343,7 +343,7 @@ element corresponds to a section, divided by the delimiter 99999.
 """
 function _split_sections(io::IO)
     file_lines = readlines(io)
-    filter!(x -> x[1] != '(', file_lines) # Ignore commented lines
+    filter!(x -> x != "" && x[1] != '(', file_lines) # Ignore commented and empty lines
     file_lines = replace.(file_lines, repeat([Char(65533) => ' '], length(file_lines)))
     sections = Vector{String}[]
 
