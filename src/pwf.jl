@@ -693,8 +693,9 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
         end
     end
 
-    if section == "DLIN" && component == "TAP"
-        pwf_data[section][i]["TRANSFORMER"] = false
+    if section == "DLIN" && component in ["TAP", "MINIMUM TAP", "MAXIMUM TAP"]
+        # Count how many defaults were needed i.e. if there is any tap information in the PWF file
+        pwf_data[section][i]["TRANSFORMER"] = get(pwf_data[section][i], "TRANSFORMER", 0) + 1
     end
 
     if section == "DBAR" && component == "CONTROLLED BUS"
@@ -707,9 +708,8 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
 end
 
 _handle_transformer_default!(pwf_data::Dict{String, Any}, section::String, i::String) =
-    section == "DLIN" ? !haskey(pwf_data[section][i], "TRANSFORMER") ?
-    pwf_data[section][i]["TRANSFORMER"] = true :
-    @assert(!pwf_data[section][i]["TRANSFORMER"]) : nothing
+    pwf_data[section][i]["TRANSFORMER"] = section == "DLIN" ? !haskey(pwf_data[section][i], "TRANSFORMER") ?
+    true : pwf_data[section][i]["TRANSFORMER"] == 3 ? false : true : nothing
 
 """
     _parse_pwf_data(data_io)

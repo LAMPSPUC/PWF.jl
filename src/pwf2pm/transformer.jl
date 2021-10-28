@@ -55,6 +55,23 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two
         delete!(sub_data, "rate_c")
     end
 
+    sub_data["transformer_info"] = Dict{String,Any}()
+    sub_data["transformer_info"]["type"] = sub_data["tapmin"] == sub_data["tapmax"] ? "fixed tap" : "variable tap"
+    ctrl_bus = pm_data["bus"]["$(abs(branch["CONTROLLED BUS"]))"]
+    sub_data["transformer_info"]["vsp"] = ctrl_bus["vm"]
+    sub_data["transformer_info"]["vmin"] = ctrl_bus["vmin"]
+    sub_data["transformer_info"]["vmax"] = ctrl_bus["vmax"]
+    sub_data["transformer_info"]["control"] =  false 
+    if haskey(pwf_data, "DTPF CIRC")
+        for (k,v) in pwf_data["DTPF CIRC"]
+            for i in 1:5
+                if v["FROM BUS $i"] == sub_data["f_bus"] && v["TO BUS $i"] == sub_data["t_bus"]
+                    sub_data["transformer_info"]["control"] = true
+                end
+            end
+        end
+    end
+
     idx = string(sub_data["index"])
     pm_data["branch"][idx] = sub_data
 end
