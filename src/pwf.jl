@@ -93,7 +93,7 @@ const _dcer_dtypes = [("BUS", Int, 1:5), ("OPERATION", Char, 7), ("GROUP", Int64
     ("MAXIMUM REACTIVE GENERATION", Float64, 38:42), ("CONTROL MODE", Char, 44), ("STATUS", Char, 46)]
 
 const _fban_1_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
-    ("TO BUS", Int64, 10:14), ("CIRCUIT", Int64, 15:16), ("CONTROL MODE", Char, 18),
+    ("TO BUS", Int64, 9:13), ("CIRCUIT", Int64, 15:16), ("CONTROL MODE", Char, 18),
     ("MINIMUM VOLTAGE", Float64, 20:23, 20), ("MAXIMUM VOLTAGE", Float64, 25:28, 25),
     ("CONTROLLED BUS", Int64, 30:34), ("INITIAL REACTIVE INJECTION", Float64, 36:41),
     ("CONTROL TYPE", Char, 43), ("ERASE DBAR", Char, 45), ("EXTREMITY", Int64, 47:51)]
@@ -112,11 +112,50 @@ const _dcsc_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Char, 7), ("TO BUS
     ("AGGREGATOR 5", Int64, 85:87), ("AGGREGATOR 6", Int64, 88:90), ("AGGREGATOR 7", Int64, 91:93), 
     ("AGGREGATOR 8", Int64, 94:96), ("AGGREGATOR 9", Int64, 97:99), ("AGGREGATOR 10", Int64, 100:102)]
 
+const _dcar_dtypes = [("ELEMENT 1 TYPE", String, 1:4), ("ELEMENT 1 IDENTIFICATION", Int64, 6:10),
+    ("CONDITION 1", Char, 12), ("ELEMENT 2 TYPE", String, 14:17), ("ELEMENT 2 IDENTIFICATION", Int64, 19:23),
+    ("MAIN CONDITION", Char, 25), ("ELEMENT 3 TYPE", String, 27:30), ("ELEMENT 3 IDENTIFICATION", Int64, 32:36),
+    ("CONDITION 2", Char, 38), ("ELEMENT 4 TYPE", String, 40:43), ("ELEMENT 4 IDENTIFICATION", Int64, 45:49),
+    ("OPERATION", Char, 51), ("PARAMETER A", Float64, 53:55), ("PARAMETER B", Float64, 57:59),
+    ("PARAMETER C", Float64, 61:63), ("PARAMETER D", Float64, 65:67), ("VOLTAGE", Float64, 69:73)]
+
+const _dctr_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Char, 7), ("TO BUS", Int64, 9:13),
+    ("CIRCUIT", Int64, 15:16), ("MINIMUM VOLTAGE", Float64, 18:21), ("MAXIMUM VOLTAGE", Float64, 23:26),
+    ("BOUNDS CONTROL TYPE", Char, 28), ("CONTROL MODE", Char, 30), ("MINIMUM PHASE", Float64, 32:37),
+    ("MAXIMUM PHASE", Float64, 39:44), ("CONTROL TYPE", Char, 46), ("SPECIFIED VALUE", Float64, 48:53),
+    ("MEASUREMENT EXTREMITY", Int64, 55:59)]
+
+const _dare_dtypes = [("NUMBER", Int64, 1:3), ("NET INTERCHANGE", Float64, 8:13),
+    ("NAME", String, 19:54), ("MINIMUM INTERCHANGE", Float64, 56:61),
+    ("MAXIMUM INTERCHANGE", Float64, 63:68)]
+
+const _dtpf_circ_dtypes = [("FROM BUS 1", Int64, 1:5), ("TO BUS 1", Int64, 7:11),
+    ("CIRCUIT 1", Int64, 13:14), ("FROM BUS 2", Int64, 16:20), ("TO BUS 2", Int64, 22:26),
+    ("CIRCUIT 2", Int64, 28:29), ("FROM BUS 3", Int64, 31:35), ("TO BUS 3", Int64, 37:41),
+    ("CIRCUIT 3", Int64, 43:44), ("FROM BUS 4", Int64, 46:50), ("TO BUS 4", Int64, 52:56),
+    ("CIRCUIT 4", Int64, 58:59), ("FROM BUS 5", Int64, 61:65), ("TO BUS 5", Int64, 67:71),
+    ("CIRCUIT 5", Int64, 73:74), ("OPERATION", Char, 76)]
+
+const _dmte_dtypes = [("ELEMENT 1 TYPE", String, 1:4), ("ELEMENT 1 IDENTIFICATION", Int64, 6:10),
+    ("CONDITION 1", Char, 12), ("ELEMENT 2 TYPE", String, 14:17), ("ELEMENT 2 IDENTIFICATION", Int64, 19:23),
+    ("MAIN CONDITION", Char, 25), ("ELEMENT 3 TYPE", String, 27:30), ("ELEMENT 3 IDENTIFICATION", Int64, 32:36),
+    ("CONDITION 2", Char, 38), ("ELEMENT 4 TYPE", String, 40:43), ("ELEMENT 4 IDENTIFICATION", Int64, 45:49),
+    ("OPERATION", Char, 51), ("BOUNDARIES", Char, 53)]
+
+const _dmfl_circ_dtypes = [("FROM BUS 1", Int64, 1:5), ("TO BUS 1", Int64, 7:11),
+    ("CIRCUIT 1", Int64, 13:14), ("FROM BUS 2", Int64, 16:20), ("TO BUS 2", Int64, 22:26),
+    ("CIRCUIT 2", Int64, 28:29), ("FROM BUS 3", Int64, 31:35), ("TO BUS 3", Int64, 37:41),
+    ("CIRCUIT 3", Int64, 43:44), ("FROM BUS 4", Int64, 46:50), ("TO BUS 4", Int64, 52:56),
+    ("CIRCUIT 4", Int64, 58:59), ("FROM BUS 5", Int64, 61:65), ("TO BUS 5", Int64, 67:71),
+    ("CIRCUIT 5", Int64, 73:74), ("OPERATION", Char, 76)]
+
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes, "DGBT" => _dgbt_dtypes,
     "DGLT" => _dglt_dtypes, "DGER" => _dger_dtypes, "DSHL" => _dshl_dtypes, "DCBA" => _dcba_dtypes, 
     "DCLI" => _dcli_dtypes, "DCNV" => _dcnv_dtypes, "DCCV" => _dccv_dtypes, "DELO" => _delo_dtypes, 
     "DCER" => _dcer_dtypes, "BUS AND VOLTAGE CONTROL" => _fban_1_dtypes, "REACTORS AND CAPACITORS BANKS" => _fban_2_dtypes,
-    "DBSH" => [_fban_1_dtypes, _fban_2_dtypes], "DCSC" => _dcsc_dtypes)
+    "DBSH" => [_fban_1_dtypes, _fban_2_dtypes], "DCSC" => _dcsc_dtypes, "DCAR" => _dcar_dtypes,
+    "DCTR" => _dctr_dtypes, "DARE" => _dare_dtypes, "DTPF CIRC" => _dtpf_circ_dtypes, "DMTE" => _dmte_dtypes,
+    "DMFL CIRC" => _dmfl_circ_dtypes)
     
 const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
                         filter(x -> x%7 == 6, 1:69), Char)
@@ -124,13 +163,15 @@ const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
 const _mnemonic_dcte = (filter(x -> x[1]%12 == 1, [i:i+3 for i in 1:68]),
                         filter(x -> x[1]%12 == 6, [i:i+5 for i in 1:66]), Float64)
 
+const _mnemonic_dbre = (filter(x -> x[1]%4 == 2, [i:i+1 for i in 1:78]),
+                        filter(x -> x[1]%4 == 2, [i:i+1 for i in 1:78]), Int64)
+
 """
 Sections which contains pairs that set values to some contants (DCTE)
 and specify some execution control options (DOPC). 
 """
 const _mnemonic_pairs = Dict("DOPC" =>  _mnemonic_dopc,
-    "DCTE" => _mnemonic_dcte
-)
+    "DCTE" => _mnemonic_dcte, "DBRE" => _mnemonic_dbre, "DOPC IMPR" => _mnemonic_dopc)
 
 const _default_dbar = Dict("NUMBER" => nothing, "OPERATION" => 'A', "STATUS" => 'L',
     "TYPE" => 0, "BASE VOLTAGE GROUP" => " 0", "NAME" => nothing, "VOLTAGE LIMIT GROUP" => " 0",
@@ -234,6 +275,42 @@ const _default_dcsc = Dict("FROM BUS" => nothing, "OPERATION" => nothing, "TO BU
     "AGGREGATOR 3" => nothing, "AGGREGATOR 4" => nothing, "AGGREGATOR 5" => nothing, 
     "AGGREGATOR 6" => nothing)
 
+const _default_dcar = Dict("ELEMENT 1 TYPE" => nothing, "ELEMENT 1 IDENTIFICATION" => nothing,
+    "CONDITION 1" => nothing, "ELEMENT 2 TYPE" => nothing, "ELEMENT 2 IDENTIFICATION" => nothing,
+    "MAIN CONDITION" => nothing, "ELEMENT 3 TYPE" => nothing, "ELEMENT 3 IDENTIFICATION" => nothing,
+    "CONDITION 2" => nothing, "ELEMENT 4 TYPE" => nothing, "ELEMENT 4 IDENTIFICATION" => nothing,
+    "OPERATION" => 'A', "PARAMETER A" => nothing, "PARAMETER B" => nothing, "PARAMETER C" => nothing,
+    "PARAMETER D" => nothing, "VOLTAGE" => nothing)
+
+const _default_dctr = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" => nothing,
+    "CIRCUIT" => nothing, "MINIMUM VOLTAGE" => nothing, "MAXIMUM VOLTAGE" => nothing,
+    "BOUNDS CONTROL TYPE" => 'C', "CONTROL MODE" => nothing, "MINIMUM PHASE" => nothing,
+    "MAXIMUM PHASE" => nothing, "CONTROL TYPE" => 'F', "SPECIFIED VALUE" => nothing,
+    "MEASUREMENT EXTREMITY" => nothing)
+
+const _default_dare = Dict("NUMBER" => nothing, "NET INTERCHANGE" => 0.0, "NAME" => nothing,
+    "MINIMUM INTERCHANGE" => 0.0, "MAXIMUM INTERCHANGE" => 0.0)
+
+const _default_dtpf_circ = Dict("FROM BUS 1" => nothing, "TO BUS 1" => nothing, "CIRCUIT 1" => nothing,
+    "FROM BUS 2" => nothing, "TO BUS 2" => nothing, "CIRCUIT 2" => nothing,
+    "FROM BUS 3" => nothing, "TO BUS 3" => nothing, "CIRCUIT 3" => nothing,
+    "FROM BUS 4" => nothing, "TO BUS 4" => nothing, "CIRCUIT 4" => nothing,
+    "FROM BUS 5" => nothing, "TO BUS 5" => nothing, "CIRCUIT 5" => nothing, "OPERATION" => 'A')
+
+const _default_dmte = Dict("ELEMENT 1 TYPE" => nothing, "ELEMENT 1 IDENTIFICATION" => nothing,
+    "CONDITION 1" => nothing, "ELEMENT 2 TYPE" => nothing, "ELEMENT 2 IDENTIFICATION" => nothing,
+    "MAIN CONDITION" => nothing, "ELEMENT 3 TYPE" => nothing, "ELEMENT 3 IDENTIFICATION" => nothing,
+    "CONDITION 2" => nothing, "ELEMENT 4 TYPE" => nothing, "ELEMENT 4 IDENTIFICATION" => nothing,
+    "OPERATION" => 'A', "BOUNDARIES" => 'T')
+
+const _default_dmfl_circ = Dict("FROM BUS 1" => nothing, "TO BUS 1" => nothing, "CIRCUIT 1" => nothing,
+    "FROM BUS 2" => nothing, "TO BUS 2" => nothing, "CIRCUIT 2" => nothing,
+    "FROM BUS 3" => nothing, "TO BUS 3" => nothing, "CIRCUIT 3" => nothing,
+    "FROM BUS 4" => nothing, "TO BUS 4" => nothing, "CIRCUIT 4" => nothing,
+    "FROM BUS 5" => nothing, "TO BUS 5" => nothing, "CIRCUIT 5" => nothing, "OPERATION" => 'A')
+
+const _default_dbre = Dict()
+
 const _default_titu = ""
 
 const _default_name = ""
@@ -242,8 +319,10 @@ const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DC
     "DOPC" => _default_dopc, "TITU" => _default_titu, "name" => _default_name, "DGER" => _default_dger,
     "DGBT" => _default_dgbt, "DGLT" => _default_dglt, "DSHL" => _default_dshl, "DCER" => _default_dcer,
     "DBSH" => _default_fban_1, "REACTANCE GROUPS" => _default_fban_2, "DCBA" => _default_dcba,
-    "DBLI" => _default_dcli, "DCNV" => _default_dcnv, "DCCV" => _default_dccv, "DELO" => _default_delo,
-    "DCSC" => _default_dcsc)
+    "DCLI" => _default_dcli, "DCNV" => _default_dcnv, "DCCV" => _default_dccv, "DELO" => _default_delo,
+    "DCSC" => _default_dcsc, "DCAR" => _default_dcar, "DCTR" => _default_dctr, "DARE" => _default_dare,
+    "DTPF CIRC" => _default_dtpf_circ, "DMTE" => _default_dmte, "DMFL CIRC" => _default_dmfl_circ,
+    "DBRE" => _default_dbre, "DOPC IMPR" => _default_dopc)
 
 
 const title_identifier = "TITU"
@@ -432,7 +511,7 @@ Internal function. Receives an array of lines corresponding to a PWF section,
 transforms it into a Dict and saves it into `data::Dict`.
 """
 function _parse_section!(data::Dict{String, Any}, section_lines::Vector{String})
-    section = split(section_lines[1], " ")[1]
+    section = section_lines[1]
     section_data = Dict{String, Any}()
 
     if section == title_identifier
