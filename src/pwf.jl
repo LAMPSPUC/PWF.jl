@@ -705,11 +705,29 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
         pwf_data[section][i][component] = pwf_data[section][i]["FROM BUS"] # Default: the bus itself
     end
 
+    if section == "DBSH" && component == "MINIMUM VOLTAGE"
+        ctrl_bus = pwf_data[section][i]["CONTROLLED BUS"]
+        group = pwf_data["DBAR"]["$ctrl_bus"]["VOLTAGE LIMIT GROUP"]
+        group_idx = findfirst(x -> x["GROUP"] == group, pwf_data["DGLT"])
+        pwf_data[section][i][component] = pwf_data["DGLT"][group_idx]["LOWER BOUND"]
+    end
+    if section == "DBSH" && component == "MAXIMUM VOLTAGE"
+        ctrl_bus = pwf_data[section][i]["CONTROLLED BUS"]
+        group = pwf_data["DBAR"]["$ctrl_bus"]["VOLTAGE LIMIT GROUP"]
+        group_idx = findfirst(x -> x["GROUP"] == group, pwf_data["DGLT"])
+        pwf_data[section][i][component] = pwf_data["DGLT"][group_idx]["UPPER BOUND"]
+    end
 end
 
-_handle_transformer_default!(pwf_data::Dict{String, Any}, section::String, i::String) =
-    pwf_data[section][i]["TRANSFORMER"] = section == "DLIN" ? !haskey(pwf_data[section][i], "TRANSFORMER") ?
-    true : pwf_data[section][i]["TRANSFORMER"] == 3 ? false : true : nothing
+function _handle_transformer_default!(pwf_data::Dict{String, Any}, section::String, i::String)
+    if section == "DLIN"
+        if haskey(pwf_data[section][i], "TRANSFORMER") && pwf_data[section][i]["TRANSFORMER"] == 3
+            pwf_data[section][i]["TRANSFORMER"] = false
+        else
+            pwf_data[section][i]["TRANSFORMER"] = true
+        end
+    end
+end
 
 """
     _parse_pwf_data(data_io)

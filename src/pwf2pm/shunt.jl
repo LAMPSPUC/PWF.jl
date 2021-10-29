@@ -46,7 +46,6 @@ function _pwf2pm_DBSH_bus_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
         sub_data["shunt_bus"] = shunt["FROM BUS"]
         
         sub_data["shunt_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : 2
-        sub_data["shunt_type_orig"] = shunt["CONTROL MODE"] == 'F' ? 1 : 2
         sub_data["shunt_control_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : shunt["CONTROL MODE"] == 'D' ? 2 : 3 
 
         sub_data["gs"] = 0.0
@@ -122,7 +121,6 @@ function _pwf2pm_DCER_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
     sub_data["bs"]        = shunt["REACTIVE GENERATION"]
 
     sub_data["shunt_type"]         = 2
-    sub_data["shunt_type_orig"]    = 2
     sub_data["shunt_control_type"] = 3 
 
     sub_data["bsmin"] = shunt["MINIMUM REACTIVE GENERATION"]
@@ -130,8 +128,9 @@ function _pwf2pm_DCER_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
 
     @assert sub_data["bsmin"] <= sub_data["bsmax"]
 
-    sub_data["vm_min"] = pm_data["bus"]["$(sub_data["shunt_bus"])"]["vm"]
-    sub_data["vm_max"] = pm_data["bus"]["$(sub_data["shunt_bus"])"]["vm"]
+    ctrl_bus = pm_data["bus"]["$(shunt["CONTROLLED BUS"])"]
+    sub_data["vm_min"] = ctrl_bus["vm"]
+    sub_data["vm_max"] = ctrl_bus["vm"]
     sub_data["controlled_bus"] = shunt["CONTROLLED BUS"]
 
     status   = pwf_data["DBAR"]["$(sub_data["shunt_bus"])"]["STATUS"]
@@ -175,7 +174,6 @@ function _pwf2pm_DBAR_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data["bs"] =  bus["TOTAL REACTIVE POWER"] 
 
     sub_data["shunt_type"] = 1
-    sub_data["shunt_type_orig"] = 1
     sub_data["shunt_control_type"] = 1
     
     sub_data["bsmin"] = sub_data["bs"]
