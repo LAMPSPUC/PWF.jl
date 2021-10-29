@@ -5,7 +5,6 @@ function _handle_base_kv(pwf_data::Dict, bus::Dict, dict_dgbt)
             group = dict_dgbt[group_identifier]
             return group["VOLTAGE"]
         elseif length(pwf_data["DGBT"]) == 1
-            @warn "Only one base voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGBT"]["1"]["GROUP"])"
             return pwf_data["DGBT"]["1"]["VOLTAGE"]
         end
     end
@@ -19,7 +18,6 @@ function _handle_vmin(pwf_data::Dict, bus::Dict, dict_dglt)
             group = dict_dglt[group_identifier]
                 return group["LOWER BOUND"]
         elseif length(pwf_data["DGLT"]) == 1
-            @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"]["1"]["GROUP"])"
             return pwf_data["DGLT"]["1"]["LOWER BOUND"]
         end
     end
@@ -33,7 +31,6 @@ function _handle_vmax(pwf_data::Dict, bus::Dict, dict_dglt)
             group = dict_dglt[group_identifier]
             return group["UPPER BOUND"]
         elseif length(pwf_data["DGLT"]) == 1
-            @warn "Only one limit voltage group defined, setting bus $(bus["NUMBER"]) as group $(pwf_data["DGLT"]["1"]["GROUP"])"
             return pwf_data["DGLT"]["1"]["UPPER BOUND"]
         end
     end
@@ -77,7 +74,7 @@ function _create_dict_dgbt(data::Dict)
     return dict_dgbt
 end
 
-function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict)
+function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict, dict_dgbt, dict_dglt)
     sub_data = Dict{String,Any}()
 
     sub_data["bus_i"] = bus["NUMBER"]
@@ -91,8 +88,6 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data["source_id"] = ["bus", "$(bus["NUMBER"])"]
     sub_data["index"] = bus["NUMBER"]
 
-    dict_dglt = haskey(pwf_data, "DGLT") ? _create_dict_dglt(pwf_data["DGLT"]) : nothing
-    dict_dgbt = haskey(pwf_data, "DGBT") ? _create_dict_dgbt(pwf_data["DGBT"]) : nothing
     sub_data["base_kv"] = _handle_base_kv(pwf_data, bus, dict_dgbt)
     sub_data["vmin"] = _handle_vmin(pwf_data, bus, dict_dglt)
     sub_data["vmax"] = _handle_vmax(pwf_data, bus, dict_dglt)
@@ -105,10 +100,15 @@ end
 
 function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
 
+    dict_dglt = haskey(pwf_data, "DGLT") ? _create_dict_dglt(pwf_data["DGLT"]) : nothing
+    isa(dict_dglt, Dict) && length(dict_dglt) == 1 ? @warn("Only one limit voltage group definded, each bus will be considered as part of the group $(pwf_data["DGLT"]["1"]["GROUP"]), regardless of its defined group") : nothing
+    dict_dgbt = haskey(pwf_data, "DGBT") ? _create_dict_dgbt(pwf_data["DGBT"]) : nothing
+    isa(dict_dgbt, Dict) && length(dict_dgbt) == 1 ? @warn("Only one base voltage group definded, each bus will be considered as part of the group $(pwf_data["DGBT"]["1"]["GROUP"]), regardless of its defined group") : nothing
+
     pm_data["bus"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
         for (i,bus) in pwf_data["DBAR"]
-            _pwf2pm_bus!(pm_data, pwf_data, bus)
+            _pwf2pm_bus!(pm_data, pwf_data, bus, dict_dgbt, dict_dglt)
         end
     end
 end
