@@ -3,8 +3,7 @@ function _handle_pmin(pwf_data::Dict, bus_i::Int, dict_dger)
         bus = dict_dger[bus_i]
         return bus["MINIMUM ACTIVE GENERATION"]
     end    
-    bus = pwf_data["DBAR"]["$bus_i"]
-    return bus["ACTIVE GENERATION"]
+    return 0.0
 end
 
 function _handle_pmax(pwf_data::Dict, bus_i::Int, dict_dger)
@@ -12,8 +11,7 @@ function _handle_pmax(pwf_data::Dict, bus_i::Int, dict_dger)
         bus = dict_dger[bus_i]
         return bus["MAXIMUM ACTIVE GENERATION"]
     end    
-    bus = pwf_data["DBAR"]["$bus_i"]
-    return bus["ACTIVE GENERATION"]
+    return 99999.0
 end
 
 function _create_dict_dger(data::Dict)
@@ -62,7 +60,7 @@ end
 function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
 
     if !haskey(pwf_data, "DGER")
-        @warn("DGER not found, setting pmin and pmax as the bar active generation")
+        @warn("DGER not found, setting pmin as 0.0 MW and pmax as 99999.0 MW")
     end
 
     pm_data["gen"] = Dict{String, Any}()
