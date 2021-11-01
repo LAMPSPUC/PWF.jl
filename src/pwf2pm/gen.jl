@@ -42,8 +42,8 @@ function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data["pmin"] = _handle_pmin(pwf_data, bus["NUMBER"], dict_dger)
     sub_data["pmax"] = _handle_pmax(pwf_data, bus["NUMBER"], dict_dger)
 
-    sub_data["qmin"] = haskey(bus, "MINIMUM REACTIVE GENERATION") ? bus["MINIMUM REACTIVE GENERATION"] : bus["REACTIVE GENERATION"]
-    sub_data["qmax"] = haskey(bus, "MAXIMUM REACTIVE GENERATION") ? bus["MAXIMUM REACTIVE GENERATION"] : bus["REACTIVE GENERATION"]
+    sub_data["qmin"] = haskey(bus, "MINIMUM REACTIVE GENERATION") ? bus["MINIMUM REACTIVE GENERATION"] : 0.0
+    sub_data["qmax"] = haskey(bus, "MAXIMUM REACTIVE GENERATION") ? bus["MAXIMUM REACTIVE GENERATION"] : 0.0
 
     # Default Cost functions
     sub_data["model"] = 2
