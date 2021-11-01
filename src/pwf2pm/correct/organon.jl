@@ -7,7 +7,9 @@ function _pwf2pm_corrections_PV!(pm_data::Dict, pwf_data::Dict, software::Organo
             ]
             if !isempty(generators_from_bus(pm_data, parse(Int, i); filters = filters))
                 bus["bus_type"] = bus_type_str_to_num["PQ"]
-                if isempty(load_from_bus(pm_data, parse(Int, i)))
+                # if there is no load in this PV bus, create one to 
+                # later allocate this generation
+                if isempty(load_from_bus(pm_data, parse(Int, i))) 
                     _pwf2pm_load!(pm_data, pwf_data, parse(Int,i))
                 end
                 @warn "Active generator with QMIN = QMAX found in a PV bus number $i. Changing bus type from PV to PQ."
@@ -55,5 +57,23 @@ function _pwf2pm_corrections_shunt!(pm_data::Dict, software::Organon)
         if !(bus_type_num_to_str[bus_type] == "PQ" && shunt["shunt_control_type"] == 2) # Discrete
            _fix_shunt_voltage_bounds(shunt, pm_data)
         end
+    end
+end
+
+function handle_min_max_value(element::Dict, spec::String, min::String, max::String)
+    spec_value = element[spec]
+    min_value  = element[min] 
+    max_value  = element[max]
+
+    if (min_value == max_value) && min_value == 0
+        return spec_value, spec_value
+    end
+
+    return min_value, max_value
+end
+
+function _pwf2pm_corrections_gen!(pm_data::Dict, pwf_data::Dict, software::Organon)
+    for (i, gen) in pm_data["gen"]
+        gen["qmin"], gen["qmax"] = handle_min_max_value(gen, "qg", "qmin", "qmax")
     end
 end

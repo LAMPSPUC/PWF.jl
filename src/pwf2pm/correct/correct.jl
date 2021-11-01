@@ -44,10 +44,11 @@ function _fix_shunt_voltage_bounds(shunt::Dict, pm_data::Dict)
 end
 
 function _pwf2pm_corrections!(pm_data::Dict, pwf_data::Dict, software::PFSoftware)
+    _pwf2pm_corrections_shunt!(pm_data, software)
+    _pwf2pm_corrections_gen!(pm_data, pwf_data, software)
     _pwf2pm_corrections_PV!(pm_data, pwf_data, software)
     _pwf2pm_corrections_PQ!(pm_data, software)
-    _pwf2pm_corrections_shunt!(pm_data, software)
-    
+   
     return 
 end
 
