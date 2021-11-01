@@ -39,12 +39,12 @@ DSHL
 99999
 DBSH
 (NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
-    2       3  1 F 0950 1100     2  -150. C       2 
+    2       3  1 F 0950 1100     2  -150. C       3 
 (G  O E (U) UOp (Sht )
 10        1   1  -150.
 FBAN
 (NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
-    3          1 F 0950 1100     3  -25.5 C       3 
+    3          1 F 0950 1100     3  -25.5 C         
 (G  O E (U) UOp (Sht )
 10        1   1  -25.5
 FBAN

@@ -33,66 +33,49 @@ function _handle_bs(shunt::Dict{String, Any}; type = "bus")
     return bs
 end
 
-function _pwf2pm_DBSH_bus_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
-    # Assumption - shunt data should only consider devices without destination bus
-    if shunt["TO BUS"] === nothing
+function _pwf2pm_DBSH_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
 
-        n = count(x -> x["shunt_bus"] == shunt["FROM BUS"], values(pm_data["shunt"])) 
+    shunt_bus = shunt["TO BUS"] === nothing ? shunt["FROM BUS"] : shunt["EXTREMITY"]
+    n = count(x -> x["shunt_bus"] == shunt_bus, values(pm_data["shunt"])) 
 
-        sub_data = Dict{String,Any}()
+    sub_data = Dict{String,Any}()
 
-        sub_data["section"] = "DBSH"
+    sub_data["section"] = "DBSH"
 
-        sub_data["shunt_bus"] = shunt["FROM BUS"]
-        
-        sub_data["shunt_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : 2
-        sub_data["shunt_control_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : shunt["CONTROL MODE"] == 'D' ? 2 : 3 
+    sub_data["shunt_bus"] = shunt_bus
+    
+    sub_data["shunt_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : 2
+    sub_data["shunt_control_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : shunt["CONTROL MODE"] == 'D' ? 2 : 3 
 
-        sub_data["gs"] = 0.0
-        sub_data["bs"] = _handle_bs(shunt)
+    sub_data["gs"] = 0.0
+    sub_data["bs"] = _handle_bs(shunt)
 
-        sub_data["vm_min"] = shunt["MINIMUM VOLTAGE"]
-        sub_data["vm_max"] = shunt["MAXIMUM VOLTAGE"]
+    sub_data["vm_min"] = shunt["MINIMUM VOLTAGE"]
+    sub_data["vm_max"] = shunt["MAXIMUM VOLTAGE"]
 
-        sub_data["controlled_bus"] = shunt["CONTROLLED BUS"]
-        bs_bounds = _handle_bs_bounds(shunt)
-        sub_data["bsmin"] = bs_bounds[1]
-        sub_data["bsmax"] = bs_bounds[2]
-        @assert sub_data["bsmin"] <= sub_data["bsmax"]
+    sub_data["controlled_bus"] = shunt["CONTROLLED BUS"]
+    bs_bounds = _handle_bs_bounds(shunt)
+    sub_data["bsmin"] = bs_bounds[1]
+    sub_data["bsmax"] = bs_bounds[2]
+    @assert sub_data["bsmin"] <= sub_data["bsmax"]
 
-        status = pwf_data["DBAR"]["$(sub_data["shunt_bus"])"]["STATUS"]
-        if status == 'L'
-            sub_data["status"] = 1
-        elseif status == 'D'
-            sub_data["status"] = 0
-        end    
+    status = pwf_data["DBAR"]["$(sub_data["shunt_bus"])"]["STATUS"]
+    if status == 'L'
+        sub_data["status"] = 1
+    elseif status == 'D'
+        sub_data["status"] = 0
+    end    
 
-        sub_data["source_id"] = ["switched shunt", sub_data["shunt_bus"], "0$(n+1)"]
-        sub_data["index"] = length(pm_data["shunt"]) + 1
+    sub_data["source_id"] = ["switched shunt", sub_data["shunt_bus"], "0$(n+1)"]
+    sub_data["index"] = length(pm_data["shunt"]) + 1
 
-        if _create_new_shunt(sub_data, pm_data)[1]
-            idx = string(sub_data["index"])
-            pm_data["shunt"][idx] = sub_data
-        else
-            idx = _create_new_shunt(sub_data, pm_data)[2]
-            pm_data["shunt"][idx]["gs"] += sub_data["gs"]
-            pm_data["shunt"][idx]["bs"] += sub_data["bs"]
-        end
-    end
-end
-
-function _pwf2pm_DBSH_line_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
-    f_bus = shunt["FROM BUS"]
-    t_bus = shunt["TO BUS"]
-    circuit = shunt["CIRCUIT"]
-
-    branch_idx = findall(x->x["f_bus"] == f_bus && x["t_bus"] == t_bus && x["circuit"] == circuit, pm_data["branch"])
-    branch = pm_data["branch"][branch_idx[1]]
-
-    if shunt["EXTREMITY"] in [f_bus, nothing]
-        branch["b_fr"] += _handle_bs(shunt; type = "line")/100
+    if _create_new_shunt(sub_data, pm_data)[1]
+        idx = string(sub_data["index"])
+        pm_data["shunt"][idx] = sub_data
     else
-        branch["b_to"] += _handle_bs(shunt; type = "line")/100
+        idx = _create_new_shunt(sub_data, pm_data)[2]
+        pm_data["shunt"][idx]["gs"] += sub_data["gs"]
+        pm_data["shunt"][idx]["bs"] += sub_data["bs"]
     end
 end
 
@@ -100,11 +83,7 @@ function _pwf2pm_DBSH_shunt!(pm_data::Dict, pwf_data::Dict)
     if haskey(pwf_data, "DBSH")
 
         for (i,shunt) in pwf_data["DBSH"]
-            if shunt["TO BUS"] === nothing # bus shunt
-                _pwf2pm_DBSH_bus_shunt!(pm_data, pwf_data, shunt)
-            else # line shunt
-                _pwf2pm_DBSH_line_shunt!(pm_data, pwf_data, shunt)
-            end
+            _pwf2pm_DBSH_shunt!(pm_data, pwf_data, shunt)
         end
     end
 end

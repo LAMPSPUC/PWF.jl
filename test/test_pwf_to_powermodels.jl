@@ -237,8 +237,9 @@
         @test pm_data["branch"]["1"]["b_to"] == 7.8
         @test pm_data["branch"]["2"]["b_fr"] == -80
         @test pm_data["branch"]["2"]["b_to"] == -0.07
-        @test pm_data["branch"]["3"]["b_fr"] == -1.5
+        @test pm_data["branch"]["3"]["b_fr"] == 0.0
         @test pm_data["branch"]["3"]["b_to"] == 0.0
         @test length(pm_data["shunt"]) == 1
+        @test pm_data["shunt"]["1"]["bs"] == -1.755
     end
 end
