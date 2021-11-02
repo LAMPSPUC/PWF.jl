@@ -674,22 +674,12 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
         bus_type = pwf_data[section][i]["TYPE"]
         if bus_type == 2
             pwf_data[section][i][component] = -9999.0
-        else
-            # If the reactive generation is different from zero, the limits will be the reactive generation itself
-            if !isa(pwf_data[section][i]["REACTIVE GENERATION"], String)
-                pwf_data[section][i][component] = pwf_data[section][i]["REACTIVE GENERATION"]
-            end
         end
     end
     if section == "DBAR" && component == "MAXIMUM REACTIVE GENERATION"
         bus_type = pwf_data[section][i]["TYPE"]
         if bus_type == 2
             pwf_data[section][i][component] = 99999.0
-        else
-            # If the reactive generation is different from zero, the limits will be the reactive generation itself
-            if !isa(pwf_data[section][i]["REACTIVE GENERATION"], String)
-                pwf_data[section][i][component] = pwf_data[section][i]["REACTIVE GENERATION"]
-            end
         end
     end
 

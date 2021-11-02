@@ -4,7 +4,7 @@ function handle_specified_value(element::Dict, spec::String, min::String, max::S
     if (element[min] === nothing || element[max] === nothing)
         return spec_value
     end
-    if ((element[min] == element[min]) && element[min] == 0.0)
+    if (element[min] == element[min] == 0.0)
         return spec_value
     end
 
@@ -74,7 +74,7 @@ function _pwf2pm_corrections_PQ!(pm_data::Dict, software::ANAREDE)
                 error("ANAREDE: Active generator with QMIN = QMAX != 0 found in PQ bus. Verify data from Bus $i.")
             elseif !isempty(gen_keys_case3)
                 # change generator status to off and sum load power with gen power
-                Pg, Qg = sum_generators_power_and_turn_off(pm_data, gen_keys_case2)
+                Pg, Qg = sum_generators_power_and_turn_off(pm_data, gen_keys_case3)
                 load_key = load_from_bus(pm_data, parse(Int, i))
                 @assert length(load_key) == 1
                 # sum load power with the negative of generator power
