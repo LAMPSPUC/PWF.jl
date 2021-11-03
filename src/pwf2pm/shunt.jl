@@ -76,6 +76,8 @@ function _pwf2pm_DBSH_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
         idx = _create_new_shunt(sub_data, pm_data)[2]
         pm_data["shunt"][idx]["gs"] += sub_data["gs"]
         pm_data["shunt"][idx]["bs"] += sub_data["bs"]
+        pm_data["shunt"][idx]["bs_min"] += sub_data["bs_min"]
+        pm_data["shunt"][idx]["bs_max"] += sub_data["bs_max"]
     end
 end
 
