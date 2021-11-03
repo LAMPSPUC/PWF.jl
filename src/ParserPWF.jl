@@ -14,6 +14,7 @@ include("pwf2pm/load.jl")
 include("pwf2pm/gen.jl")
 include("pwf2pm/dcline.jl")
 include("pwf2pm/shunt.jl")
+include("pwf2pm/info.jl")
 
 include("pwf2pm/correct/correct.jl")
 include("pwf2pm/correct/organon.jl")
