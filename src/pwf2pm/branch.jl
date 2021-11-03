@@ -90,9 +90,9 @@ function _pwf2pm_DCSC_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
     sub_data["g_to"] = 0.0
     sub_data["b_to"] = 0.0
 
-    sub_data["tap"] = 0
-    sub_data["tapmin"] = 0
-    sub_data["tapmax"] = 0
+    sub_data["tap"] = 1.0
+    sub_data["tapmin"] = 1.0
+    sub_data["tapmax"] = 1.0
     sub_data["shift"] = 0
     sub_data["angmin"] = -360.0
     sub_data["angmax"] = 360.0

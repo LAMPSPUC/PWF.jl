@@ -39,9 +39,11 @@ end
 
 function _handle_bus_type(bus::Dict)
     bus_type = bus["TYPE"]
-    dict_bus_type = Dict(0 => 1, 3 => 1, # PQ
-    1 => 2, # PV
-    2 => 3 # Referência
+    dict_bus_type = Dict(
+        0 => 1, 
+        3 => 1, # PQ
+        1 => 2, # PV
+        2 => 3 # Referência
     )
     if bus["STATUS"] == 'L'
         return dict_bus_type[bus_type]
