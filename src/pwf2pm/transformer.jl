@@ -18,8 +18,6 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two
     sub_data["g_fr"] = 0.0
     sub_data["g_to"] = 0.0
     sub_data["tap"] = pop!(branch, "TAP")
-    sub_data["tapmin"] = pop!(branch, "MINIMUM TAP")
-    sub_data["tapmax"] = pop!(branch, "MAXIMUM TAP")
     sub_data["shift"] = -pop!(branch, "LAG")
     sub_data["angmin"] = -360.0 # No limit
     sub_data["angmax"] = 360.0 # No limit
@@ -31,7 +29,6 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two
         sub_data["br_status"] = 0
     end
 
-    sub_data["circuit"] = branch["CIRCUIT"]
     n = 0 # count(x -> x["f_bus"] == sub_data["f_bus"] && x["t_bus"] == sub_data["t_bus"], values(pm_data["branch"])) 
     sub_data["source_id"] = ["transformer", sub_data["f_bus"], sub_data["t_bus"], 0, "0$(n + 1)", 0]
     sub_data["index"] = length(pm_data["branch"]) + 1
@@ -55,18 +52,21 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two
         delete!(sub_data, "rate_c")
     end
 
-    sub_data["transformer_info"] = Dict{String,Any}()
-    sub_data["transformer_info"]["type"] = sub_data["tapmin"] == sub_data["tapmax"] ? "fixed tap" : "variable tap"
+    sub_data["control_info"] = Dict{String,Any}()
+    sub_data["control_info"]["tapmin"] = pop!(branch, "MINIMUM TAP")
+    sub_data["control_info"]["tapmax"] = pop!(branch, "MAXIMUM TAP")
+    sub_data["control_info"]["circuit"] = branch["CIRCUIT"]
+    sub_data["control_info"]["type"] = sub_data["control_info"]["tapmin"] == sub_data["control_info"]["tapmax"] ? "fixed tap" : "variable tap"
     ctrl_bus = pm_data["bus"]["$(abs(branch["CONTROLLED BUS"]))"]
-    sub_data["transformer_info"]["vsp"] = ctrl_bus["vm"]
-    sub_data["transformer_info"]["vmin"] = ctrl_bus["vmin"]
-    sub_data["transformer_info"]["vmax"] = ctrl_bus["vmax"]
-    sub_data["transformer_info"]["control"] =  false 
+    sub_data["control_info"]["vsp"] = ctrl_bus["vm"]
+    sub_data["control_info"]["vmin"] = ctrl_bus["vmin"]
+    sub_data["control_info"]["vmax"] = ctrl_bus["vmax"]
+    sub_data["control_info"]["control"] =  false 
     if haskey(pwf_data, "DTPF CIRC")
         for (k,v) in pwf_data["DTPF CIRC"]
             for i in 1:5
                 if v["FROM BUS $i"] == sub_data["f_bus"] && v["TO BUS $i"] == sub_data["t_bus"]
-                    sub_data["transformer_info"]["control"] = true
+                    sub_data["control_info"]["control"] = true
                 end
             end
         end

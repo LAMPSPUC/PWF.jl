@@ -41,8 +41,6 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
     sub_data["b_to"] = b[2]
 
     sub_data["tap"] = pop!(branch, "TAP")
-    sub_data["tapmin"] = sub_data["tap"]
-    sub_data["tapmax"] = sub_data["tap"]
     sub_data["shift"] = -pop!(branch, "LAG")
     sub_data["angmin"] = -360.0 # No limit
     sub_data["angmax"] = 360.0 # No limit
@@ -54,7 +52,11 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
         sub_data["br_status"] = 0
     end
 
-    sub_data["circuit"] = branch["CIRCUIT"]
+    sub_data["control_info"] = Dict{String,Any}()
+    sub_data["control_info"]["tapmin"] = sub_data["tap"]
+    sub_data["control_info"]["tapmax"] = sub_data["tap"]
+    sub_data["control_info"]["circuit"] = branch["CIRCUIT"]
+
     sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
     sub_data["index"] = length(pm_data["branch"]) + 1
 
@@ -91,8 +93,6 @@ function _pwf2pm_DCSC_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
     sub_data["b_to"] = 0.0
 
     sub_data["tap"] = 1.0
-    sub_data["tapmin"] = 1.0
-    sub_data["tapmax"] = 1.0
     sub_data["shift"] = 0
     sub_data["angmin"] = -360.0
     sub_data["angmax"] = 360.0
@@ -104,7 +104,11 @@ function _pwf2pm_DCSC_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
         sub_data["br_status"] = 0
     end
 
-    sub_data["circuit"] = branch["CIRCUIT"]
+    sub_data["control_info"] = Dict{String,Any}()
+    sub_data["control_info"]["tapmin"] = 1.0
+    sub_data["control_info"]["tapmax"] = 1.0
+    sub_data["control_info"]["circuit"] = branch["CIRCUIT"]
+
     sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
     sub_data["index"] = length(pm_data["branch"]) + 1
 

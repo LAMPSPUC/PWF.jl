@@ -54,7 +54,7 @@ function _pwf2pm_corrections_shunt!(pm_data::Dict, software::Organon)
         bus = pm_data["bus"]["$(shunt["shunt_bus"])"]
         bus_type = bus["bus_type"]
         
-        if !(bus_type_num_to_str[bus_type] == "PQ" && shunt["shunt_control_type"] == 2) # Discrete
+        if !(bus_type_num_to_str[bus_type] == "PQ" && shunt["control_info"]["shunt_control_type"] == 2) # Discrete
            _fix_shunt_voltage_bounds(shunt, pm_data)
         end
     end

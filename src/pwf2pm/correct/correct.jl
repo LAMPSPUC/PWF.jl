@@ -59,8 +59,10 @@ function _correct_pwf_network_data(pm_data::Dict)
 
     if haskey(pm_data, "shunt")
         for (i, shunt) in pm_data["shunt"]
-            PowerModels._apply_func!(shunt, "bsmin", rescale)
-            PowerModels._apply_func!(shunt, "bsmax", rescale)
+            if haskey(shunt, "control_info")
+                PowerModels._apply_func!(shunt["control_info"], "bsmin", rescale)
+                PowerModels._apply_func!(shunt["control_info"], "bsmax", rescale)
+            end
         end
     end
 
