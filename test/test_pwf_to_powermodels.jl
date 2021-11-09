@@ -1,5 +1,5 @@
 @testset "Dict to PowerModels" begin
-    @testset "Intermediary functions" begin
+    @testset "PowerModels conversion" begin
         file = open(joinpath(@__DIR__,"data/pwf/test_system.pwf"))
         pwf_data = ParserPWF._parse_pwf_data(file)
         pm_data = Dict{String, Any}()
@@ -199,7 +199,7 @@
 
     @testset "Shunt control_info" begin
         file = open(joinpath(@__DIR__,"data/pwf/3bus_new_fields.pwf"))
-        pm_data = ParserPWF.parse_pwf_to_powermodels(file)
+        pm_data = ParserPWF.parse_pwf_to_powermodels(file, software = ParserPWF.ANAREDE)
 
         @test length(pm_data["bus"]) == 3
         @test occursin("B s 1", pm_data["bus"]["1"]["name"])
@@ -245,5 +245,103 @@
         @test pm_data["branch"]["3"]["b_to"] == 0.0
         @test length(pm_data["shunt"]) == 1
         @test pm_data["shunt"]["1"]["bs"] == -1.755
+    end
+
+    @testset "DBSH" begin
+        data_anarede = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DBSH.pwf"), software = ParserPWF.ANAREDE)
+        data_organon = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DBSH.pwf"), software = ParserPWF.Organon)
+
+        pm_anarede = PowerModels.instantiate_model(data_anarede, PowerModels.ACPPowerModel, PowerModels.build_pf);
+        pm_organon = PowerModels.instantiate_model(data_organon, PowerModels.ACPPowerModel, PowerModels.build_pf);
+
+        result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer=Ipopt.Optimizer)
+        result_organon = PowerModels.optimize_model!(pm_organon, optimizer=Ipopt.Optimizer)
+
+        PowerModels.update_data!(data_anarede, result_anarede["solution"])
+        PowerModels.update_data!(data_organon, result_organon["solution"])
+
+        @test isapprox(data_anarede["bus"]["1"]["vm"], 1.029, atol = 1e-3)
+        @test isapprox(data_anarede["bus"]["2"]["vm"], 1.03, atol = 1e-3)
+        @test isapprox(data_anarede["bus"]["3"]["vm"], 0.960, atol = 1e-3)
+
+        @test isapprox(data_anarede["bus"]["1"]["va"], 0.0, atol = 1e-1)
+        @test isapprox(data_anarede["bus"]["2"]["va"], 0.0, atol = 1e-1)
+        @test isapprox(data_anarede["bus"]["3"]["va"], 0.8*pi/180, atol = 1e-1)
+
+        @test isapprox(data_anarede["gen"]["1"]["pg"], 0.162, atol = 1e-3)
+        @test isapprox(data_anarede["gen"]["2"]["pg"], 0.171, atol = 1e-3)
+
+        @test isapprox(data_anarede["gen"]["1"]["qg"], 0.233, atol = 1e-3)
+        @test isapprox(data_anarede["gen"]["2"]["qg"], 0.242, atol = 1e-3)
+    end
+
+    @testset "DCER" begin
+        data_anarede = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DCER.pwf"), software = ParserPWF.ANAREDE)
+        data_organon = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DCER.pwf"), software = ParserPWF.Organon)
+
+        pm_anarede = PowerModels.instantiate_model(data_anarede, PowerModels.ACPPowerModel, PowerModels.build_pf);
+        pm_organon = PowerModels.instantiate_model(data_organon, PowerModels.ACPPowerModel, PowerModels.build_pf);
+
+        result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer=Ipopt.Optimizer)
+        result_organon = PowerModels.optimize_model!(pm_organon, optimizer=Ipopt.Optimizer)
+
+        PowerModels.update_data!(data_anarede, result_anarede["solution"])
+        PowerModels.update_data!(data_organon, result_organon["solution"])
+
+        @test isapprox(data_anarede["bus"]["1"]["vm"], 1.029, atol = 1e-3)
+        @test isapprox(data_anarede["bus"]["2"]["vm"], 1.03, atol = 1e-3)
+        @test isapprox(data_anarede["bus"]["3"]["vm"], 1.024, atol = 1e-3)
+
+        @test isapprox(data_anarede["bus"]["1"]["va"], 0.0, atol = 1e-1)
+        @test isapprox(data_anarede["bus"]["2"]["va"], 0.0, atol = 1e-1)
+        @test isapprox(data_anarede["bus"]["3"]["va"], -2.7*pi/180, atol = 1e-1)
+
+        @test isapprox(data_anarede["gen"]["1"]["pg"], 0.154, atol = 1e-3)
+        @test isapprox(data_anarede["gen"]["2"]["pg"], 0.163, atol = 1e-3)
+
+        @test isapprox(data_anarede["gen"]["1"]["qg"], -0.129, atol = 1e-3)
+        @test isapprox(data_anarede["gen"]["2"]["qg"], -0.120, atol = 1e-3)
+    end
+
+    @testset "DSHL" begin
+        data_anarede = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DSHL.pwf"), software = ParserPWF.ANAREDE)
+        data_organon = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DSHL.pwf"), software = ParserPWF.Organon)
+
+        pm_anarede = PowerModels.instantiate_model(data_anarede, PowerModels.ACPPowerModel, PowerModels.build_pf);
+        pm_organon = PowerModels.instantiate_model(data_organon, PowerModels.ACPPowerModel, PowerModels.build_pf);
+
+        result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer=Ipopt.Optimizer)
+        result_organon = PowerModels.optimize_model!(pm_organon, optimizer=Ipopt.Optimizer)
+
+        PowerModels.update_data!(data_anarede, result_anarede["solution"])
+        PowerModels.update_data!(data_organon, result_organon["solution"])
+
+        @test isapprox(data_anarede["bus"]["1"]["vm"], 1.029, atol = 1e-3)
+        @test isapprox(data_anarede["bus"]["2"]["vm"], 0.662, atol = 1e-3)
+        @test isapprox(data_anarede["bus"]["3"]["vm"], 0.695, atol = 1e-3)
+
+        @test isapprox(data_anarede["bus"]["1"]["va"], 0.0, atol = 1e-1)
+        @test isapprox(data_anarede["bus"]["2"]["va"], 19*pi/180, atol = 1e-1)
+        @test isapprox(data_anarede["bus"]["3"]["va"], 11.8*pi/180, atol = 1e-1)
+
+        @test isapprox(data_anarede["gen"]["1"]["pg"], 1.205, atol = 1e-3)
+        @test isapprox(data_anarede["gen"]["2"]["pg"], 0.130, atol = 1e-3)
+
+        @test isapprox(data_anarede["gen"]["1"]["qg"], 3.191, atol = 1e-3)
+        @test isapprox(data_anarede["gen"]["2"]["qg"], 0.025, atol = 1e-3)
+        
+        @test isapprox(data_organon["bus"]["1"]["vm"], 1.029, atol = 1e-3)
+        @test isapprox(data_organon["bus"]["2"]["vm"], 0.665, atol = 1e-3)
+        @test isapprox(data_organon["bus"]["3"]["vm"], 0.705, atol = 1e-3)
+
+        @test isapprox(data_organon["bus"]["1"]["va"], 0.0, atol = 1e-1)
+        @test isapprox(data_organon["bus"]["2"]["va"], 19.34*pi/180, atol = 1e-2)
+        @test isapprox(data_organon["bus"]["3"]["va"], 12.51*pi/180, atol = 1e-2)
+
+        @test isapprox(data_organon["gen"]["1"]["pg"], 1.131, atol = 1e-3)
+        @test isapprox(data_organon["gen"]["2"]["pg"], 0.130, atol = 1e-3)
+
+        @test isapprox(data_organon["gen"]["1"]["qg"], 3.209, atol = 1e-3)
+        @test isapprox(data_organon["gen"]["2"]["qg"], 0.025, atol = 1e-3)
     end
 end
