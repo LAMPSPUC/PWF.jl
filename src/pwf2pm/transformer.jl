@@ -19,8 +19,8 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two
     sub_data["g_to"] = 0.0
     sub_data["tap"] = pop!(branch, "TAP")
     sub_data["shift"] = -pop!(branch, "LAG")
-    sub_data["angmin"] = -60.0
-    sub_data["angmax"] = 60.0
+    sub_data["angmin"] = -60.0 # PowerModels.jl standard
+    sub_data["angmax"] = 60.0 # PowerModels.jl standard
     sub_data["transformer"] = true
 
     if branch["STATUS"] == branch["OPENING FROM BUS"] == branch["OPENING TO BUS"] == 'L'

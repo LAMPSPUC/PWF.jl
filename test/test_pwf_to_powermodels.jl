@@ -214,6 +214,7 @@
         @test pm_data["shunt"]["1"]["control_info"]["controlled_bus"] == 3
         @test pm_data["shunt"]["1"]["control_info"]["vm_min"] == 1.03
         @test pm_data["shunt"]["1"]["control_info"]["vm_max"] == 1.03
+        @test pm_data["shunt"]["1"]["control_info"]["inclination"] == nothing
 
         @test pm_data["shunt"]["2"]["control_info"]["shunt_type"] == 2
         @test pm_data["shunt"]["2"]["control_info"]["shunt_control_type"] == 3
@@ -222,6 +223,7 @@
         @test pm_data["shunt"]["2"]["control_info"]["controlled_bus"] == 1
         @test pm_data["shunt"]["2"]["control_info"]["vm_min"] == 1.029
         @test pm_data["shunt"]["2"]["control_info"]["vm_max"] == 1.029
+        @test pm_data["shunt"]["2"]["control_info"]["inclination"] == 2.0
 
         @test pm_data["shunt"]["3"]["control_info"]["shunt_type"] == 2
         @test pm_data["shunt"]["3"]["control_info"]["shunt_control_type"] == 2
@@ -230,6 +232,7 @@
         @test pm_data["shunt"]["3"]["control_info"]["controlled_bus"] == 72
         @test pm_data["shunt"]["3"]["control_info"]["vm_min"] == 0.9
         @test pm_data["shunt"]["3"]["control_info"]["vm_max"] == 1.1
+        @test pm_data["shunt"]["3"]["control_info"]["inclination"] == nothing
 
     end
 

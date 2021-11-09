@@ -59,6 +59,7 @@ function _pwf2pm_DBSH_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
     sub_data["control_info"]["bsmin"] = bs_bounds[1]
     sub_data["control_info"]["bsmax"] = bs_bounds[2]
     @assert sub_data["control_info"]["bsmin"] <= sub_data["control_info"]["bsmax"]
+    sub_data["control_info"]["inclination"] = nothing
 
     status = pwf_data["DBAR"]["$(sub_data["shunt_bus"])"]["STATUS"]
     if status == 'L'
@@ -115,6 +116,7 @@ function _pwf2pm_DCER_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
     sub_data["control_info"]["vm_min"] = ctrl_bus["vm"]
     sub_data["control_info"]["vm_max"] = ctrl_bus["vm"]
     sub_data["control_info"]["controlled_bus"] = shunt["CONTROLLED BUS"]
+    sub_data["control_info"]["inclination"] = shunt["INCLINATION"]
 
     status   = pwf_data["DBAR"]["$(sub_data["shunt_bus"])"]["STATUS"]
 
@@ -169,6 +171,7 @@ function _pwf2pm_DBAR_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data["control_info"]["vm_min"] = bus["VOLTAGE"]
     sub_data["control_info"]["vm_max"] = bus["VOLTAGE"]
     sub_data["control_info"]["controlled_bus"] = bus["CONTROLLED BUS"]
+    sub_data["control_info"]["inclination"] = nothing
 
     if bus["STATUS"] == 'L'
         sub_data["status"] = 1

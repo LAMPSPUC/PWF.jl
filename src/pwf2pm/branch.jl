@@ -42,8 +42,8 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
 
     sub_data["tap"] = pop!(branch, "TAP")
     sub_data["shift"] = -pop!(branch, "LAG")
-    sub_data["angmin"] = -60.0
-    sub_data["angmax"] = 60.0
+    sub_data["angmin"] = -60.0 # PowerModels.jl standard
+    sub_data["angmax"] = 60.0 # PowerModels.jl standard
     sub_data["transformer"] = false
 
     if branch["STATUS"] == branch["OPENING FROM BUS"] == branch["OPENING TO BUS"] == 'L'
@@ -94,8 +94,8 @@ function _pwf2pm_DCSC_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
 
     sub_data["tap"] = 1.0
     sub_data["shift"] = 0
-    sub_data["angmin"] = -60.0
-    sub_data["angmax"] = 60.0
+    sub_data["angmin"] = -60.0 # PowerModels.jl standard
+    sub_data["angmax"] = 60.0 # PowerModels.jl standard
     sub_data["transformer"] = false
 
     if branch["STATUS"] == 'L'
