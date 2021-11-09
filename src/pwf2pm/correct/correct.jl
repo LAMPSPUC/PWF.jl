@@ -39,8 +39,8 @@ function sum_generators_power_and_turn_off(pm_data::Dict, gen_keys::Vector)
 end
 
 function _fix_shunt_voltage_bounds(shunt::Dict, pm_data::Dict)
-    shunt["vm_min"] = pm_data["bus"]["$(shunt["shunt_bus"])"]["vm"]
-    shunt["vm_max"] = pm_data["bus"]["$(shunt["shunt_bus"])"]["vm"]
+    shunt["control_info"]["vm_min"] = pm_data["bus"]["$(shunt["shunt_bus"])"]["vm"]
+    shunt["control_info"]["vm_max"] = pm_data["bus"]["$(shunt["shunt_bus"])"]["vm"]
 end
 
 function _pwf2pm_corrections!(pm_data::Dict, pwf_data::Dict, software::PFSoftware)
