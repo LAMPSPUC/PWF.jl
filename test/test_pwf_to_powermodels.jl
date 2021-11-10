@@ -212,8 +212,8 @@
         @test pm_data["shunt"]["1"]["control_data"]["bsmin"] == -0.1
         @test pm_data["shunt"]["1"]["control_data"]["bsmax"] == -0.1
         @test pm_data["shunt"]["1"]["control_data"]["controlled_bus"] == 3
-        @test pm_data["shunt"]["1"]["control_data"]["vm_min"] == 1.03
-        @test pm_data["shunt"]["1"]["control_data"]["vm_max"] == 1.03
+        @test pm_data["shunt"]["1"]["control_data"]["vmmin"] == 1.03
+        @test pm_data["shunt"]["1"]["control_data"]["vmmax"] == 1.03
         @test pm_data["shunt"]["1"]["control_data"]["inclination"] == nothing
 
         @test pm_data["shunt"]["2"]["control_data"]["shunt_type"] == 2
@@ -221,8 +221,8 @@
         @test pm_data["shunt"]["2"]["control_data"]["bsmin"] == -0.5
         @test pm_data["shunt"]["2"]["control_data"]["bsmax"] == 1.
         @test pm_data["shunt"]["2"]["control_data"]["controlled_bus"] == 1
-        @test pm_data["shunt"]["2"]["control_data"]["vm_min"] == 1.029
-        @test pm_data["shunt"]["2"]["control_data"]["vm_max"] == 1.029
+        @test pm_data["shunt"]["2"]["control_data"]["vmmin"] == 1.029
+        @test pm_data["shunt"]["2"]["control_data"]["vmmax"] == 1.029
         @test pm_data["shunt"]["2"]["control_data"]["inclination"] == 2.0
 
         @test pm_data["shunt"]["3"]["control_data"]["shunt_type"] == 2
@@ -230,8 +230,8 @@
         @test pm_data["shunt"]["3"]["control_data"]["bsmin"] == -0.3
         @test pm_data["shunt"]["3"]["control_data"]["bsmax"] == 0.6
         @test pm_data["shunt"]["3"]["control_data"]["controlled_bus"] == 72
-        @test pm_data["shunt"]["3"]["control_data"]["vm_min"] == 0.9
-        @test pm_data["shunt"]["3"]["control_data"]["vm_max"] == 1.1
+        @test pm_data["shunt"]["3"]["control_data"]["vmmin"] == 0.9
+        @test pm_data["shunt"]["3"]["control_data"]["vmmax"] == 1.1
         @test pm_data["shunt"]["3"]["control_data"]["inclination"] == nothing
 
     end

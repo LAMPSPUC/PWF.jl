@@ -51,8 +51,8 @@ function _pwf2pm_DBSH_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
     sub_data["gs"] = 0.0
     sub_data["bs"] = _handle_bs(shunt)
 
-    sub_data["control_data"]["vm_min"] = shunt["MINIMUM VOLTAGE"]
-    sub_data["control_data"]["vm_max"] = shunt["MAXIMUM VOLTAGE"]
+    sub_data["control_data"]["vmmin"] = shunt["MINIMUM VOLTAGE"]
+    sub_data["control_data"]["vmmax"] = shunt["MAXIMUM VOLTAGE"]
 
     sub_data["control_data"]["controlled_bus"] = shunt["CONTROLLED BUS"]
     bs_bounds = _handle_bs_bounds(shunt)
@@ -113,8 +113,8 @@ function _pwf2pm_DCER_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
     @assert sub_data["control_data"]["bsmin"] <= sub_data["control_data"]["bsmax"]
 
     ctrl_bus = pm_data["bus"]["$(shunt["CONTROLLED BUS"])"]
-    sub_data["control_data"]["vm_min"] = ctrl_bus["vm"]
-    sub_data["control_data"]["vm_max"] = ctrl_bus["vm"]
+    sub_data["control_data"]["vmmin"] = ctrl_bus["vm"]
+    sub_data["control_data"]["vmmax"] = ctrl_bus["vm"]
     sub_data["control_data"]["controlled_bus"] = shunt["CONTROLLED BUS"]
     sub_data["control_data"]["inclination"] = shunt["INCLINATION"]
 
@@ -168,8 +168,8 @@ function _pwf2pm_DBAR_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data["control_data"]["bsmax"] = sub_data["bs"]
     @assert sub_data["control_data"]["bsmin"] <= sub_data["control_data"]["bsmax"]
 
-    sub_data["control_data"]["vm_min"] = bus["VOLTAGE"]
-    sub_data["control_data"]["vm_max"] = bus["VOLTAGE"]
+    sub_data["control_data"]["vmmin"] = bus["VOLTAGE"]
+    sub_data["control_data"]["vmmax"] = bus["VOLTAGE"]
     sub_data["control_data"]["controlled_bus"] = bus["CONTROLLED BUS"]
     sub_data["control_data"]["inclination"] = nothing
 
