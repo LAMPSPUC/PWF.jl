@@ -23,8 +23,8 @@
                 @test haskey(bus, "va")
                 @test haskey(bus, "vm")
                 @test haskey(bus, "base_kv")
-                @test haskey(bus, "control_info")
-                @test haskey(bus["control_info"], "voltage_controlled_bus")
+                @test haskey(bus, "control_data")
+                @test haskey(bus["control_data"], "voltage_controlled_bus")
 
                 @test isa(bus["zone"], Int)
                 @test isa(bus["bus_i"], Int)
@@ -38,8 +38,8 @@
                 @test isa(bus["va"], Float64)
                 @test isa(bus["vm"], Float64)
                 @test isa(bus["base_kv"], Float64)
-                @test isa(bus["control_info"], Dict)
-                @test isa(bus["control_info"]["voltage_controlled_bus"], Int)
+                @test isa(bus["control_data"], Dict)
+                @test isa(bus["control_data"]["voltage_controlled_bus"], Int)
             end
         end
 
@@ -67,7 +67,7 @@
                 @test haskey(branch, "angmax")
                 @test haskey(branch, "transformer")
                 @test haskey(branch, "tap")
-                @test haskey(branch, "control_info")
+                @test haskey(branch, "control_data")
 
                 @test isa(branch["br_r"], Float64)
                 @test isa(branch["shift"], Float64)
@@ -85,7 +85,7 @@
                 @test isa(branch["angmax"], Float64)
                 @test isa(branch["transformer"], Bool)
                 @test isa(branch["tap"], Float64)
-                @test isa(branch["control_info"], Dict)
+                @test isa(branch["control_data"], Dict)
             end
 
         end
@@ -197,42 +197,42 @@
         @test check_same_dict(parse_result["solution"]["bus"], result)
     end
 
-    @testset "Shunt control_info" begin
+    @testset "Shunt control_data" begin
         file = open(joinpath(@__DIR__,"data/pwf/3bus_new_fields.pwf"))
         pm_data = ParserPWF.parse_pwf_to_powermodels(file, software = ParserPWF.ANAREDE)
 
         @test length(pm_data["bus"]) == 3
         @test occursin("B s 1", pm_data["bus"]["1"]["name"])
-        @test pm_data["bus"]["2"]["control_info"]["voltage_controlled_bus"] == 3
+        @test pm_data["bus"]["2"]["control_data"]["voltage_controlled_bus"] == 3
 
         @test length(pm_data["shunt"]) == 3
         
-        @test pm_data["shunt"]["1"]["control_info"]["shunt_type"] == 1
-        @test pm_data["shunt"]["1"]["control_info"]["shunt_control_type"] == 1
-        @test pm_data["shunt"]["1"]["control_info"]["bsmin"] == -0.1
-        @test pm_data["shunt"]["1"]["control_info"]["bsmax"] == -0.1
-        @test pm_data["shunt"]["1"]["control_info"]["controlled_bus"] == 3
-        @test pm_data["shunt"]["1"]["control_info"]["vm_min"] == 1.03
-        @test pm_data["shunt"]["1"]["control_info"]["vm_max"] == 1.03
-        @test pm_data["shunt"]["1"]["control_info"]["inclination"] == nothing
+        @test pm_data["shunt"]["1"]["control_data"]["shunt_type"] == 1
+        @test pm_data["shunt"]["1"]["control_data"]["shunt_control_type"] == 1
+        @test pm_data["shunt"]["1"]["control_data"]["bsmin"] == -0.1
+        @test pm_data["shunt"]["1"]["control_data"]["bsmax"] == -0.1
+        @test pm_data["shunt"]["1"]["control_data"]["controlled_bus"] == 3
+        @test pm_data["shunt"]["1"]["control_data"]["vm_min"] == 1.03
+        @test pm_data["shunt"]["1"]["control_data"]["vm_max"] == 1.03
+        @test pm_data["shunt"]["1"]["control_data"]["inclination"] == nothing
 
-        @test pm_data["shunt"]["2"]["control_info"]["shunt_type"] == 2
-        @test pm_data["shunt"]["2"]["control_info"]["shunt_control_type"] == 3
-        @test pm_data["shunt"]["2"]["control_info"]["bsmin"] == -0.5
-        @test pm_data["shunt"]["2"]["control_info"]["bsmax"] == 1.
-        @test pm_data["shunt"]["2"]["control_info"]["controlled_bus"] == 1
-        @test pm_data["shunt"]["2"]["control_info"]["vm_min"] == 1.029
-        @test pm_data["shunt"]["2"]["control_info"]["vm_max"] == 1.029
-        @test pm_data["shunt"]["2"]["control_info"]["inclination"] == 2.0
+        @test pm_data["shunt"]["2"]["control_data"]["shunt_type"] == 2
+        @test pm_data["shunt"]["2"]["control_data"]["shunt_control_type"] == 3
+        @test pm_data["shunt"]["2"]["control_data"]["bsmin"] == -0.5
+        @test pm_data["shunt"]["2"]["control_data"]["bsmax"] == 1.
+        @test pm_data["shunt"]["2"]["control_data"]["controlled_bus"] == 1
+        @test pm_data["shunt"]["2"]["control_data"]["vm_min"] == 1.029
+        @test pm_data["shunt"]["2"]["control_data"]["vm_max"] == 1.029
+        @test pm_data["shunt"]["2"]["control_data"]["inclination"] == 2.0
 
-        @test pm_data["shunt"]["3"]["control_info"]["shunt_type"] == 2
-        @test pm_data["shunt"]["3"]["control_info"]["shunt_control_type"] == 2
-        @test pm_data["shunt"]["3"]["control_info"]["bsmin"] == -0.3
-        @test pm_data["shunt"]["3"]["control_info"]["bsmax"] == 0.6
-        @test pm_data["shunt"]["3"]["control_info"]["controlled_bus"] == 72
-        @test pm_data["shunt"]["3"]["control_info"]["vm_min"] == 0.9
-        @test pm_data["shunt"]["3"]["control_info"]["vm_max"] == 1.1
-        @test pm_data["shunt"]["3"]["control_info"]["inclination"] == nothing
+        @test pm_data["shunt"]["3"]["control_data"]["shunt_type"] == 2
+        @test pm_data["shunt"]["3"]["control_data"]["shunt_control_type"] == 2
+        @test pm_data["shunt"]["3"]["control_data"]["bsmin"] == -0.3
+        @test pm_data["shunt"]["3"]["control_data"]["bsmax"] == 0.6
+        @test pm_data["shunt"]["3"]["control_data"]["controlled_bus"] == 72
+        @test pm_data["shunt"]["3"]["control_data"]["vm_min"] == 0.9
+        @test pm_data["shunt"]["3"]["control_data"]["vm_max"] == 1.1
+        @test pm_data["shunt"]["3"]["control_data"]["inclination"] == nothing
 
     end
 

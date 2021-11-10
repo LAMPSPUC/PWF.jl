@@ -39,8 +39,8 @@ function sum_generators_power_and_turn_off(pm_data::Dict, gen_keys::Vector)
 end
 
 function _fix_shunt_voltage_bounds(shunt::Dict, pm_data::Dict)
-    shunt["control_info"]["vm_min"] = pm_data["bus"]["$(shunt["shunt_bus"])"]["vm"]
-    shunt["control_info"]["vm_max"] = pm_data["bus"]["$(shunt["shunt_bus"])"]["vm"]
+    shunt["control_data"]["vm_min"] = pm_data["bus"]["$(shunt["shunt_bus"])"]["vm"]
+    shunt["control_data"]["vm_max"] = pm_data["bus"]["$(shunt["shunt_bus"])"]["vm"]
 end
 
 function _pwf2pm_corrections!(pm_data::Dict, pwf_data::Dict, software::PFSoftware)
@@ -59,9 +59,9 @@ function _correct_pwf_network_data(pm_data::Dict)
 
     if haskey(pm_data, "shunt")
         for (i, shunt) in pm_data["shunt"]
-            if haskey(shunt, "control_info")
-                PowerModels._apply_func!(shunt["control_info"], "bsmin", rescale)
-                PowerModels._apply_func!(shunt["control_info"], "bsmax", rescale)
+            if haskey(shunt, "control_data")
+                PowerModels._apply_func!(shunt["control_data"], "bsmin", rescale)
+                PowerModels._apply_func!(shunt["control_data"], "bsmax", rescale)
             end
         end
     end
