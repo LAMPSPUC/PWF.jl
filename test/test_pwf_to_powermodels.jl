@@ -250,6 +250,63 @@
         @test pm_data["shunt"]["1"]["bs"] == -1.755
     end
 
+    @testset "Transformer control fields" begin
+        data = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/9bus_transformer_fields.pwf"))
+
+        tap_automatic_control = findfirst(x -> x["f_bus"] == 1 && x["t_bus"] == 4, data["branch"])
+        tap_variable_control = findfirst(x -> x["f_bus"] == 2 && x["t_bus"] == 7, data["branch"])
+        phase_control = findfirst(x -> x["f_bus"] == 3 && x["t_bus"] == 9, data["branch"])
+
+        tap_automatic_control = data["branch"][tap_automatic_control]["control_data"]
+        tap_variable_control = data["branch"][tap_variable_control]["control_data"]
+        phase_control = data["branch"][phase_control]["control_data"]
+
+        @test tap_automatic_control["control_type"] == "tap_control"
+        @test tap_automatic_control["constraint_type"] == "setpoint"
+        @test tap_automatic_control["controlled_bus"] == 1
+        @test tap_automatic_control["tapmin"] == 0.85
+        @test tap_automatic_control["tapmax"] == 1.15
+        @test tap_automatic_control["vmsp"] == 1.075
+        @test tap_automatic_control["vmmin"] == 0.9
+        @test tap_automatic_control["vmmax"] == 1.1
+        @test tap_automatic_control["shift_control_variable"] == nothing
+        @test tap_automatic_control["shiftmin"] == nothing
+        @test tap_automatic_control["shiftmax"] == nothing
+        @test tap_automatic_control["valsp"] == nothing
+        @test tap_automatic_control["circuit"] == 1
+        @test tap_automatic_control["control"] == true
+
+        @test tap_variable_control["control_type"] == "tap_control"
+        @test tap_variable_control["constraint_type"] == "bounds"
+        @test tap_variable_control["controlled_bus"] == 7
+        @test tap_variable_control["tapmin"] == 0.85
+        @test tap_variable_control["tapmax"] == 1.15
+        @test tap_variable_control["vmsp"] == 1.078
+        @test tap_variable_control["vmmin"] == 0.8
+        @test tap_variable_control["vmmax"] == 1.2
+        @test tap_variable_control["shift_control_variable"] == nothing
+        @test tap_variable_control["shiftmin"] == nothing
+        @test tap_variable_control["shiftmax"] == nothing
+        @test tap_variable_control["valsp"] == 100.0
+        @test tap_variable_control["circuit"] == 1
+        @test tap_variable_control["control"] == false
+
+        @test phase_control["control_type"] == "shift_control"
+        @test phase_control["constraint_type"] == "bounds"
+        @test phase_control["controlled_bus"] == 9
+        @test phase_control["tapmin"] == nothing
+        @test phase_control["tapmax"] == nothing
+        @test phase_control["vmsp"] == 1.083
+        @test phase_control["vmmin"] == 0.8
+        @test phase_control["vmmax"] == 1.2
+        @test phase_control["shift_control_variable"] == "power"
+        @test phase_control["shiftmin"] == -30.0
+        @test phase_control["shiftmax"] == 30.0
+        @test phase_control["valsp"] == 250.5
+        @test phase_control["circuit"] == 1
+        @test phase_control["control"] == false
+    end
+
     @testset "DBSH" begin
         data_anarede = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DBSH.pwf"), software = ParserPWF.ANAREDE)
         data_organon = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DBSH.pwf"), software = ParserPWF.Organon)

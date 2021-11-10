@@ -57,6 +57,19 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
     sub_data["control_data"]["tapmax"] = sub_data["tap"]
     sub_data["control_data"]["circuit"] = branch["CIRCUIT"]
 
+    # Transformer control_data fields are created and set to nothing
+    sub_data["control_data"]["control_type"] = nothing
+    sub_data["control_data"]["constraint_type"] = nothing
+    sub_data["control_data"]["controlled_bus"] = nothing
+    sub_data["control_data"]["vmsp"] = nothing
+    sub_data["control_data"]["vmmin"] = nothing
+    sub_data["control_data"]["vmmax"] = nothing
+    sub_data["control_data"]["shift_control_variable"] = nothing
+    sub_data["control_data"]["shiftmin"] = nothing
+    sub_data["control_data"]["shiftmax"] = nothing
+    sub_data["control_data"]["valsp"] = nothing
+    sub_data["control_data"]["control"] = nothing
+
     sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
     sub_data["index"] = length(pm_data["branch"]) + 1
 
@@ -109,6 +122,19 @@ function _pwf2pm_DCSC_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
     sub_data["control_data"]["tapmax"] = 1.0
     sub_data["control_data"]["circuit"] = branch["CIRCUIT"]
 
+    # Transformer control_data fields are created and set to nothing
+    sub_data["control_data"]["control_type"] = nothing
+    sub_data["control_data"]["constraint_type"] = nothing
+    sub_data["control_data"]["controlled_bus"] = nothing
+    sub_data["control_data"]["vmsp"] = nothing
+    sub_data["control_data"]["vmmin"] = nothing
+    sub_data["control_data"]["vmmax"] = nothing
+    sub_data["control_data"]["shift_control_variable"] = nothing
+    sub_data["control_data"]["shiftmin"] = nothing
+    sub_data["control_data"]["shiftmax"] = nothing
+    sub_data["control_data"]["valsp"] = nothing
+    sub_data["control_data"]["control"] = nothing
+    
     sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
     sub_data["index"] = length(pm_data["branch"]) + 1
 

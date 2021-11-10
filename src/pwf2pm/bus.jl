@@ -16,7 +16,7 @@ function _handle_vmin(pwf_data::Dict, bus::Dict, dict_dglt)
     if haskey(pwf_data, "DGLT") 
         if haskey(dict_dglt, group_identifier)
             group = dict_dglt[group_identifier]
-                return group["LOWER BOUND"]
+            return group["LOWER BOUND"]
         elseif length(pwf_data["DGLT"]) == 1
             return pwf_data["DGLT"]["1"]["LOWER BOUND"]
         end

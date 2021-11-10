@@ -707,6 +707,13 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
         group_idx = findfirst(x -> x["GROUP"] == group, pwf_data["DGLT"])
         pwf_data[section][i][component] = pwf_data["DGLT"][group_idx]["UPPER BOUND"]
     end
+
+    if section == "DCTR" && component in ["MINIMUM VOLTAGE", "MAXIMUM VOLTAGE"]
+        pwf_data[section][i]["VOLTAGE CONTROL"] = false
+    end
+    if section == "DCTR" && component in ["MINIMUM PHASE", "MAXIMUM PHASE"]
+        pwf_data[section][i]["PHASE CONTROL"] = false
+    end
 end
 
 function _handle_transformer_default!(pwf_data::Dict{String, Any}, section::String, i::String)
