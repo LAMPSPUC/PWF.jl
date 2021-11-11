@@ -190,6 +190,10 @@ const _dmot_dtypes = [("BUS", Int64, 1:5), ("OPERATION", Char, 7), ("STATUS", Ch
 
 const _dcmt_dtypes = [("COMMENTS", String, 1:80)]
 
+const _dinj_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Char, 7),
+    ("EQUIVALENT ACTIVE INJECITON", Float64, 9:15), ("EQUIVALENT REACTIVE INJECTION", Float64, 16:22),
+    ("EQUIVALENT SHUNT", Float64, 23:29), ("EQUIVALENT PARTICIPATION FACTOR", Float64, 30:36)]
+
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes, "DGBT" => _dgbt_dtypes,
     "DGLT" => _dglt_dtypes, "DGER" => _dger_dtypes, "DSHL" => _dshl_dtypes, "DCBA" => _dcba_dtypes, 
     "DCLI" => _dcli_dtypes, "DCNV" => _dcnv_dtypes, "DCCV" => _dccv_dtypes, "DELO" => _delo_dtypes, 
@@ -197,7 +201,8 @@ const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes, "DGBT" 
     "DCSC" => _dcsc_dtypes, "DCAR" => _dcar_dtypes, "DCTR" => _dctr_dtypes, "DARE" => _dare_dtypes,
     "DTPF CIRC" => _dtpf_circ_dtypes, "DMTE" => _dmte_dtypes, "DMFL CIRC" => _dmfl_circ_dtypes,
     "AGGREGATOR IDENTIFICATION" => _fagr_1_dtypes, "AGGREGATOR OCCURENCES" => _fagr_2_dtypes,
-    "DCAI" => _dcai_dtypes, "DGEI" => _dgei_dtypes, "DMOT" => _dmot_dtypes, "DCMT" => _dcmt_dtypes)
+    "DCAI" => _dcai_dtypes, "DGEI" => _dgei_dtypes, "DMOT" => _dmot_dtypes, "DCMT" => _dcmt_dtypes,
+    "DINJ" => _dinj_dtypes)
     
 const _mnemonic_dopc = (filter(x -> x[1]%7 == 1, [i:i+3 for i in 1:66]),
                         filter(x -> x%7 == 6, 1:69), Char)
@@ -378,6 +383,10 @@ const _default_dmot = Dict("BUS" => nothing, "OPERATION" => 'A', "STATUS" => 'L'
 
 const _default_dcmt = Dict("COMMENTS" => nothing)
 
+const _default_dinj = Dict("NUMBER" => nothing, "OPERATION" => 'A',
+    "EQUIVALENT ACTIVE INJECITON" => 0.0, "EQUIVALENT REACTIVE INJECITON" => 0.0,
+    "EQUIVALENT SHUNT" => 0.0, "EQUIVALENT PARTICIPATION FACTOR" => 0.0)
+
 const _default_titu = ""
 
 const _default_name = ""
@@ -391,7 +400,7 @@ const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DC
     "DTPF CIRC" => _default_dtpf_circ, "DMTE" => _default_dmte, "DMFL CIRC" => _default_dmfl_circ,
     "DBRE" => _default_dbre, "DOPC IMPR" => _default_dopc, "DAGR" => _default_fagr_1,
     "OCCURENCES" => _default_fagr_2, "DCAI" => _default_dcai, "DGEI" => _default_dgei,
-    "DMOT" => _default_dmot, "DCMT" => _default_dcmt)
+    "DMOT" => _default_dmot, "DCMT" => _default_dcmt, "DINJ" => _default_dinj)
 
 
 const title_identifier = "TITU"
