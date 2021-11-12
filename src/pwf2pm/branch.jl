@@ -41,11 +41,9 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
     sub_data["b_to"] = b[2]
 
     sub_data["tap"] = pop!(branch, "TAP")
-    sub_data["tapmin"] = sub_data["tap"]
-    sub_data["tapmax"] = sub_data["tap"]
     sub_data["shift"] = -pop!(branch, "LAG")
-    sub_data["angmin"] = -360.0 # No limit
-    sub_data["angmax"] = 360.0 # No limit
+    sub_data["angmin"] = -60.0 # PowerModels.jl standard
+    sub_data["angmax"] = 60.0 # PowerModels.jl standard
     sub_data["transformer"] = false
 
     if branch["STATUS"] == branch["OPENING FROM BUS"] == branch["OPENING TO BUS"] == 'L'
@@ -54,7 +52,24 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
         sub_data["br_status"] = 0
     end
 
-    sub_data["circuit"] = branch["CIRCUIT"]
+    sub_data["control_data"] = Dict{String,Any}()
+    sub_data["control_data"]["tapmin"] = sub_data["tap"]
+    sub_data["control_data"]["tapmax"] = sub_data["tap"]
+    sub_data["control_data"]["circuit"] = branch["CIRCUIT"]
+
+    # Transformer control_data fields are created and set to nothing
+    sub_data["control_data"]["control_type"] = nothing
+    sub_data["control_data"]["constraint_type"] = nothing
+    sub_data["control_data"]["controlled_bus"] = nothing
+    sub_data["control_data"]["vmsp"] = nothing
+    sub_data["control_data"]["vmmin"] = nothing
+    sub_data["control_data"]["vmmax"] = nothing
+    sub_data["control_data"]["shift_control_variable"] = nothing
+    sub_data["control_data"]["shiftmin"] = nothing
+    sub_data["control_data"]["shiftmax"] = nothing
+    sub_data["control_data"]["valsp"] = nothing
+    sub_data["control_data"]["control"] = nothing
+
     sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
     sub_data["index"] = length(pm_data["branch"]) + 1
 
@@ -90,12 +105,10 @@ function _pwf2pm_DCSC_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
     sub_data["g_to"] = 0.0
     sub_data["b_to"] = 0.0
 
-    sub_data["tap"] = 0
-    sub_data["tapmin"] = 0
-    sub_data["tapmax"] = 0
+    sub_data["tap"] = 1.0
     sub_data["shift"] = 0
-    sub_data["angmin"] = -360.0
-    sub_data["angmax"] = 360.0
+    sub_data["angmin"] = -60.0 # PowerModels.jl standard
+    sub_data["angmax"] = 60.0 # PowerModels.jl standard
     sub_data["transformer"] = false
 
     if branch["STATUS"] == 'L'
@@ -104,7 +117,24 @@ function _pwf2pm_DCSC_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
         sub_data["br_status"] = 0
     end
 
-    sub_data["circuit"] = branch["CIRCUIT"]
+    sub_data["control_data"] = Dict{String,Any}()
+    sub_data["control_data"]["tapmin"] = 1.0
+    sub_data["control_data"]["tapmax"] = 1.0
+    sub_data["control_data"]["circuit"] = branch["CIRCUIT"]
+
+    # Transformer control_data fields are created and set to nothing
+    sub_data["control_data"]["control_type"] = nothing
+    sub_data["control_data"]["constraint_type"] = nothing
+    sub_data["control_data"]["controlled_bus"] = nothing
+    sub_data["control_data"]["vmsp"] = nothing
+    sub_data["control_data"]["vmmin"] = nothing
+    sub_data["control_data"]["vmmax"] = nothing
+    sub_data["control_data"]["shift_control_variable"] = nothing
+    sub_data["control_data"]["shiftmin"] = nothing
+    sub_data["control_data"]["shiftmax"] = nothing
+    sub_data["control_data"]["valsp"] = nothing
+    sub_data["control_data"]["control"] = nothing
+    
     sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
     sub_data["index"] = length(pm_data["branch"]) + 1
 

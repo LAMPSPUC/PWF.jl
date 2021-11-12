@@ -11,7 +11,7 @@
         ParserPWF._parse_section!(data, sections[1])
         @test haskey(data, "TITU")
         ParserPWF._parse_section!(data, sections[2])
-        @test haskey(data, "DOPC")
+        @test haskey(data, "DOPC IMPR")
         ParserPWF._parse_section!(data, sections[3])
         @test haskey(data, "DCTE")
         ParserPWF._parse_section!(data, sections[4])
@@ -27,7 +27,7 @@
 
         @testset "Keys" begin
             @test haskey(dict, "TITU")
-            @test haskey(dict, "DOPC")
+            @test haskey(dict, "DOPC IMPR")
             @test haskey(dict, "DCTE")
             @test haskey(dict, "DBAR")
             @test haskey(dict, "DLIN")
@@ -36,14 +36,14 @@
         @testset "Types" begin
             @test isa(dict, Dict)
             @test isa(dict["TITU"], String)
-            @test isa(dict["DOPC"], Dict)
+            @test isa(dict["DOPC IMPR"], Dict)
             @test isa(dict["DCTE"], Dict)
             @test isa(dict["DBAR"], Dict)
             @test isa(dict["DLIN"], Dict)
         end
 
         @testset "Lengths" begin
-            @test length(dict["DOPC"]) == 13
+            @test length(dict["DOPC IMPR"]) == 13
             @test length(dict["DCTE"]) == 67
             @test length(dict["DBAR"]) == 9
             @test length(dict["DLIN"]) == 7
@@ -117,7 +117,7 @@
         end
 
         @testset "DOPC" begin
-            for (key, value) in dict["DOPC"]
+            for (key, value) in dict["DOPC IMPR"]
                 @test isa(key, String)
                 @test isa(value, Char)
                 @test length(key) == 4

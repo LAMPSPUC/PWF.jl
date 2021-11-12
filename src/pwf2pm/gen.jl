@@ -3,8 +3,7 @@ function _handle_pmin(pwf_data::Dict, bus_i::Int, dict_dger)
         bus = dict_dger[bus_i]
         return bus["MINIMUM ACTIVE GENERATION"]
     end    
-    bus = pwf_data["DBAR"]["$bus_i"]
-    return bus["ACTIVE GENERATION"]
+    return 0.0
 end
 
 function _handle_pmax(pwf_data::Dict, bus_i::Int, dict_dger)
@@ -12,8 +11,7 @@ function _handle_pmax(pwf_data::Dict, bus_i::Int, dict_dger)
         bus = dict_dger[bus_i]
         return bus["MAXIMUM ACTIVE GENERATION"]
     end    
-    bus = pwf_data["DBAR"]["$bus_i"]
-    return bus["ACTIVE GENERATION"]
+    return 99999.0
 end
 
 function _create_dict_dger(data::Dict)
@@ -42,8 +40,8 @@ function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data["pmin"] = _handle_pmin(pwf_data, bus["NUMBER"], dict_dger)
     sub_data["pmax"] = _handle_pmax(pwf_data, bus["NUMBER"], dict_dger)
 
-    sub_data["qmin"] = haskey(bus, "MINIMUM REACTIVE GENERATION") ? bus["MINIMUM REACTIVE GENERATION"] : bus["REACTIVE GENERATION"]
-    sub_data["qmax"] = haskey(bus, "MAXIMUM REACTIVE GENERATION") ? bus["MAXIMUM REACTIVE GENERATION"] : bus["REACTIVE GENERATION"]
+    sub_data["qmin"] = haskey(bus, "MINIMUM REACTIVE GENERATION") ? bus["MINIMUM REACTIVE GENERATION"] : 0.0
+    sub_data["qmax"] = haskey(bus, "MAXIMUM REACTIVE GENERATION") ? bus["MAXIMUM REACTIVE GENERATION"] : 0.0
 
     # Default Cost functions
     sub_data["model"] = 2
@@ -62,13 +60,13 @@ end
 function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
 
     if !haskey(pwf_data, "DGER")
-        @warn("DGER not found, setting pmin and pmax as the bar active generation")
+        @warn("DGER not found, setting pmin as 0.0 MW and pmax as 99999.0 MW")
     end
 
     pm_data["gen"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
         for (i,bus) in pwf_data["DBAR"]
-            if bus["ACTIVE GENERATION"] > 0.0 || bus["REACTIVE GENERATION"] != 0.0 || bus["TYPE"] in [bus_type_raw_to_pwf[bus_type_str_to_num["PV"]], bus_type_raw_to_pwf[bus_type_str_to_num["Vθ"]]]
+            if bus["ACTIVE GENERATION"] != 0.0 || bus["REACTIVE GENERATION"] != 0.0 || bus["TYPE"] in [bus_type_raw_to_pwf[bus_type_str_to_num["PV"]], bus_type_raw_to_pwf[bus_type_str_to_num["Vθ"]]]
                 _pwf2pm_generator!(pm_data, pwf_data, bus)
             end
         end
