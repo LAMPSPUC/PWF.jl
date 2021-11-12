@@ -30,18 +30,30 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict, link::Dict)
         dict_dccv[dict_dcnv[number]["OPERATION MODE"]] = converter_control
     end
 
+    dcli_keys = findall(x -> x["FROM BUS"] in keys(dict_dcba) && x["TO BUS"] in keys(dict_dcba), pwf_data["DCLI"])
+    @assert length(dcli_keys) == 1
+    dict_dcli = Dict{String,Dict}()
+    dict_dcli["1"] = pwf_data["DCLI"][dcli_keys[1]]
+
     @assert dict_dccv['R']["CONVERTER CONTROL TYPE"] == dict_dccv['I']["CONVERTER CONTROL TYPE"]
     mdc  = dict_dccv['R']["CONVERTER CONTROL TYPE"]
 
-    setvl = dict_dccv['R']["SPECIFIED VALUE"], dict_dccv['I']["SPECIFIED VALUE"]
+    setvl = dict_dccv['R']["SPECIFIED VALUE"]
 
     rect, inv = dict_dccv['R']["NUMBER"], dict_dccv['I']["NUMBER"]
     rect_bus, inv_bus = dict_dcnv[rect]["DC BUS"], dict_dcnv[inv]["DC BUS"]
-    vschd = dict_dcba[rect_bus]["VOLTAGE"], dict_dcba[inv_bus]["VOLTAGE"]
+    vschd = dict_dcba[rect_bus]["VOLTAGE"]
+    rdc = dict_dcli["1"]["RESISTANCE"]
+    current = setvl / vschd
+    loss = current^2 * rdc
 
     # Assumption - rectifier power has negative value, inverter has a positive one
-    pf = mdc == 'P' ? abs(setvl[1]) : mdc == 'C' ? - abs(setvl[1] / vschd[1] / 1000) : 0
-    pt = mdc == 'P' ? - abs(setvl[2]) : mdc == 'C' ? abs(setvl[2] / vschd[2] / 1000) : 0
+    # Our formulation is only prepared for power, not current control
+    # pf = mdc == 'P' ? abs(setvl[1]) : mdc == 'C' ? - abs(setvl[1] / vschd[1] / 1000) : 0
+    # pt = mdc == 'P' ? - abs(setvl[2]) : mdc == 'C' ? abs(setvl[2] / vschd[2] / 1000) : 0
+
+    pf = mdc == 'P' ? abs(setvl) : @error("The formulation is prepared only for power control")
+    pt = mdc == 'P' ? - abs(setvl) + loss : @error("The formulation is prepared only for power control")
 
     sub_data["f_bus"] = dict_dcnv[rect]["AC BUS"]
     sub_data["t_bus"] = dict_dcnv[inv]["AC BUS"]
