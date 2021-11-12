@@ -16,7 +16,7 @@ function _handle_vmin(pwf_data::Dict, bus::Dict, dict_dglt)
     if haskey(pwf_data, "DGLT") 
         if haskey(dict_dglt, group_identifier)
             group = dict_dglt[group_identifier]
-                return group["LOWER BOUND"]
+            return group["LOWER BOUND"]
         elseif length(pwf_data["DGLT"]) == 1
             return pwf_data["DGLT"]["1"]["LOWER BOUND"]
         end
@@ -94,8 +94,8 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict, dict_dgbt, dict_
     sub_data["vmin"] = _handle_vmin(pwf_data, bus, dict_dglt)
     sub_data["vmax"] = _handle_vmax(pwf_data, bus, dict_dglt)
 
-    sub_data["control_info"] = Dict{String,Any}()
-    sub_data["control_info"]["voltage_controlled_bus"] = bus["CONTROLLED BUS"]
+    sub_data["control_data"] = Dict{String,Any}()
+    sub_data["control_data"]["voltage_controlled_bus"] = bus["CONTROLLED BUS"]
 
     idx = string(sub_data["index"])
     pm_data["bus"][idx] = sub_data

@@ -1,0 +1,59 @@
+TITU
+3bus - DCline                                              
+DOPC IMPR
+(Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E
+QLIM D CREM D STEP D NEWT D MOST D MOSG D MOSF D RCVG D RMON D FILE D
+CONT D CELO D MFCT D
+99999
+DCTE
+(Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) 
+BASE   100. DASE   100. TEPA     .1 EXST     .4 TETP     5. TBPA     5.
+TLPP     1. TEPR     .1 QLST     .4 TLPR     .1 TLPQ     2. TSBZ    .01
+TSBA     5. ASTP    .05 VSTP     5. TLVC     .5 TLTC    .01 TSFR  .1E-7
+ZMAX   500. TLPV     .5 VDVM   200. VDVN    40. TUDC   .001 TADC    .01
+PGER    30. TPST     .2 VFLD    80. ZMIN   .001 HIST    470 LFIT     10
+ACIT     35 LFCV      1 DCIT     10 VSIT     10 LPIT     50 LFLP     10
+PDIT     10 LCRT     96 LPRT     60 CSTP     5. ASDC     1.
+ICIT   9999 DMAX      5 FDIV     2. ICMN    .05 VART     5. TSTP     33
+ICMV     .5 APAS    90. CPAR    70. VAVT     2. VAVF     5. VMVF    15.
+VPVT     2. VPVF     5. VPMF    10. VSVF    20. VINF     1. VSUP     1.
+TLSI     0. NDIR    20. STTR     5. TRPT   100. STIR     1. BFPO     1.
+LFPO     .1                                                            
+99999
+DBAR
+(Num)OETGb(   nome   )Gl( V)( A)( Pg)( Qg)( Qn)( Qm)(Bc  )( Pl)( Ql)( Sh)Are(Vf)M(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
+    1 L2 ABus 1         10290.0011.5223.68-130.130.4                       11000                                 
+    2 L2 ABus 2         1030 0.012.99  2.5                                 11000                                
+    3 L0 ABus 3         10300.77                          30.395.329       11000                                      
+99999
+DLIN
+(De )d O d(Pa )NcEP ( R% )( X% )(Mvar)(Tap)(Tmn)(Tmx)(Phs)(Bc  )(Cn)(Ce)Ns(Cq)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
+    1         3 1     18.1  17.4                                                                             
+    2         3 1     18.1  17.4                                                                                                         
+99999
+DELO
+(No) O ( V ) ( P ) (   Identificacao  ) M E
+   1    600. 1566.                      N L
+99999
+DCBA
+(No) O TP(   Nome   )Gl( Vd)                                      ( Rs)(Elo
+  10   1+RET+ELO01      600.                                              1
+  20    +INV+ELO01     589.1                                              1
+  30    0NEU0ELO01R       0.                                              1
+  40    0NEU0ELO01I       0.                                              1
+99999
+DCLI
+(De) O  (Pa)Nc P (  R )( L  )                               (Cn)
+  10      20 1 F  10.47                                         
+99999
+DCNV
+(No) O (CA ) (CC) (EL) T p (Ino) (Xc ) (Vfs) (Snt) (Rra) (Lra) (CCC) Fr
+   1       1   10   30 R 4 2610.  17.8 127.4  471.    0.             60
+   2       2   20   40 I 4 2610.  17.2  122.  450.    0.             60
+99999
+DCCV
+(No) O FMC (Vsp) (Marg (IMax (Dsp) (Dtn) (Dtm) (Tmn) (Tmx) (S (Vmn (Tmh) (Ttr)
+   1     P  625.       9999.   15.    5. 84.99  .925  1.25     975 1.237    1.
+   2   F P  625.   10.   40.   17.   17. 72.74  .925  1.25     975 1.237    1.
+99999
+FIM

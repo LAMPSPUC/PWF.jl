@@ -39,26 +39,27 @@ function _pwf2pm_DBSH_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
     n = count(x -> x["shunt_bus"] == shunt_bus, values(pm_data["shunt"])) 
 
     sub_data = Dict{String,Any}()
-    sub_data["control_info"] = Dict{String,Any}()
+    sub_data["control_data"] = Dict{String,Any}()
 
-    sub_data["control_info"]["section"] = "DBSH"
+    sub_data["control_data"]["section"] = "DBSH"
 
     sub_data["shunt_bus"] = shunt_bus
     
-    sub_data["control_info"]["shunt_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : 2
-    sub_data["control_info"]["shunt_control_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : shunt["CONTROL MODE"] == 'D' ? 2 : 3 
+    sub_data["control_data"]["shunt_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : 2
+    sub_data["control_data"]["shunt_control_type"] = shunt["CONTROL MODE"] == 'F' ? 1 : shunt["CONTROL MODE"] == 'D' ? 2 : 3 
 
     sub_data["gs"] = 0.0
     sub_data["bs"] = _handle_bs(shunt)
 
-    sub_data["control_info"]["vm_min"] = shunt["MINIMUM VOLTAGE"]
-    sub_data["control_info"]["vm_max"] = shunt["MAXIMUM VOLTAGE"]
+    sub_data["control_data"]["vmmin"] = shunt["MINIMUM VOLTAGE"]
+    sub_data["control_data"]["vmmax"] = shunt["MAXIMUM VOLTAGE"]
 
-    sub_data["control_info"]["controlled_bus"] = shunt["CONTROLLED BUS"]
+    sub_data["control_data"]["controlled_bus"] = shunt["CONTROLLED BUS"]
     bs_bounds = _handle_bs_bounds(shunt)
-    sub_data["control_info"]["bsmin"] = bs_bounds[1]
-    sub_data["control_info"]["bsmax"] = bs_bounds[2]
-    @assert sub_data["control_info"]["bsmin"] <= sub_data["control_info"]["bsmax"]
+    sub_data["control_data"]["bsmin"] = bs_bounds[1]
+    sub_data["control_data"]["bsmax"] = bs_bounds[2]
+    @assert sub_data["control_data"]["bsmin"] <= sub_data["control_data"]["bsmax"]
+    sub_data["control_data"]["inclination"] = nothing
 
     status = pwf_data["DBAR"]["$(sub_data["shunt_bus"])"]["STATUS"]
     if status == 'L'
@@ -77,8 +78,8 @@ function _pwf2pm_DBSH_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
         idx = _create_new_shunt(sub_data, pm_data)[2]
         pm_data["shunt"][idx]["gs"] += sub_data["gs"]
         pm_data["shunt"][idx]["bs"] += sub_data["bs"]
-        pm_data["shunt"][idx]["control_info"]["bsmin"] += sub_data["control_info"]["bsmin"]
-        pm_data["shunt"][idx]["control_info"]["bsmax"] += sub_data["control_info"]["bsmax"]
+        pm_data["shunt"][idx]["control_data"]["bsmin"] += sub_data["control_data"]["bsmin"]
+        pm_data["shunt"][idx]["control_data"]["bsmax"] += sub_data["control_data"]["bsmax"]
     end
 end
 
@@ -95,26 +96,27 @@ function _pwf2pm_DCER_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
     n = count(x -> x["shunt_bus"] == shunt["BUS"], values(pm_data["shunt"])) 
 
     sub_data = Dict{String,Any}()
-    sub_data["control_info"] = Dict{String,Any}()
+    sub_data["control_data"] = Dict{String,Any}()
     
-    sub_data["control_info"]["section"] = "DCER"
+    sub_data["control_data"]["section"] = "DCER"
 
     sub_data["shunt_bus"] = shunt["BUS"]
     sub_data["gs"]        = 0.0
     sub_data["bs"]        = shunt["REACTIVE GENERATION"]
 
-    sub_data["control_info"]["shunt_type"]         = 2
-    sub_data["control_info"]["shunt_control_type"] = 3 
+    sub_data["control_data"]["shunt_type"]         = 2
+    sub_data["control_data"]["shunt_control_type"] = 3 
 
-    sub_data["control_info"]["bsmin"] = shunt["MINIMUM REACTIVE GENERATION"]
-    sub_data["control_info"]["bsmax"] = shunt["MAXIMUM REACTIVE GENERATION"]
+    sub_data["control_data"]["bsmin"] = shunt["MINIMUM REACTIVE GENERATION"]
+    sub_data["control_data"]["bsmax"] = shunt["MAXIMUM REACTIVE GENERATION"]
 
-    @assert sub_data["control_info"]["bsmin"] <= sub_data["control_info"]["bsmax"]
+    @assert sub_data["control_data"]["bsmin"] <= sub_data["control_data"]["bsmax"]
 
     ctrl_bus = pm_data["bus"]["$(shunt["CONTROLLED BUS"])"]
-    sub_data["control_info"]["vm_min"] = ctrl_bus["vm"]
-    sub_data["control_info"]["vm_max"] = ctrl_bus["vm"]
-    sub_data["control_info"]["controlled_bus"] = shunt["CONTROLLED BUS"]
+    sub_data["control_data"]["vmmin"] = ctrl_bus["vm"]
+    sub_data["control_data"]["vmmax"] = ctrl_bus["vm"]
+    sub_data["control_data"]["controlled_bus"] = shunt["CONTROLLED BUS"]
+    sub_data["control_data"]["inclination"] = shunt["INCLINATION"]
 
     status   = pwf_data["DBAR"]["$(sub_data["shunt_bus"])"]["STATUS"]
 
@@ -134,8 +136,8 @@ function _pwf2pm_DCER_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict)
         idx = _create_new_shunt(sub_data, pm_data)[2]
         pm_data["shunt"][idx]["gs"] += sub_data["gs"]
         pm_data["shunt"][idx]["bs"] += sub_data["bs"]
-        pm_data["shunt"][idx]["control_info"]["bsmin"] += sub_data["control_info"]["bsmin"]
-        pm_data["shunt"][idx]["control_info"]["bsmax"] += sub_data["control_info"]["bsmax"]
+        pm_data["shunt"][idx]["control_data"]["bsmin"] += sub_data["control_data"]["bsmin"]
+        pm_data["shunt"][idx]["control_data"]["bsmax"] += sub_data["control_data"]["bsmax"]
     end
 end
 
@@ -151,24 +153,25 @@ end
 
 function _pwf2pm_DBAR_shunt!(pm_data::Dict, pwf_data::Dict, bus::Dict)
     sub_data = Dict{String,Any}()
-    sub_data["control_info"] = Dict{String,Any}()
+    sub_data["control_data"] = Dict{String,Any}()
 
-    sub_data["control_info"]["section"] = "DBAR"
+    sub_data["control_data"]["section"] = "DBAR"
     
     sub_data["shunt_bus"] = bus["NUMBER"]
     sub_data["gs"] = 0.0        
     sub_data["bs"] =  bus["TOTAL REACTIVE POWER"] 
 
-    sub_data["control_info"]["shunt_type"] = 1
-    sub_data["control_info"]["shunt_control_type"] = 1
+    sub_data["control_data"]["shunt_type"] = 1
+    sub_data["control_data"]["shunt_control_type"] = 1
     
-    sub_data["control_info"]["bsmin"] = sub_data["bs"]
-    sub_data["control_info"]["bsmax"] = sub_data["bs"]
-    @assert sub_data["control_info"]["bsmin"] <= sub_data["control_info"]["bsmax"]
+    sub_data["control_data"]["bsmin"] = sub_data["bs"]
+    sub_data["control_data"]["bsmax"] = sub_data["bs"]
+    @assert sub_data["control_data"]["bsmin"] <= sub_data["control_data"]["bsmax"]
 
-    sub_data["control_info"]["vm_min"] = bus["VOLTAGE"]
-    sub_data["control_info"]["vm_max"] = bus["VOLTAGE"]
-    sub_data["control_info"]["controlled_bus"] = bus["CONTROLLED BUS"]
+    sub_data["control_data"]["vmmin"] = bus["VOLTAGE"]
+    sub_data["control_data"]["vmmax"] = bus["VOLTAGE"]
+    sub_data["control_data"]["controlled_bus"] = bus["CONTROLLED BUS"]
+    sub_data["control_data"]["inclination"] = nothing
 
     if bus["STATUS"] == 'L'
         sub_data["status"] = 1
