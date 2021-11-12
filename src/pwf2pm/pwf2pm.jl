@@ -20,7 +20,7 @@ const element_status         = Dict(0 => "OFF", "D" => "OFF", 1 => "ON", "L" => 
 
 
 
-function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true, software = Organon)
+function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true, software = ANAREDE)
     software = software()
     pm_data = Dict{String,Any}()
 
@@ -60,7 +60,7 @@ end
 
 Parse .pwf file directly to PowerModels data structure
 """
-function parse_pwf_to_powermodels(filename::String; validate::Bool=true, software = Organon)
+function parse_pwf_to_powermodels(filename::String; validate::Bool=true, software = ANAREDE)
     pwf_data = open(filename) do f
         parse_pwf(f)
     end
@@ -74,7 +74,7 @@ end
     parse_pwf_to_powermodels(io::Io, validate::Bool=false)::Dict
 
 """
-function parse_pwf_to_powermodels(io::IO; validate::Bool=true, software = Organon)
+function parse_pwf_to_powermodels(io::IO; validate::Bool=true, software = ANAREDE)
     pwf_data = _parse_pwf_data(io)
 
     # Parse Dict to a Power Models format

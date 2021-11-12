@@ -120,6 +120,17 @@ Dict{String, Any} with 13 entries:
 - switch
 - storage
 
+**Two parsing modes comprehended**
+
+There are two main softwares used for parsing PWF files and each one does slightly different assumptions to the data parsed. For more information, visit the documentation.
+
+```julia
+
+julia> data = parse_file(file; software = ANAREDE)
+
+julia> data = parse_file(file; software = Organon)
+```
+
 **Additional data inside PWF files**
 
 Additional information existing in a PWF file that is not used by PowerModels is stored inside each element in the field "control_data", such as the example below:
