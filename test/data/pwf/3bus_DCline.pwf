@@ -1,9 +1,9 @@
 TITU
-Caso do Anderson - P�gina 38                                                    
+3bus - DCline                                              
 DOPC IMPR
 (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E
-QLIM L CREM L STEP L NEWT L MOST L MOSG L MOSF L RCVG L RMON L FILE L
-CONT L CELO L MFCT L
+QLIM D CREM D STEP D NEWT D MOST D MOSG D MOSF D RCVG D RMON D FILE D
+CONT D CELO D MFCT D
 99999
 DCTE
 (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) 
@@ -23,30 +23,37 @@ LFPO     .1
 DBAR
 (Num)OETGb(   nome   )Gl( V)( A)( Pg)( Qg)( Qn)( Qm)(Bc  )( Pl)( Ql)( Sh)Are(Vf)M(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
     1 L2 ABus 1         10290.0011.5223.68-130.130.4                       11000                                 
-    2 L0 ABus 2         1030 0.012.99  2.5-130.130.4       5.392.329       11000                                
-    3 L1 ABus 3         10300.77 1.99  0.5                30.395.329       11000                                      
+    2 L2 ABus 2         1030 0.012.99  2.5                                 11000                                
+    3 L0 ABus 3         10300.77                          30.395.329       11000                                      
 99999
 DLIN
 (De )d O d(Pa )NcEP ( R% )( X% )(Mvar)(Tap)(Tmn)(Tmx)(Phs)(Bc  )(Cn)(Ce)Ns(Cq)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
-    1         2 1     18.1  17.4900000                                                                  
     1         3 1     18.1  17.4                                                                             
     2         3 1     18.1  17.4                                                                                                         
 99999
-DSHL
-(De ) O  (Pa )Nc (Shde)(Shpa) ED EP
-    1        2 1         330.  L  L
-    1        3 1 -8000.   -7.  L  L
+DELO
+(No) O ( V ) ( P ) (   Identificacao  ) M E
+   1    600. 1566.                      N L
 99999
-DBSH
-(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
-    2       3  1 F 0950 1100     2  -150. C       3 
-(G  O E (U) UOp (Sht )
-10        1   1  -150.
-FBAN
-(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
-    3          1 F 0950 1100     3  -25.5 C         
-(G  O E (U) UOp (Sht )
-10        1   1  -25.5
-FBAN
+DCBA
+(No) O TP(   Nome   )Gl( Vd)                                      ( Rs)(Elo
+  10   1+RET+ELO01      600.                                              1
+  20    +INV+ELO01     589.1                                              1
+  30    0NEU0ELO01R       0.                                              1
+  40    0NEU0ELO01I       0.                                              1
+99999
+DCLI
+(De) O  (Pa)Nc P (  R )( L  )                               (Cn)
+  10      20 1 F  10.47                                         
+99999
+DCNV
+(No) O (CA ) (CC) (EL) T p (Ino) (Xc ) (Vfs) (Snt) (Rra) (Lra) (CCC) Fr
+   1       1   10   30 R 4 2610.  17.8 127.4  471.    0.             60
+   2       2   20   40 I 4 2610.  17.2  122.  450.    0.             60
+99999
+DCCV
+(No) O FMC (Vsp) (Marg (IMax (Dsp) (Dtn) (Dtm) (Tmn) (Tmx) (S (Vmn (Tmh) (Ttr)
+   1     P  625.       9999.   15.    5. 84.99  .925  1.25     975 1.237    1.
+   2   F P  625.   10.   40.   17.   17. 72.74  .925  1.25     975 1.237    1.
 99999
 FIM

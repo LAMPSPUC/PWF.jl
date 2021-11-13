@@ -2,7 +2,6 @@ function check_same_dict(dict1::Dict, dict2::Dict, key; atol = 1e-3, ignore = ["
     if key in ignore
         return true
     end
-    @assert keys(dict1) == keys(dict2)
     v1, v2 = dict1[key], dict2[key]
     if isa(v1, Dict)
         if isa(v2, Dict)
@@ -31,7 +30,6 @@ function check_same_dict(dict1::Dict, dict2::Dict, key; atol = 1e-3, ignore = ["
 end
 
 function check_same_dict(dict1::Dict, dict2::Dict; atol = 1e-3, ignore = ["source_version", "source_type", "name", "source_id"])
-    @assert keys(dict1) == keys(dict2)
     bools = Bool[]
     for (k,v1) in dict1
         if !(k in ignore)

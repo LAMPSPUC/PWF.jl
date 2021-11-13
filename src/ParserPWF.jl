@@ -14,10 +14,22 @@ include("pwf2pm/load.jl")
 include("pwf2pm/gen.jl")
 include("pwf2pm/dcline.jl")
 include("pwf2pm/shunt.jl")
-include("pwf2pm/correct.jl")
+include("pwf2pm/info.jl")
+
+include("pwf2pm/correct/correct.jl")
+include("pwf2pm/correct/organon.jl")
+include("pwf2pm/correct/anarede.jl")
+
 include("pwf2pm/pwf2pm.jl")
 
-export parse_pwf
-export parse_pwf_to_powermodels
+function parse_file(filename::String; validate::Bool=true, software = ANAREDE, pm::Bool = true)
+    pm ? parse_pwf_to_powermodels(filename, validate = validate, software = software) : parse_pwf(filename)
+end
+
+function parse_file(io::IO; validate::Bool=true, software = ANAREDE, pm::Bool = true)
+    pm ? parse_pwf_to_powermodels(io, validate = validate, software = software) : parse_pwf(filename)
+end
+
+export parse_file
 
 end # end module

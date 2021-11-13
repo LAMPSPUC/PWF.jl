@@ -1,6 +1,6 @@
 name = "ParserPWF"
 uuid = "0f4c3beb-4231-4c4d-93e1-709cb40a89e6"
-version = "0.1.1"
+version = "0.2.0"
 
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"

@@ -120,7 +120,36 @@ Dict{String, Any} with 13 entries:
 - switch
 - storage
 
+**Two parsing modes comprehended**
+
+There are two main softwares used for parsing PWF files and each one does slightly different assumptions to the data parsed. For more information, visit the documentation.
+
+```julia
+
+julia> data = parse_file(file; software = ANAREDE)
+
+julia> data = parse_file(file; software = Organon)
+```
+
+**Additional data inside PWF files**
+
+Additional information existing in a PWF file that is not used by PowerModels is stored inside each element in the field "control_data", such as the example below:
+
+```julia
+julia> data["shunt"]["1"]["control_data"]
+Dict{String, Any} with 9 entries:
+  "vmmax"              => 1.029
+  "section"            => "DBAR"
+  "shunt_control_type" => 3
+  "bsmin"              => 0.0
+  "shunt_type"         => 2
+  "bsmax"              => 0.0
+  "inclination"        => nothing
+  "vmmin"              => 1.029
+  "controlled_bus"     => 1
+```
+
 ## Contributing
 
 - PRs such as adding new sections and fixing bugs are very welcome!
-- For nontrivial changes, you'll probably want to first discuss the changes via issue. Suggestions are asuper welcome!
+- For nontrivial changes, you'll probably want to first discuss the changes via issue. Suggestions are super welcome!

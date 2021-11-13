@@ -1,9 +1,9 @@
 TITU
-9 bus                                                
+9 bus - test transformer fields                                            
 DOPC IMPR
 (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E
-QLIM L CREM L STEP L NEWT L MOST L MOSG L MOSF L RCVG L RMON L FILE L
-CONT L CELO L MFCT L
+QLIM D CREM D STEP D NEWT D MOST D MOSG D MOSF D RCVG D RMON D FILE D
+CONT D CELO D MFCT D
 99999
 DCTE
 (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) 
@@ -22,20 +22,20 @@ LFPO     .1
 99999
 DBAR
 (Num)OETGb(   nome   )Gl( V)( A)( Pg)( Qg)( Qn)( Qm)(Bc  )( Pl)( Ql)( Sh)Are(Vf)M(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
-    1 L2 0Bus 1        010750.00142.510.88-130.130.4                                                         
-    2 L1 0Bus 2        01075-1.890.00-2.59-101.101.2                                                       
-    3 L1 0Bus 3        01075-1.485.00-13.7-67.467.40                                                          
-    4 L3 0Bus 4        01072-4.1                                                           
-    5 L  0Bus 5        01050-7.7                          125.050.00                                                  
-    6 L  0Bus 6        01065-6.7                          90.0030.00                                                   
-    7 L3 0Bus 7        01078-4.6                                  
-    8 L  0Bus 8        01069-6.3                          100.035.00           
-    9 L3 0Bus 9        01083-3.9                                   
+    1 L2 0Bus 1        A10750.00142.510.88-130.130.4                                                         
+    2 L1 0Bus 2        A1075-1.890.00-2.59-101.101.2                                                       
+    3 L1 0Bus 3        A1075-1.485.00-13.7-67.467.40                                                          
+    4 L3 0Bus 4        B1072-4.1                                                           
+    5 L  0Bus 5        B1050-7.7                          125.050.00                                                  
+    6 L  0Bus 6        B1065-6.7                          90.0030.00                                                   
+    7 L3 0Bus 7        C1078-4.6                                  
+    8 L  0Bus 8        C1069-6.3                          100.035.00           
+    9 L3 0Bus 9        C1083-3.9                                   
 99999
 DLIN
 (De )d O d(Pa )NcEP ( R% )( X% )(Mvar)(Tap)(Tmn)(Tmx)(Phs)(Bc  )(Cn)(Ce)Ns(Cq)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
-    1         4 1L  0.00005.7600      1.000                                   
-    2         7 1L  0.00006.2500      1.000                                   
+    1         4 1L  0.00005.7600      1.0000.85 1.15                         
+    2         7 1L  0.00006.2500      1.0000.85 1.15                          
     3         9 1L  0.00005.8600      1.000                                
     4         5 1L  1.00008.500017.600                                   
     4         6 1L  1.70009.200015.800                                  
@@ -43,5 +43,20 @@ DLIN
     7         5 1L  3.200016.10030.600                                     
     7         8 1L  0.85007.200014.900       
     8         9 1L  1.190010.08020.900                                                         
+99999
+DCTR
+(Nf ) O (Nt ) Nc Vmin Vmax C M (Fmin) (Fmax) C ( Vsp) (Ext) Ns
+    2       7  1 0.95 1.05                   P   100.     7                     
+    3       9  1                 -30.    30. P 250.50     9                     
+99999
+DTPF CIRC
+(De ) (Pa ) Nc (De ) (Pa ) Nc (De ) (Pa ) Nc (De ) (Pa ) Nc (De ) (Pa ) Nc O
+                                  1     4  1             
+99999
+DGLT
+(G (Vmn) (Vmx) (Vmne (Vmxe
+ A    .9   1.1    .9   1.1
+ B   .95  1.15   .95  1.15
+ C    .8   1.2    .8   1.2
 99999
 FIM
