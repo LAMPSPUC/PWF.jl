@@ -107,7 +107,7 @@
 
         @testset "Resulting Dict" begin
             file = open(joinpath(@__DIR__,"data/pwf/test_system.pwf"))
-            pm_data = ParserPWF.parse_pwf_to_powermodels(file)
+            pm_data = ParserPWF.parse_pwf_to_powermodels(file; software = ParserPWF.Organon)
 
             @testset "PowerModels Dict" begin
                 @test isa(pm_data, Dict)
@@ -132,7 +132,7 @@
             @testset "Power Flow" begin
 
                 pm = instantiate_model(pm_data, ACPPowerModel, PowerModels.build_pf)
-                result = optimize_model!(pm, optimizer=Ipopt.Optimizer)
+                result = optimize_model!(pm, optimizer=ipopt)
 
                 @testset "Status" begin
                     @test result["termination_status"] == LOCALLY_SOLVED
@@ -165,14 +165,9 @@
             
                 pwf_data = ParserPWF.parse_pwf_to_powermodels(file_pwf)
                 raw_data = PowerModels.parse_file(file_raw)
-
-                solver = optimizer_with_attributes(
-                    Ipopt.Optimizer, 
-                    "print_level"=>0,
-                )
                 
-                result_pwf = PowerModels.run_ac_pf(pwf_data, solver)
-                result_raw = PowerModels.run_ac_pf(raw_data, solver)
+                result_pwf = PowerModels.run_ac_pf(pwf_data, ipopt)
+                result_raw = PowerModels.run_ac_pf(raw_data, ipopt)
                 
                 @test check_same_dict(result_pwf["solution"], result_raw["solution"], atol = 10e-9)
             end
@@ -181,12 +176,9 @@
 
         @testset "PWF to PM corrections" begin
             file = open(joinpath(@__DIR__,"data/pwf/3bus_corrections.pwf"))
-            pm_data = ParserPWF.parse_pwf_to_powermodels(file)
-            solver = optimizer_with_attributes(
-                Ipopt.Optimizer, 
-                "print_level"=>0,
-            )
-            parse_result = PowerModels.run_ac_pf(pm_data, solver);
+            pm_data = ParserPWF.parse_pwf_to_powermodels(file; software = ParserPWF.Organon)
+
+            parse_result = PowerModels.run_ac_pf(pm_data, ipopt);
 
             result = Dict(
                 "1" => Dict("va" => 0, "vm" => 1.029),
@@ -239,7 +231,7 @@
 
         @testset "Line shunt" begin
             file = open(joinpath(@__DIR__,"data/pwf/test_line_shunt.pwf"))
-            pm_data = ParserPWF.parse_pwf_to_powermodels(file)
+            pm_data = ParserPWF.parse_pwf_to_powermodels(file; software = ParserPWF.Organon)
 
             @test pm_data["branch"]["1"]["b_fr"] == 4.5
             @test pm_data["branch"]["1"]["b_to"] == 7.8
@@ -317,8 +309,8 @@
             pm_anarede = PowerModels.instantiate_model(data_anarede, PowerModels.ACPPowerModel, PowerModels.build_pf);
             pm_organon = PowerModels.instantiate_model(data_organon, PowerModels.ACPPowerModel, PowerModels.build_pf);
 
-            result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer=Ipopt.Optimizer)
-            result_organon = PowerModels.optimize_model!(pm_organon, optimizer=Ipopt.Optimizer)
+            result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer = ipopt)
+            result_organon = PowerModels.optimize_model!(pm_organon, optimizer = ipopt)
 
             PowerModels.update_data!(data_anarede, result_anarede["solution"])
             PowerModels.update_data!(data_organon, result_organon["solution"])
@@ -345,8 +337,8 @@
             pm_anarede = PowerModels.instantiate_model(data_anarede, PowerModels.ACPPowerModel, PowerModels.build_pf);
             pm_organon = PowerModels.instantiate_model(data_organon, PowerModels.ACPPowerModel, PowerModels.build_pf);
 
-            result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer=Ipopt.Optimizer)
-            result_organon = PowerModels.optimize_model!(pm_organon, optimizer=Ipopt.Optimizer)
+            result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer = ipopt)
+            result_organon = PowerModels.optimize_model!(pm_organon, optimizer = ipopt)
 
             PowerModels.update_data!(data_anarede, result_anarede["solution"])
             PowerModels.update_data!(data_organon, result_organon["solution"])
@@ -374,8 +366,8 @@
             pm_anarede = PowerModels.instantiate_model(data_anarede, PowerModels.ACPPowerModel, PowerModels.build_pf);
             pm_organon = PowerModels.instantiate_model(data_organon, PowerModels.ACPPowerModel, PowerModels.build_pf);
 
-            result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer=Ipopt.Optimizer)
-            result_organon = PowerModels.optimize_model!(pm_organon, optimizer=Ipopt.Optimizer)
+            result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer = ipopt)
+            result_organon = PowerModels.optimize_model!(pm_organon, optimizer = ipopt)
 
             PowerModels.update_data!(data_anarede, result_anarede["solution"])
             PowerModels.update_data!(data_organon, result_organon["solution"])
@@ -418,8 +410,8 @@
             pm_anarede = PowerModels.instantiate_model(data_anarede, PowerModels.ACPPowerModel, PowerModels.build_pf);
             pm_organon = PowerModels.instantiate_model(data_organon, PowerModels.ACPPowerModel, PowerModels.build_pf);
 
-            result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer=Ipopt.Optimizer)
-            result_organon = PowerModels.optimize_model!(pm_organon, optimizer=Ipopt.Optimizer)
+            result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer = ipopt)
+            result_organon = PowerModels.optimize_model!(pm_organon, optimizer = ipopt)
 
             PowerModels.update_data!(data_anarede, result_anarede["solution"])
             PowerModels.update_data!(data_organon, result_organon["solution"])
@@ -460,7 +452,7 @@
         @testset "DC line" begin
             data_anarede = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DCline.pwf"), software = ParserPWF.ANAREDE)
             pm_anarede = PowerModels.instantiate_model(data_anarede, PowerModels.ACPPowerModel, PowerModels.build_pf);
-            result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer=Ipopt.Optimizer)
+            result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer = ipopt)
             PowerModels.update_data!(data_anarede, result_anarede["solution"])
 
             @test isapprox(data_anarede["bus"]["1"]["vm"], 1.029, atol = 1e-3)
