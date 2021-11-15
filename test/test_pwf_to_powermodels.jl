@@ -294,7 +294,7 @@
             @test phase_control["vmmax"] == 1.2
             @test phase_control["shift_control_variable"] == "power"
             @test isapprox(phase_control["shiftmin"], -0.523598775; atol = 1e-5)
-            @test isapprox(phase_control["shiftmin"],  0.523598775; atol = 1e-5)
+            @test isapprox(phase_control["shiftmax"],  0.523598775; atol = 1e-5)
             @test phase_control["valsp"] == 2.505
             @test phase_control["circuit"] == 1
             @test phase_control["control"] == true
