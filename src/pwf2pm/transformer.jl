@@ -140,12 +140,12 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two
     sub_data["control_data"]["vmsp"] = ctrl_bus["vm"]
     sub_data["control_data"]["vmmin"] = ctrl_bus["vmin"]
     sub_data["control_data"]["vmmax"] = ctrl_bus["vmax"]
-    sub_data["control_data"]["control"] =  false 
+    sub_data["control_data"]["control"] =  true 
     if haskey(pwf_data, "DTPF CIRC")
         for (k,v) in pwf_data["DTPF CIRC"]
             for i in 1:5
                 if v["FROM BUS $i"] == sub_data["f_bus"] && v["TO BUS $i"] == sub_data["t_bus"] && v["CIRCUIT $i"] == branch["CIRCUIT"]
-                    sub_data["control_data"]["control"] = true
+                    sub_data["control_data"]["control"] = false
                 end
             end
         end

@@ -267,7 +267,7 @@
             @test tap_automatic_control["shiftmax"] == nothing
             @test tap_automatic_control["valsp"] == nothing
             @test tap_automatic_control["circuit"] == 1
-            @test tap_automatic_control["control"] == true
+            @test tap_automatic_control["control"] == false
 
             @test tap_variable_control["control_type"] == "tap_control"
             @test tap_variable_control["constraint_type"] == "bounds"
@@ -282,10 +282,10 @@
             @test tap_variable_control["shiftmax"] == nothing
             @test tap_variable_control["valsp"] == 100.0
             @test tap_variable_control["circuit"] == 1
-            @test tap_variable_control["control"] == false
+            @test tap_variable_control["control"] == true
 
             @test phase_control["control_type"] == "shift_control"
-            @test phase_control["constraint_type"] == "bounds"
+            @test phase_control["constraint_type"] == "setpoint"
             @test phase_control["controlled_bus"] == 9
             @test phase_control["tapmin"] == nothing
             @test phase_control["tapmax"] == nothing
@@ -293,11 +293,11 @@
             @test phase_control["vmmin"] == 0.8
             @test phase_control["vmmax"] == 1.2
             @test phase_control["shift_control_variable"] == "power"
-            @test phase_control["shiftmin"] == -30.0
-            @test phase_control["shiftmax"] == 30.0
-            @test phase_control["valsp"] == 250.5
+            @test isapprox(phase_control["shiftmin"], -0.523598775; atol = 1e-5)
+            @test isapprox(phase_control["shiftmin"],  0.523598775; atol = 1e-5)
+            @test phase_control["valsp"] == 2.505
             @test phase_control["circuit"] == 1
-            @test phase_control["control"] == false
+            @test phase_control["control"] == true
         end
     end
 
