@@ -4,7 +4,7 @@ function _pwf2pm_info!(pm_data::Dict, pwf_data::Dict, option::String, status::Ch
     pm_data["info"][section][key] = value
 end
 
-function _pwf2pm_info!(pm_data::Dict, pwf_data::Dict, option::String, value::Float64, section::String)
+function _pwf2pm_info!(pm_data::Dict, pwf_data::Dict, option::String, value::Real, section::String)
     key = lowercase(option)
     pm_data["info"][section][key] = value
 end
