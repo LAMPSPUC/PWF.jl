@@ -1,0 +1,74 @@
+TITU
+Default values test
+DCTE
+(Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) 
+BASE        DASE        TEPA        EXST        TETP        TBPA        
+TLPP        TEPR        QLST        TLPR                    TSBZ        
+TSBA        ASTP        VSTP        TLVC        TLTC        TSFR        
+ZMAX                    VDVM        VDVN        TUDC        TADC        
+PGER        TPST        VFLD        ZMIN        HIST        LFIT        
+ACIT        LFCV        DCIT        VSIT        LPIT        LFLP        
+PDIT        LCRT        LPRT        CSTP        ASDC        
+ICIT        DMAX        FDIV        ICMN        VART        TSTP        
+ICMV        APAS        CPAR        VAVT        VAVF        VMVF        
+VPVT        VPVF        VPMF        VSVF        VINF        VSUP        
+TLSI                                                                      
+99999
+DBAR
+(Num)OETGb(   nome   )Gl( V)( A)( Pg)( Qg)( Qn)( Qm)(Bc  )( Pl)( Ql)( Sh)Are(Vf)M(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
+    1            Bus 1
+    2  2         Bus 2
+99999
+DLIN
+(De )d O d(Pa )NcEP ( R% )( X% )(Mvar)(Tap)(Tmn)(Tmx)(Phs)(Bc  )(Cn)(Ce)Ns(Cq)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
+    1         2                             0.95 1.05
+    2         1                                                   0
+99999
+DGER
+(No ) O (Pmn ) (Pmx ) ( Fp) (FpR) (FPn) (Fa) (Fr) (Ag) ( Xq) (Sno)
+    1
+99999
+DGBT
+ 0
+99999
+DGLT
+(G (Vmn) (Vmx) (Vmne (Vmxe
+ 0
+ 1   .9    1.1
+99999
+DCBA
+(No) O TP(   Nome   )Gl( Vd)                                      ( Rs)(Elo
+  10   1+RET                                                          
+  20    -INV                                                         
+  30    0NEUR                                                           
+  40    0NEUI                                                            
+99999
+DCLI
+(De) O  (Pa)Nc P (  R )( L  )                               (Cn)
+  10      20                                          
+99999
+DELO
+(No) O ( V ) ( P ) (   Identificacao  ) M E
+   1                                    
+99999
+DBSH
+(NFr) O (NTo) Nc C (Vmn (Vmx Bctrl (Qini) T A (Extr
+    1           
+(G  O E (U) UOp (Sht )
+10     
+20        2
+FBAN
+99999
+DCSC
+(De ) O  (Pa )NcEPB      (Xmin)(Xmax)( Xv )C ( Vsp) (Ext)Nst(Cn)(Ce)(Cq)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
+    1        2                     0
+99999
+DCAI
+(Num) O (G) E (U) UOp ( P ) ( Q ) (A) (B) (C) (D) (Vfl) (Vf)
+    1           2
+99999
+DGEI
+(Num) OA(G) E(U)UOpUOn( Pg)( Qg)( Qn)( Qm)(Xtrf) ( Xd)( Xq)( Xl) (fp)( Sn)(Ptu)
+    1          2
+99999
+FIM

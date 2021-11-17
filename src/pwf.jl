@@ -169,7 +169,7 @@ const _dcai_dtypes = [("BUS", Int64, 1:5), ("OPERATION", Char, 7), ("GROUP", Int
     ("ACTIVE CHARGE", Float64, 23:27), ("REACTIVE CHARGE", Float64, 29:33),
     ("PARAMETER A", Float64, 35:37), ("PARAMETER B", Float64, 39:41),
     ("PARAMETER C", Float64, 43:45), ("PARAMETER D", Float64, 47:49), ("VOLTAGE", Float64, 51:55),
-    ("VOLTAGE FOR CHARGE DEFINITION", Float64, 57:60)]
+    ("CHARGE DEFINITION VOLTAGE", Float64, 57:60)]
 
 const _dgei_dtypes = [("BUS", Int64, 1:5), ("OPERATION", Char, 7), ("AUTOMATIC MODE", Char, 8),
     ("GROUP", Int64, 10:11), ("STATUS", Char, 13), ("UNITIES", Int64, 14:16),
@@ -178,7 +178,7 @@ const _dgei_dtypes = [("BUS", Int64, 1:5), ("OPERATION", Char, 7), ("AUTOMATIC M
     ("MINIMUM REACTIVE GENERATION", Float64, 33:37), ("MAXIMUM REACTIVE GENERATION", Float64, 38:42),
     ("ELEVATOR TRANSFORMER REACTANCE", Float64, 43:48), ("XD", Float64, 50:54, 53),
     ("XQ", Float64, 55:59, 58), ("XL", Float64, 60:64, 63), ("POWER FACTOR", Float64, 66:69, 67),
-    ("APARENT POWER", Float64, 70:74, 72), ("MECHANICAL LIMIT", Float64, 75:79, 77)]
+    ("APPARENT POWER", Float64, 70:74, 72), ("MECHANICAL LIMIT", Float64, 75:79, 77)]
 
 const _dmot_dtypes = [("BUS", Int64, 1:5), ("OPERATION", Char, 7), ("STATUS", Char, 8),
     ("GROUP", Int64, 10:11), ("SIGN", Char, 12), ("LOADING FACTOR", Float64, 13:15),
@@ -191,7 +191,7 @@ const _dmot_dtypes = [("BUS", Int64, 1:5), ("OPERATION", Char, 7), ("STATUS", Ch
 const _dcmt_dtypes = [("COMMENTS", String, 1:80)]
 
 const _dinj_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Char, 7),
-    ("EQUIVALENT ACTIVE INJECITON", Float64, 9:15), ("EQUIVALENT REACTIVE INJECTION", Float64, 16:22),
+    ("EQUIVALENT ACTIVE INJECTION", Float64, 9:15), ("EQUIVALENT REACTIVE INJECTION", Float64, 16:22),
     ("EQUIVALENT SHUNT", Float64, 23:29), ("EQUIVALENT PARTICIPATION FACTOR", Float64, 30:36)]
 
 const _pwf_dtypes = Dict("DBAR" => _dbar_dtypes, "DLIN" => _dlin_dtypes, "DGBT" => _dgbt_dtypes,
@@ -237,8 +237,8 @@ const _default_dlin = Dict("FROM BUS" => nothing, "OPENING FROM BUS" => 'L',
     "STATUS" => 'L', "OWNER" => 'F', "RESISTANCE" => 0.0, "REACTANCE" => nothing,
     "SHUNT SUSCEPTANCE" => 0.0, "TAP" => 1.0, "MINIMUM TAP" => nothing,
     "MAXIMUM TAP" => nothing, "LAG" => 0.0, "CONTROLLED BUS" => nothing,
-    "NORMAL CAPACITY" => Inf, "EMERGENCY CAPACITY" => Inf, "NUMBER OF TAPS" => 33,
-    "EQUIPAMENT CAPACITY" => Inf, "AGGREGATOR 1" => nothing, "AGGREGATOR 2" => nothing,
+    "NORMAL CAPACITY" => Inf, "EMERGENCY CAPACITY" => nothing, "NUMBER OF TAPS" => 33,
+    "EQUIPAMENT CAPACITY" => nothing, "AGGREGATOR 1" => nothing, "AGGREGATOR 2" => nothing,
     "AGGREGATOR 3" => nothing, "AGGREGATOR 4" => nothing, "AGGREGATOR 5" => nothing,
     "AGGREGATOR 6" => nothing, "AGGREGATOR 7" => nothing, "AGGREGATOR 8" => nothing,
     "AGGREGATOR 9" => nothing, "AGGREGATOR 10" => nothing)
@@ -274,7 +274,7 @@ const _default_dshl = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" =
     "STATUS FROM" => " L", "STATUS TO" => " L")
 
 const _default_dcba = Dict("NUMBER" => nothing, "OPERATION" => 'A', "TYPE" => 0,
-    "POLARITY" => nothing, "NAME" => nothing, "VOLTAGE LIMIT GROUP" => nothing,
+    "POLARITY" => nothing, "NAME" => nothing, "VOLTAGE LIMIT GROUP" => " 0",
     "VOLTAGE" => 0, "GROUND ELECTRODE" => 0.0, "DC LINK" => 1)
 
 const _default_dcli = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" => nothing,
@@ -317,14 +317,15 @@ const _default_fagr_2 = Dict("NUMBER" => nothing, "OPERATION" => 'A', "DESCRIPTI
 
 const _default_fagr_1 = Dict("NUMBER" => nothing, "DESCRIPTION" => nothing, "OCCURENCES" => _default_fagr_2)
 
-const _default_dcsc = Dict("FROM BUS" => nothing, "OPERATION" => nothing, "TO BUS" => nothing,
+const _default_dcsc = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" => nothing,
     "CIRCUIT" => 0, "STATUS" => 'L', "OWNER" => 'F', "BYPASS" => 'D',
     "MINIMUM VALUE" => -9999.0, "MAXIMUM VALUE" => 9999.0, "INITIAL VALUE" => nothing,
     "CONTROL MODE" => 'X', "SPECIFIED VALUE" => nothing, "MEASUREMENT EXTREMITY" => nothing,
     "NUMBER OF STAGES" => nothing, "NORMAL CAPACITY" => Inf, "EMERGENCY CAPACITY" => Inf,
     "EQUIPAMENT CAPACITY" => Inf, "AGGREGATOR 1" => nothing, "AGGREGATOR 2" => nothing,
     "AGGREGATOR 3" => nothing, "AGGREGATOR 4" => nothing, "AGGREGATOR 5" => nothing, 
-    "AGGREGATOR 6" => nothing)
+    "AGGREGATOR 6" => nothing, "AGGREGATOR 8" => nothing, "AGGREGATOR 7" => nothing,
+    "AGGREGATOR 9" => nothing, "AGGREGATOR 10" => nothing)
 
 const _default_dcar = Dict("ELEMENT 1 TYPE" => nothing, "ELEMENT 1 IDENTIFICATION" => nothing,
     "CONDITION 1" => nothing, "ELEMENT 2 TYPE" => nothing, "ELEMENT 2 IDENTIFICATION" => nothing,
@@ -371,8 +372,8 @@ const _default_dgei = Dict("BUS" => nothing, "OPERATION" => 'A', "AUTOMATIC MODE
     "GROUP" => nothing, "STATUS" => 'L', "UNITIES" => 1, "OPERATING UNITIES" => 1,
     "MINIMUM OPERATING UNITIES" => 1, "ACTIVE GENERATION" => 0.0, "REACTIVE GENERATION" => 0.0,
     "MINIMUM REACTIVE GENERATION" => -9999.0, "MAXIMUM REACTIVE GENERATION" => 99999.0,
-    "TRANSFORMER ELEVATOR REACTANCE" => nothing, "XD" => 0.0, "XQ" => 0.0, "XL" => 0.0,
-    "POWER FACTOR" => 1.0, "APARENT POWER" => 99999.0, "MECHANICAL LIMIT" => 99999.0)
+    "ELEVATOR TRANSFORMER REACTANCE" => nothing, "XD" => 0.0, "XQ" => 0.0, "XL" => 0.0,
+    "POWER FACTOR" => 1.0, "APPARENT POWER" => 99999.0, "MECHANICAL LIMIT" => 99999.0)
 
 const _default_dmot = Dict("BUS" => nothing, "OPERATION" => 'A', "STATUS" => 'L',
     "GROUP" => nothing, "SIGN" => '+', "LOADING FACTOR" => 100.0, "UNITIES" => 1,
@@ -384,7 +385,7 @@ const _default_dmot = Dict("BUS" => nothing, "OPERATION" => 'A', "STATUS" => 'L'
 const _default_dcmt = Dict("COMMENTS" => nothing)
 
 const _default_dinj = Dict("NUMBER" => nothing, "OPERATION" => 'A',
-    "EQUIVALENT ACTIVE INJECITON" => 0.0, "EQUIVALENT REACTIVE INJECITON" => 0.0,
+    "EQUIVALENT ACTIVE INJECTION" => 0.0, "EQUIVALENT REACTIVE INJECTION" => 0.0,
     "EQUIVALENT SHUNT" => 0.0, "EQUIVALENT PARTICIPATION FACTOR" => 0.0)
 
 const _default_titu = ""
@@ -704,17 +705,34 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
         pwf_data[section][i][component] = pwf_data[section][i]["FROM BUS"] # Default: the bus itself
     end
 
+    if section == "DLIN" && component in ["EMERGENCY CAPACITY", "EQUIPAMENT CAPACITY"]
+        normal_capacity = pwf_data[section][i]["NORMAL CAPACITY"]
+        normal_capacity = isa(normal_capacity, AbstractString) && _needs_default(normal_capacity) ? _pwf_defaults[section]["NORMAL CAPACITY"] : normal_capacity
+        pwf_data[section][i][component] = normal_capacity
+    end
+
     if section == "DBSH" && component == "MINIMUM VOLTAGE"
         ctrl_bus = pwf_data[section][i]["CONTROLLED BUS"]
+        ctrl_bus = !isa(ctrl_bus, Int64) ? pwf_data[section][i]["FROM BUS"] : ctrl_bus
         group = pwf_data["DBAR"]["$ctrl_bus"]["VOLTAGE LIMIT GROUP"]
+        group = isa(group, AbstractString) && _needs_default(group) ? " 0" : group
         group_idx = findfirst(x -> x["GROUP"] == group, pwf_data["DGLT"])
-        pwf_data[section][i][component] = pwf_data["DGLT"][group_idx]["LOWER BOUND"]
+        lower_bound = pwf_data["DGLT"][group_idx]["LOWER BOUND"]
+        lower_bound = isa(lower_bound, AbstractString) && _needs_default(lower_bound) ? 0.8 : lower_bound
+        pwf_data[section][i][component] = lower_bound
     end
     if section == "DBSH" && component == "MAXIMUM VOLTAGE"
         ctrl_bus = pwf_data[section][i]["CONTROLLED BUS"]
+        ctrl_bus = !isa(ctrl_bus, Int64) ? pwf_data[section][i]["FROM BUS"] : ctrl_bus
         group = pwf_data["DBAR"]["$ctrl_bus"]["VOLTAGE LIMIT GROUP"]
+        group = isa(group, AbstractString) && _needs_default(group) ? " 0" : group
         group_idx = findfirst(x -> x["GROUP"] == group, pwf_data["DGLT"])
-        pwf_data[section][i][component] = pwf_data["DGLT"][group_idx]["UPPER BOUND"]
+        upper_bound = pwf_data["DGLT"][group_idx]["UPPER BOUND"]
+        upper_bound = isa(upper_bound, AbstractString) && _needs_default(upper_bound) ? 1.2 : upper_bound
+        pwf_data[section][i][component] = upper_bound
+    end
+    if section == "DBSH" && component == "CONTROLLED BUS"
+        pwf_data[section][i][component] = pwf_data[section][i]["FROM BUS"]
     end
 
     if section == "DCTR" && component in ["MINIMUM VOLTAGE", "MAXIMUM VOLTAGE"]
@@ -737,9 +755,9 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
 
     if section == "DCBA" && component == "VOLTAGE"
         if pwf_data[section][i]["POLARITY"] == '0'
-            pwf_data[section][i][component] = 0
+            pwf_data[section][i][component] = 0.0
         else
-            pwf_data[section][i][component] = 1
+            pwf_data[section][i][component] = 1.0
         end
     end
 
@@ -771,14 +789,17 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
         pwf_data[section][i][component] = pwf_data[section][i]["UNITIES"]
     end
     if section == "DCAI" && component == "VOLTAGE" && haskey(pwf_data, "DCTE")
-        pwf_data[section][i][component] = pwf_data["DCTE"]["VFLD"]
+        vfld = pwf_data["DCTE"]["VFLD"]
+        vfld = isa(vfld, AbstractString) && _needs_default(vfld) ? 70 : vfld
+        pwf_data[section][i][component] = vfld
     end
     if section == "DGEI" && component == "OPERATING UNITIES"
         pwf_data[section][i][component] = pwf_data[section][i]["UNITIES"]
     end
-
-    if section == "DBSH" && component == "CONTROLLED BUS"
-        pwf_data[section][i][component] = pwf_data[section][i]["FROM BUS"]
+    if section == "REACTANCE GROUPS" && component == "OPERATING UNITIES"
+        unities = pwf_data[section][i]["UNITIES"]
+        unities = isa(unities, AbstractString) && _needs_default(unities) ? 1 : unities
+        pwf_data[section][i][component] = unities
     end
 end
 
