@@ -85,7 +85,7 @@ const _dshl_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
     ("SHUNT TO", Float64, 24:29), ("STATUS FROM", String, 31:32), ("STATUS TO", String, 34:35)]
 
 const _dcba_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("TYPE", Int64, 8),
-    ("POLARITY", String, 9), ("NAME", String, 10:21), ("VOLTAGE LIMIT GROUP", String, 22:23),
+    ("POLARITY", Char, 9), ("NAME", String, 10:21), ("VOLTAGE LIMIT GROUP", String, 22:23),
     ("VOLTAGE", Float64, 24:28), ("GROUND ELECTRODE", Float64, 67:71), ("DC LINK", Int64, 72:75)]
 
 const _dcli_dtypes = [("FROM BUS", Int64, 1:4), ("OPERATION", Int64, 6), ("TO BUS", Int64, 9:12),
@@ -233,7 +233,7 @@ const _default_dbar = Dict("NUMBER" => nothing, "OPERATION" => 'A', "STATUS" => 
     "AGGREGATOR 10" => nothing)
 
 const _default_dlin = Dict("FROM BUS" => nothing, "OPENING FROM BUS" => 'L',
-    "OPERATION" => 'A', "OPENING TO BUS" => 'L', "TO BUS" => nothing, "CIRCUIT" => nothing,
+    "OPERATION" => 'A', "OPENING TO BUS" => 'L', "TO BUS" => nothing, "CIRCUIT" => 0,
     "STATUS" => 'L', "OWNER" => 'F', "RESISTANCE" => 0.0, "REACTANCE" => nothing,
     "SHUNT SUSCEPTANCE" => 0.0, "TAP" => 1.0, "MINIMUM TAP" => nothing,
     "MAXIMUM TAP" => nothing, "LAG" => 0.0, "CONTROLLED BUS" => nothing,
@@ -278,7 +278,7 @@ const _default_dcba = Dict("NUMBER" => nothing, "OPERATION" => 'A', "TYPE" => 0,
     "VOLTAGE" => 0, "GROUND ELECTRODE" => 0.0, "DC LINK" => 1)
 
 const _default_dcli = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" => nothing,
-    "CIRCUIT" => nothing, "OWNER" => nothing, "RESISTANCE" => nothing, "INDUCTANCE" => 0.0,
+    "CIRCUIT" => 0, "OWNER" => nothing, "RESISTANCE" => nothing, "INDUCTANCE" => 0.0,
     "CAPACITY" => Inf)
 
 const _default_dcnv = Dict("NUMBER" => nothing, "OPERATION" => 'A', "AC BUS" => nothing,
@@ -318,7 +318,7 @@ const _default_fagr_2 = Dict("NUMBER" => nothing, "OPERATION" => 'A', "DESCRIPTI
 const _default_fagr_1 = Dict("NUMBER" => nothing, "DESCRIPTION" => nothing, "OCCURENCES" => _default_fagr_2)
 
 const _default_dcsc = Dict("FROM BUS" => nothing, "OPERATION" => nothing, "TO BUS" => nothing,
-    "CIRCUIT" => nothing, "STATUS" => 'L', "OWNER" => 'F', "BYPASS" => 'D',
+    "CIRCUIT" => 0, "STATUS" => 'L', "OWNER" => 'F', "BYPASS" => 'D',
     "MINIMUM VALUE" => -9999.0, "MAXIMUM VALUE" => 9999.0, "INITIAL VALUE" => nothing,
     "CONTROL MODE" => 'X', "SPECIFIED VALUE" => nothing, "MEASUREMENT EXTREMITY" => nothing,
     "NUMBER OF STAGES" => nothing, "NORMAL CAPACITY" => Inf, "EMERGENCY CAPACITY" => Inf,
@@ -342,11 +342,11 @@ const _default_dctr = Dict("FROM BUS" => nothing, "OPERATION" => 'A', "TO BUS" =
 const _default_dare = Dict("NUMBER" => nothing, "NET INTERCHANGE" => 0.0, "NAME" => nothing,
     "MINIMUM INTERCHANGE" => 0.0, "MAXIMUM INTERCHANGE" => 0.0)
 
-const _default_dtpf_circ = Dict("FROM BUS 1" => nothing, "TO BUS 1" => nothing, "CIRCUIT 1" => nothing,
-    "FROM BUS 2" => nothing, "TO BUS 2" => nothing, "CIRCUIT 2" => nothing,
-    "FROM BUS 3" => nothing, "TO BUS 3" => nothing, "CIRCUIT 3" => nothing,
-    "FROM BUS 4" => nothing, "TO BUS 4" => nothing, "CIRCUIT 4" => nothing,
-    "FROM BUS 5" => nothing, "TO BUS 5" => nothing, "CIRCUIT 5" => nothing, "OPERATION" => 'A')
+const _default_dtpf_circ = Dict("FROM BUS 1" => nothing, "TO BUS 1" => nothing, "CIRCUIT 1" => 0,
+    "FROM BUS 2" => nothing, "TO BUS 2" => nothing, "CIRCUIT 2" => 0,
+    "FROM BUS 3" => nothing, "TO BUS 3" => nothing, "CIRCUIT 3" => 0,
+    "FROM BUS 4" => nothing, "TO BUS 4" => nothing, "CIRCUIT 4" => 0,
+    "FROM BUS 5" => nothing, "TO BUS 5" => nothing, "CIRCUIT 5" => 0, "OPERATION" => 'A')
 
 const _default_dmte = Dict("ELEMENT 1 TYPE" => nothing, "ELEMENT 1 IDENTIFICATION" => nothing,
     "CONDITION 1" => nothing, "ELEMENT 2 TYPE" => nothing, "ELEMENT 2 IDENTIFICATION" => nothing,
@@ -354,11 +354,11 @@ const _default_dmte = Dict("ELEMENT 1 TYPE" => nothing, "ELEMENT 1 IDENTIFICATIO
     "CONDITION 2" => nothing, "ELEMENT 4 TYPE" => nothing, "ELEMENT 4 IDENTIFICATION" => nothing,
     "OPERATION" => 'A', "BOUNDARIES" => 'T')
 
-const _default_dmfl_circ = Dict("FROM BUS 1" => nothing, "TO BUS 1" => nothing, "CIRCUIT 1" => nothing,
-    "FROM BUS 2" => nothing, "TO BUS 2" => nothing, "CIRCUIT 2" => nothing,
-    "FROM BUS 3" => nothing, "TO BUS 3" => nothing, "CIRCUIT 3" => nothing,
-    "FROM BUS 4" => nothing, "TO BUS 4" => nothing, "CIRCUIT 4" => nothing,
-    "FROM BUS 5" => nothing, "TO BUS 5" => nothing, "CIRCUIT 5" => nothing, "OPERATION" => 'A')
+const _default_dmfl_circ = Dict("FROM BUS 1" => nothing, "TO BUS 1" => nothing, "CIRCUIT 1" => 0,
+    "FROM BUS 2" => nothing, "TO BUS 2" => nothing, "CIRCUIT 2" => 0,
+    "FROM BUS 3" => nothing, "TO BUS 3" => nothing, "CIRCUIT 3" => 0,
+    "FROM BUS 4" => nothing, "TO BUS 4" => nothing, "CIRCUIT 4" => 0,
+    "FROM BUS 5" => nothing, "TO BUS 5" => nothing, "CIRCUIT 5" => 0, "OPERATION" => 'A')
 
 const _default_dbre = Dict()
 
@@ -722,6 +722,63 @@ function _handle_special_defaults!(pwf_data::Dict{String, Any}, section::String,
     end
     if section == "DCTR" && component in ["MINIMUM PHASE", "MAXIMUM PHASE"]
         pwf_data[section][i]["PHASE CONTROL"] = false
+    end
+
+    if section == "DCTR" && component == "MEASUREMENT EXTREMITY"
+        pwf_data[section][i][component] = pwf_data[section][i]["FROM BUS"]
+    end
+
+    if section == "DGLT" && component == "LOWER EMERGENCY BOUND"
+        pwf_data[section][i][component] = pwf_data[section][i]["LOWER BOUND"]
+    end
+    if section == "DGLT" && component == "UPPER EMERGENCY BOUND"
+        pwf_data[section][i][component] = pwf_data[section][i]["UPPER BOUND"]
+    end
+
+    if section == "DCBA" && component == "VOLTAGE"
+        if pwf_data[section][i]["POLARITY"] == '0'
+            pwf_data[section][i][component] = 0
+        else
+            pwf_data[section][i][component] = 1
+        end
+    end
+
+    if section == "DCCV" && component == "TAP HI MVAR MODE"
+        step = (pwf_data[section][i]["MAXIMUM TRANSFORMER TAP"] - pwf_data[section][i]["MINIMUM TRANSFORMER TAP"]) / pwf_data[section][i]["TRANSFORMER TAP NUMBER OF STEPS"]
+        pwf_data[section][i][component] = pwf_data[section][i]["MAXIMUM TRANSFORMER TAP"] - step
+    end
+
+    if section == "DELO" && component == "BASE" && haskey(pwf_data, "DCTE")
+        pwf_data[section][i][component] = pwf_data["DCTE"]["DASE"]
+    end
+
+    if section == "DCER" && component == "CONTROLLED BUS"
+        pwf_data[section][i][component] = pwf_data[section][i]["BUS"]
+    end
+
+    if section == "DCSC" && component == "INITIAL VALUE"
+        pwf_data[section][i][component] = pwf_data[section][i]["MAXIMUM VALUE"]
+    end
+    if section == "DCSC" && component == "MEASUREMENT EXTREMITY"
+        pwf_data[section][i][component] = pwf_data[section][i]["FROM BUS"]
+    end
+
+    if section == "DCAR" && component == "VOLTAGE" && haskey(pwf_data, "DCTE")
+        pwf_data[section][i][component] = pwf_data["DCTE"]["VFLD"]
+    end
+
+    if section == "DCAI" && component == "OPERATING UNITIES"
+        pwf_data[section][i][component] = pwf_data[section][i]["UNITIES"]
+    end
+    if section == "DCAI" && component == "VOLTAGE" && haskey(pwf_data, "DCTE")
+        pwf_data[section][i][component] = pwf_data["DCTE"]["VFLD"]
+    end
+    if section == "DGEI" && component == "OPERATING UNITIES"
+        pwf_data[section][i][component] = pwf_data[section][i]["UNITIES"]
+    end
+
+    if section == "DBSH" && component == "CONTROLLED BUS"
+        pwf_data[section][i][component] = pwf_data[section][i]["FROM BUS"]
     end
 end
 
