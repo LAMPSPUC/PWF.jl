@@ -25,7 +25,7 @@ function _create_dict_dshl(data::Dict)
     return dshl_dict
 end
 
-function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
+function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict; add_control_data::Bool=false)
     sub_data = Dict{String,Any}()
 
     sub_data["f_bus"] = pop!(branch, "FROM BUS")
@@ -52,23 +52,25 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
         sub_data["br_status"] = 0
     end
 
-    sub_data["control_data"] = Dict{String,Any}()
-    sub_data["control_data"]["tapmin"] = sub_data["tap"]
-    sub_data["control_data"]["tapmax"] = sub_data["tap"]
-    sub_data["control_data"]["circuit"] = branch["CIRCUIT"]
+    if add_control_data
+        sub_data["control_data"] = Dict{String,Any}()
+        sub_data["control_data"]["tapmin"] = sub_data["tap"]
+        sub_data["control_data"]["tapmax"] = sub_data["tap"]
+        sub_data["control_data"]["circuit"] = branch["CIRCUIT"]
 
-    # Transformer control_data fields are created and set to nothing
-    sub_data["control_data"]["control_type"] = nothing
-    sub_data["control_data"]["constraint_type"] = nothing
-    sub_data["control_data"]["controlled_bus"] = nothing
-    sub_data["control_data"]["vmsp"] = nothing
-    sub_data["control_data"]["vmmin"] = nothing
-    sub_data["control_data"]["vmmax"] = nothing
-    sub_data["control_data"]["shift_control_variable"] = nothing
-    sub_data["control_data"]["shiftmin"] = nothing
-    sub_data["control_data"]["shiftmax"] = nothing
-    sub_data["control_data"]["valsp"] = nothing
-    sub_data["control_data"]["control"] = nothing
+        # Transformer control_data fields are created and set to nothing
+        sub_data["control_data"]["control_type"] = nothing
+        sub_data["control_data"]["constraint_type"] = nothing
+        sub_data["control_data"]["controlled_bus"] = nothing
+        sub_data["control_data"]["vmsp"] = nothing
+        sub_data["control_data"]["vmmin"] = nothing
+        sub_data["control_data"]["vmmax"] = nothing
+        sub_data["control_data"]["shift_control_variable"] = nothing
+        sub_data["control_data"]["shiftmin"] = nothing
+        sub_data["control_data"]["shiftmax"] = nothing
+        sub_data["control_data"]["valsp"] = nothing
+        sub_data["control_data"]["control"] = nothing
+    end
 
     sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
     sub_data["index"] = length(pm_data["branch"]) + 1
@@ -92,7 +94,7 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
 
 end
 
-function _pwf2pm_DCSC_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
+function _pwf2pm_DCSC_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict; add_control_data::Bool=false)
     sub_data = Dict{String,Any}()
 
     sub_data["f_bus"] = pop!(branch, "FROM BUS")
@@ -117,23 +119,25 @@ function _pwf2pm_DCSC_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
         sub_data["br_status"] = 0
     end
 
-    sub_data["control_data"] = Dict{String,Any}()
-    sub_data["control_data"]["tapmin"] = 1.0
-    sub_data["control_data"]["tapmax"] = 1.0
-    sub_data["control_data"]["circuit"] = branch["CIRCUIT"]
+    if add_control_data
+        sub_data["control_data"] = Dict{String,Any}()
+        sub_data["control_data"]["tapmin"] = 1.0
+        sub_data["control_data"]["tapmax"] = 1.0
+        sub_data["control_data"]["circuit"] = branch["CIRCUIT"]
 
-    # Transformer control_data fields are created and set to nothing
-    sub_data["control_data"]["control_type"] = nothing
-    sub_data["control_data"]["constraint_type"] = nothing
-    sub_data["control_data"]["controlled_bus"] = nothing
-    sub_data["control_data"]["vmsp"] = nothing
-    sub_data["control_data"]["vmmin"] = nothing
-    sub_data["control_data"]["vmmax"] = nothing
-    sub_data["control_data"]["shift_control_variable"] = nothing
-    sub_data["control_data"]["shiftmin"] = nothing
-    sub_data["control_data"]["shiftmax"] = nothing
-    sub_data["control_data"]["valsp"] = nothing
-    sub_data["control_data"]["control"] = nothing
+        # Transformer control_data fields are created and set to nothing
+        sub_data["control_data"]["control_type"] = nothing
+        sub_data["control_data"]["constraint_type"] = nothing
+        sub_data["control_data"]["controlled_bus"] = nothing
+        sub_data["control_data"]["vmsp"] = nothing
+        sub_data["control_data"]["vmmin"] = nothing
+        sub_data["control_data"]["vmmax"] = nothing
+        sub_data["control_data"]["shift_control_variable"] = nothing
+        sub_data["control_data"]["shiftmin"] = nothing
+        sub_data["control_data"]["shiftmax"] = nothing
+        sub_data["control_data"]["valsp"] = nothing
+        sub_data["control_data"]["control"] = nothing
+    end
     
     sub_data["source_id"] = ["branch", sub_data["f_bus"], sub_data["t_bus"], "01"]
     sub_data["index"] = length(pm_data["branch"]) + 1
@@ -161,18 +165,18 @@ function _pwf2pm_DCSC_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict)
 
 end
 
-function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict)
+function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict; add_control_data::Bool=false)
     pm_data["branch"] = Dict{String, Any}()
     if haskey(pwf_data, "DLIN")
         for (i,branch) in pwf_data["DLIN"]
             if !branch["TRANSFORMER"]
-                _pwf2pm_branch!(pm_data, pwf_data, branch)
+                _pwf2pm_branch!(pm_data, pwf_data, branch, add_control_data = add_control_data)
             end
         end
     end
     if haskey(pwf_data, "DCSC")
         for (i,csc) in pwf_data["DCSC"]
-            _pwf2pm_DCSC_branch!(pm_data, pwf_data, csc)
+            _pwf2pm_DCSC_branch!(pm_data, pwf_data, csc, add_control_data = add_control_data)
         end
     end
 end

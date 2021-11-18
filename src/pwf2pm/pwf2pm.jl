@@ -20,7 +20,7 @@ const element_status         = Dict(0 => "OFF", "D" => "OFF", 1 => "ON", "L" => 
 
 
 
-function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true, software = ANAREDE)
+function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true, software = ANAREDE, add_control_data::Bool=false)
     software = software()
     pm_data = Dict{String,Any}()
 
@@ -31,14 +31,18 @@ function _parse_pwf_to_powermodels(pwf_data::Dict; validate::Bool=true, software
 
     pm_data["baseMVA"] = _handle_base_mva(pwf_data)
 
-    _pwf2pm_bus!(pm_data, pwf_data)
-    _pwf2pm_branch!(pm_data, pwf_data)
+    _pwf2pm_bus!(pm_data, pwf_data, add_control_data = add_control_data)
+    _pwf2pm_branch!(pm_data, pwf_data, add_control_data = add_control_data)
     _pwf2pm_load!(pm_data, pwf_data)
     _pwf2pm_generator!(pm_data, pwf_data)
-    _pwf2pm_transformer!(pm_data, pwf_data)
+    _pwf2pm_transformer!(pm_data, pwf_data, add_control_data = add_control_data)
     _pwf2pm_dcline!(pm_data, pwf_data)
-    _pwf2pm_shunt!(pm_data, pwf_data)
-    _pwf2pm_info!(pm_data, pwf_data)
+    _pwf2pm_shunt!(pm_data, pwf_data, add_control_data = add_control_data)
+
+    if add_control_data
+        _pwf2pm_info!(pm_data, pwf_data)
+    end
+    
     # ToDo: fields not yet contemplated by the parser
 
     pm_data["storage"] = Dict{String,Any}()
@@ -60,13 +64,13 @@ end
 
 Parse .pwf file directly to PowerModels data structure
 """
-function parse_pwf_to_powermodels(filename::String; validate::Bool=true, software = ANAREDE)
+function parse_pwf_to_powermodels(filename::String; validate::Bool=true, software = ANAREDE, add_control_data::Bool=false)
     pwf_data = open(filename) do f
         parse_pwf(f)
     end
 
     # Parse Dict to a Power Models format
-    pm = _parse_pwf_to_powermodels(pwf_data, validate = validate, software = software)
+    pm = _parse_pwf_to_powermodels(pwf_data, validate = validate, software = software, add_control_data = add_control_data)
     return pm
 end
 
@@ -74,10 +78,10 @@ end
     parse_pwf_to_powermodels(io::Io, validate::Bool=false)::Dict
 
 """
-function parse_pwf_to_powermodels(io::IO; validate::Bool=true, software = ANAREDE)
+function parse_pwf_to_powermodels(io::IO; validate::Bool=true, software = ANAREDE, add_control_data::Bool=false)
     pwf_data = _parse_pwf_data(io)
 
     # Parse Dict to a Power Models format
-    pm = _parse_pwf_to_powermodels(pwf_data, validate = validate, software = software)
+    pm = _parse_pwf_to_powermodels(pwf_data, validate = validate, software = software, add_control_data = add_control_data)
     return pm
 end

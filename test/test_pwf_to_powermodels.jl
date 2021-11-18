@@ -6,7 +6,7 @@
             pm_data = Dict{String, Any}()
 
             @testset "Bus" begin
-                ParserPWF._pwf2pm_bus!(pm_data, pwf_data)
+                ParserPWF._pwf2pm_bus!(pm_data, pwf_data, add_control_data = true)
                 
                 @test haskey(pm_data, "bus")
                 @test length(pm_data["bus"]) == 9
@@ -45,8 +45,8 @@
             end
 
             @testset "Branch" begin
-                ParserPWF._pwf2pm_branch!(pm_data, pwf_data)
-                ParserPWF._pwf2pm_transformer!(pm_data, pwf_data)
+                ParserPWF._pwf2pm_branch!(pm_data, pwf_data, add_control_data = true)
+                ParserPWF._pwf2pm_transformer!(pm_data, pwf_data, add_control_data = true)
                 
                 @test haskey(pm_data, "branch")
                 @test length(pm_data["branch"]) == 7
@@ -192,7 +192,7 @@
     @testset "Control data fields" begin
         @testset "Shunt control_data" begin
             file = open(joinpath(@__DIR__,"data/pwf/3bus_shunt_fields.pwf"))
-            pm_data = ParserPWF.parse_pwf_to_powermodels(file, software = ParserPWF.ANAREDE)
+            pm_data = ParserPWF.parse_pwf_to_powermodels(file, software = ParserPWF.ANAREDE, add_control_data = true)
 
             @test length(pm_data["bus"]) == 3
             @test occursin("B s 1", pm_data["bus"]["1"]["name"])
@@ -244,7 +244,7 @@
         end
 
         @testset "Transformer control fields" begin
-            data = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/9bus_transformer_fields.pwf"))
+            data = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/9bus_transformer_fields.pwf"), add_control_data = true)
 
             tap_automatic_control = findfirst(x -> x["f_bus"] == 1 && x["t_bus"] == 4, data["branch"])
             tap_variable_control = findfirst(x -> x["f_bus"] == 2 && x["t_bus"] == 7, data["branch"])

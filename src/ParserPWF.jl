@@ -22,12 +22,12 @@ include("pwf2pm/correct/anarede.jl")
 
 include("pwf2pm/pwf2pm.jl")
 
-function parse_file(filename::String; validate::Bool=true, software = ANAREDE, pm::Bool = true)
-    pm ? parse_pwf_to_powermodels(filename, validate = validate, software = software) : parse_pwf(filename)
+function parse_file(filename::String; validate::Bool=true, software = ANAREDE, pm::Bool = true, add_control_data::Bool=false)
+    pm ? parse_pwf_to_powermodels(filename, validate = validate, software = software, add_control_data = add_control_data) : parse_pwf(filename)
 end
 
 function parse_file(io::IO; validate::Bool=true, software = ANAREDE, pm::Bool = true)
-    pm ? parse_pwf_to_powermodels(io, validate = validate, software = software) : parse_pwf(filename)
+    pm ? parse_pwf_to_powermodels(io, validate = validate, software = software, add_control_data = add_control_data) : parse_pwf(filename)
 end
 
 export parse_file
