@@ -97,6 +97,8 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict, dict_dgbt, dict_
     if add_control_data
         sub_data["control_data"] = Dict{String,Any}()
         sub_data["control_data"]["voltage_controlled_bus"] = bus["CONTROLLED BUS"]
+        sub_data["control_data"]["vmmin"] = sub_data["vmin"]
+        sub_data["control_data"]["vmmax"] = sub_data["vmax"]
     end
 
     idx = string(sub_data["index"])
