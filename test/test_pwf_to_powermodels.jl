@@ -285,7 +285,7 @@
             @test tap_variable_control["control"] == false
 
             @test phase_control["control_type"] == "shift_control"
-            @test phase_control["constraint_type"] == "bounds"
+            @test phase_control["constraint_type"] == "setpoint"
             @test phase_control["controlled_bus"] == 9
             @test phase_control["tapmin"] == nothing
             @test phase_control["tapmax"] == nothing
