@@ -6,7 +6,7 @@
             pm_data = Dict{String, Any}()
 
             @testset "Bus" begin
-                ParserPWF._pwf2pm_bus!(pm_data, pwf_data)
+                ParserPWF._pwf2pm_bus!(pm_data, pwf_data, add_control_data = true)
                 
                 @test haskey(pm_data, "bus")
                 @test length(pm_data["bus"]) == 9
@@ -45,8 +45,8 @@
             end
 
             @testset "Branch" begin
-                ParserPWF._pwf2pm_branch!(pm_data, pwf_data)
-                ParserPWF._pwf2pm_transformer!(pm_data, pwf_data)
+                ParserPWF._pwf2pm_branch!(pm_data, pwf_data, add_control_data = true)
+                ParserPWF._pwf2pm_transformer!(pm_data, pwf_data, add_control_data = true)
                 
                 @test haskey(pm_data, "branch")
                 @test length(pm_data["branch"]) == 7
@@ -192,7 +192,7 @@
     @testset "Control data fields" begin
         @testset "Shunt control_data" begin
             file = open(joinpath(@__DIR__,"data/pwf/3bus_shunt_fields.pwf"))
-            pm_data = ParserPWF.parse_pwf_to_powermodels(file, software = ParserPWF.ANAREDE)
+            pm_data = ParserPWF.parse_pwf_to_powermodels(file, software = ParserPWF.ANAREDE, add_control_data = true)
 
             @test length(pm_data["bus"]) == 3
             @test occursin("B s 1", pm_data["bus"]["1"]["name"])
@@ -205,27 +205,27 @@
             @test pm_data["shunt"]["1"]["control_data"]["bsmin"] == -0.1
             @test pm_data["shunt"]["1"]["control_data"]["bsmax"] == -0.1
             @test pm_data["shunt"]["1"]["control_data"]["controlled_bus"] == 3
-            @test pm_data["shunt"]["1"]["control_data"]["vmmin"] == 1.03
-            @test pm_data["shunt"]["1"]["control_data"]["vmmax"] == 1.03
             @test pm_data["shunt"]["1"]["control_data"]["inclination"] == nothing
+            @test pm_data["bus"]["3"]["control_data"]["vmmin"] == 1.03
+            @test pm_data["bus"]["3"]["control_data"]["vmmax"] == 1.03
 
             @test pm_data["shunt"]["2"]["control_data"]["shunt_type"] == 2
             @test pm_data["shunt"]["2"]["control_data"]["shunt_control_type"] == 3
             @test pm_data["shunt"]["2"]["control_data"]["bsmin"] == -0.5
             @test pm_data["shunt"]["2"]["control_data"]["bsmax"] == 1.
             @test pm_data["shunt"]["2"]["control_data"]["controlled_bus"] == 1
-            @test pm_data["shunt"]["2"]["control_data"]["vmmin"] == 1.029
-            @test pm_data["shunt"]["2"]["control_data"]["vmmax"] == 1.029
             @test pm_data["shunt"]["2"]["control_data"]["inclination"] == 2.0
+            @test pm_data["bus"]["1"]["control_data"]["vmmin"] == 1.029
+            @test pm_data["bus"]["1"]["control_data"]["vmmax"] == 1.029
 
             @test pm_data["shunt"]["3"]["control_data"]["shunt_type"] == 2
             @test pm_data["shunt"]["3"]["control_data"]["shunt_control_type"] == 2
             @test pm_data["shunt"]["3"]["control_data"]["bsmin"] == -0.3
             @test pm_data["shunt"]["3"]["control_data"]["bsmax"] == 0.6
-            @test pm_data["shunt"]["3"]["control_data"]["controlled_bus"] == 72
-            @test pm_data["shunt"]["3"]["control_data"]["vmmin"] == 0.9
-            @test pm_data["shunt"]["3"]["control_data"]["vmmax"] == 1.1
+            @test pm_data["shunt"]["3"]["control_data"]["controlled_bus"] == 2
             @test pm_data["shunt"]["3"]["control_data"]["inclination"] == nothing
+            @test pm_data["bus"]["2"]["control_data"]["vmmin"] == 0.9
+            @test pm_data["bus"]["2"]["control_data"]["vmmax"] == 1.1
 
         end
 
@@ -244,7 +244,7 @@
         end
 
         @testset "Transformer control fields" begin
-            data = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/9bus_transformer_fields.pwf"))
+            data = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/9bus_transformer_fields.pwf"), add_control_data = true)
 
             tap_automatic_control = findfirst(x -> x["f_bus"] == 1 && x["t_bus"] == 4, data["branch"])
             tap_variable_control = findfirst(x -> x["f_bus"] == 2 && x["t_bus"] == 7, data["branch"])
