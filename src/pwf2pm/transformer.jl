@@ -39,7 +39,7 @@ function _create_dict_dctr(data::Dict)
     return dctr_dict
 end
 
-function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two-winding transformer
+function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict; add_control_data::Bool=false) # Two-winding transformer
     sub_data = Dict{String,Any}()
 
     sub_data["f_bus"] = pop!(branch, "FROM BUS")
@@ -83,69 +83,71 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two
         delete!(sub_data, "rate_c")
     end
 
-    sub_data["control_data"] = Dict{String,Any}()
-    sub_data["control_data"]["tapmin"] = pop!(branch, "MINIMUM TAP")
-    sub_data["control_data"]["tapmax"] = pop!(branch, "MAXIMUM TAP")
-    sub_data["control_data"]["circuit"] = branch["CIRCUIT"]
+    if add_control_data
+        sub_data["control_data"] = Dict{String,Any}()
+        sub_data["control_data"]["tapmin"] = pop!(branch, "MINIMUM TAP")
+        sub_data["control_data"]["tapmax"] = pop!(branch, "MAXIMUM TAP")
+        sub_data["control_data"]["circuit"] = branch["CIRCUIT"]
 
-    sub_data["control_data"]["controlled_bus"] = abs(branch["CONTROLLED BUS"])
+        sub_data["control_data"]["controlled_bus"] = abs(branch["CONTROLLED BUS"])
 
-    dict_dctr = haskey(pwf_data, "DCTR") ? _create_dict_dctr(pwf_data["DCTR"]) : nothing
-    constraint_type = "fix"
-    if isa(dict_dctr, Dict) && haskey(dict_dctr, (sub_data["f_bus"], sub_data["t_bus"]))
-        branch_dctr = dict_dctr[(sub_data["f_bus"], sub_data["t_bus"])]
-        circuit = branch["CIRCUIT"]
-        if haskey(branch_dctr, circuit)
-            constraint_type = branch_dctr[circuit]["TYPE OF CONTROL"]
+        dict_dctr = haskey(pwf_data, "DCTR") ? _create_dict_dctr(pwf_data["DCTR"]) : nothing
+        constraint_type = "fix"
+        if isa(dict_dctr, Dict) && haskey(dict_dctr, (sub_data["f_bus"], sub_data["t_bus"]))
+            branch_dctr = dict_dctr[(sub_data["f_bus"], sub_data["t_bus"])]
+            circuit = branch["CIRCUIT"]
+            if haskey(branch_dctr, circuit)
+                constraint_type = branch_dctr[circuit]["TYPE OF CONTROL"]
+            end
         end
-    end
 
-    tap_bounds = sub_data["control_data"]["tapmin"] !== nothing && sub_data["control_data"]["tapmax"] !== nothing
-    if tap_bounds # tap control
-        sub_data["control_data"]["control_type"] = "tap_control"
-        sub_data["control_data"]["shift_control_variable"] = nothing
-        sub_data["control_data"]["shiftmin"] = nothing
-        sub_data["control_data"]["shiftmax"] = nothing
-        if constraint_type == "VOLTAGE CONTROL"
-            sub_data["control_data"]["constraint_type"] = "bounds"
-            sub_data["control_data"]["valsp"] = branch_dctr[circuit]["SPECIFIED VALUE"]
-            sub_data["control_data"]["controlled_bus"] = branch_dctr[circuit]["MEASUREMENT EXTREMITY"]
-    
-        else
+        tap_bounds = sub_data["control_data"]["tapmin"] !== nothing && sub_data["control_data"]["tapmax"] !== nothing
+        if tap_bounds # tap control
+            sub_data["control_data"]["control_type"] = "tap_control"
+            sub_data["control_data"]["shift_control_variable"] = nothing
+            sub_data["control_data"]["shiftmin"] = nothing
+            sub_data["control_data"]["shiftmax"] = nothing
+            if constraint_type == "VOLTAGE CONTROL"
+                sub_data["control_data"]["constraint_type"] = "bounds"
+                sub_data["control_data"]["valsp"] = branch_dctr[circuit]["SPECIFIED VALUE"]
+                sub_data["control_data"]["controlled_bus"] = branch_dctr[circuit]["MEASUREMENT EXTREMITY"]
+        
+            else
+                sub_data["control_data"]["constraint_type"] = "setpoint"
+                sub_data["control_data"]["valsp"] = nothing
+            end
+
+        elseif constraint_type == "PHASE CONTROL" # phase control
+            sub_data["control_data"]["control_type"] = "shift_control"
             sub_data["control_data"]["constraint_type"] = "setpoint"
+            shift_type = branch_dctr[circuit]["CONTROL TYPE"]
+            sub_data["control_data"]["shift_control_variable"] = shift_type == 'C' ? "current" : shift_type == 'P' ? "power" : "fixed"
+            sub_data["control_data"]["shiftmin"] = branch_dctr[circuit]["MINIMUM PHASE"]
+            sub_data["control_data"]["shiftmax"] = branch_dctr[circuit]["MAXIMUM PHASE"]
+            sub_data["control_data"]["valsp"] = branch_dctr[circuit]["SPECIFIED VALUE"]
+
+            sub_data["control_data"]["controlled_bus"] = branch_dctr[circuit]["MEASUREMENT EXTREMITY"]
+
+        else # fix
+            sub_data["control_data"]["control_type"] = "fix"
+            sub_data["control_data"]["constraint_type"] = nothing
+            sub_data["control_data"]["shift_control_variable"] = nothing
+            sub_data["control_data"]["shiftmin"] = nothing
+            sub_data["control_data"]["shiftmax"] = nothing
             sub_data["control_data"]["valsp"] = nothing
         end
 
-    elseif constraint_type == "PHASE CONTROL" # phase control
-        sub_data["control_data"]["control_type"] = "shift_control"
-        sub_data["control_data"]["constraint_type"] = "bounds"
-        shift_type = branch_dctr[circuit]["CONTROL TYPE"]
-        sub_data["control_data"]["shift_control_variable"] = shift_type == 'C' ? "current" : shift_type == 'P' ? "power" : "fixed"
-        sub_data["control_data"]["shiftmin"] = branch_dctr[circuit]["MINIMUM PHASE"]
-        sub_data["control_data"]["shiftmax"] = branch_dctr[circuit]["MAXIMUM PHASE"]
-        sub_data["control_data"]["valsp"] = branch_dctr[circuit]["SPECIFIED VALUE"]
-
-        sub_data["control_data"]["controlled_bus"] = branch_dctr[circuit]["MEASUREMENT EXTREMITY"]
-
-    else # fix
-        sub_data["control_data"]["control_type"] = "fix"
-        sub_data["control_data"]["constraint_type"] = nothing
-        sub_data["control_data"]["shift_control_variable"] = nothing
-        sub_data["control_data"]["shiftmin"] = nothing
-        sub_data["control_data"]["shiftmax"] = nothing
-        sub_data["control_data"]["valsp"] = nothing
-    end
-
-    ctrl_bus = pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]
-    sub_data["control_data"]["vmsp"] = ctrl_bus["vm"]
-    sub_data["control_data"]["vmmin"] = ctrl_bus["vmin"]
-    sub_data["control_data"]["vmmax"] = ctrl_bus["vmax"]
-    sub_data["control_data"]["control"] =  false 
-    if haskey(pwf_data, "DTPF CIRC")
-        for (k,v) in pwf_data["DTPF CIRC"]
-            for i in 1:5
-                if v["FROM BUS $i"] == sub_data["f_bus"] && v["TO BUS $i"] == sub_data["t_bus"] && v["CIRCUIT $i"] == branch["CIRCUIT"]
-                    sub_data["control_data"]["control"] = true
+        ctrl_bus = pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]
+        sub_data["control_data"]["vmsp"] = ctrl_bus["vm"]
+        sub_data["control_data"]["vmmin"] = ctrl_bus["vmin"]
+        sub_data["control_data"]["vmmax"] = ctrl_bus["vmax"]
+        sub_data["control_data"]["control"] =  false 
+        if haskey(pwf_data, "DTPF CIRC")
+            for (k,v) in pwf_data["DTPF CIRC"]
+                for i in 1:5
+                    if v["FROM BUS $i"] == sub_data["f_bus"] && v["TO BUS $i"] == sub_data["t_bus"] && v["CIRCUIT $i"] == branch["CIRCUIT"]
+                        sub_data["control_data"]["control"] = true
+                    end
                 end
             end
         end
@@ -155,7 +157,7 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict) # Two
     pm_data["branch"][idx] = sub_data
 end
 
-function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding transformer
+function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict; add_control_data::Bool=false) # Two-winding transformer
     if !haskey(pm_data, "branch")
         pm_data["branch"] = Dict{String, Any}()
     end
@@ -163,7 +165,7 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict) # Two-winding trans
     if haskey(pwf_data, "DLIN")
         for (i,branch) in pwf_data["DLIN"]
             if branch["TRANSFORMER"]
-                _pwf2pm_transformer!(pm_data, pwf_data, branch)
+                _pwf2pm_transformer!(pm_data, pwf_data, branch, add_control_data = add_control_data)
             end
         end
     end

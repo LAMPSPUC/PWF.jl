@@ -1,22 +1,24 @@
-function _pwf2pm_info!(pm_data::Dict, pwf_data::Dict, option::String, status::Char)
+function _pwf2pm_info!(pm_data::Dict, pwf_data::Dict, option::String, status::Char, section::String)
     key = lowercase(option)
     value = status == 'L' ? true : status == 'D' ? false : error("Execution option $key status not defined")
-    pm_data["info"][key] = value
+    pm_data["info"]["actions"][key] = value
+end
+
+function _pwf2pm_info!(pm_data::Dict, pwf_data::Dict, option::String, value::Real, section::String)
+    key = lowercase(option)
+    pm_data["info"]["parameters"][key] = value
 end
 
 function _pwf2pm_info!(pm_data::Dict, pwf_data::Dict)
-    pm_data["info"] = Dict{String,Any}()
-    if haskey(pwf_data, "DOPC")
+    pm_data["info"] = Dict("actions" => Dict{String,Any}(), "parameters" => Dict{String,Any}())
+    info_sections = ["DOPC", "DOPC IMPR", "DCTE"]
 
-        for (option,status) in pwf_data["DOPC"]
-            _pwf2pm_info!(pm_data, pwf_data, option, status)
-        end
-    end
+    for section in info_sections
+        if haskey(pwf_data, section)
 
-    if haskey(pwf_data, "DOPC IMPR")
-
-        for (option,status) in pwf_data["DOPC IMPR"]
-            _pwf2pm_info!(pm_data, pwf_data, option, status)
+            for (option,value) in pwf_data[section]
+                _pwf2pm_info!(pm_data, pwf_data, option, value, section)
+            end
         end
     end
 end

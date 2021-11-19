@@ -52,6 +52,12 @@ function _pwf2pm_corrections!(pm_data::Dict, pwf_data::Dict, software::PFSoftwar
     return 
 end
 
+function _set_controlled_bus_voltage_bounds!(pm_data::Dict, shunt_control_data::Dict)
+    ctrl_bus = shunt_control_data["controlled_bus"]
+    pm_data["bus"]["$ctrl_bus"]["control_data"]["vmmin"] = pop!(shunt_control_data, "vmmin")
+    pm_data["bus"]["$ctrl_bus"]["control_data"]["vmmax"] = pop!(shunt_control_data, "vmmax")
+end
+
 function _correct_pwf_network_data(pm_data::Dict)
     mva_base = pm_data["baseMVA"]
 
@@ -62,6 +68,8 @@ function _correct_pwf_network_data(pm_data::Dict)
             if haskey(shunt, "control_data")
                 PowerModels._apply_func!(shunt["control_data"], "bsmin", rescale)
                 PowerModels._apply_func!(shunt["control_data"], "bsmax", rescale)
+
+                _set_controlled_bus_voltage_bounds!(pm_data, shunt["control_data"])
             end
         end
     end

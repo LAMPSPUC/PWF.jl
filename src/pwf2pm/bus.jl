@@ -76,7 +76,7 @@ function _create_dict_dgbt(data::Dict)
     return dict_dgbt
 end
 
-function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict, dict_dgbt, dict_dglt)
+function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict, dict_dgbt, dict_dglt; add_control_data::Bool=false)
     sub_data = Dict{String,Any}()
 
     sub_data["bus_i"] = bus["NUMBER"]
@@ -94,14 +94,18 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict, dict_dgbt, dict_
     sub_data["vmin"] = _handle_vmin(pwf_data, bus, dict_dglt)
     sub_data["vmax"] = _handle_vmax(pwf_data, bus, dict_dglt)
 
-    sub_data["control_data"] = Dict{String,Any}()
-    sub_data["control_data"]["voltage_controlled_bus"] = bus["CONTROLLED BUS"]
+    if add_control_data
+        sub_data["control_data"] = Dict{String,Any}()
+        sub_data["control_data"]["voltage_controlled_bus"] = bus["CONTROLLED BUS"]
+        sub_data["control_data"]["vmmin"] = sub_data["vmin"]
+        sub_data["control_data"]["vmmax"] = sub_data["vmax"]
+    end
 
     idx = string(sub_data["index"])
     pm_data["bus"][idx] = sub_data
 end
 
-function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
+function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict; add_control_data::Bool=false)
 
     dict_dglt = haskey(pwf_data, "DGLT") ? _create_dict_dglt(pwf_data["DGLT"]) : nothing
     isa(dict_dglt, Dict) && length(dict_dglt) == 1 ? @warn("Only one limit voltage group definded, each bus will be considered as part of the group $(pwf_data["DGLT"]["1"]["GROUP"]), regardless of its defined group") : nothing
@@ -111,7 +115,7 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict)
     pm_data["bus"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")
         for (i,bus) in pwf_data["DBAR"]
-            _pwf2pm_bus!(pm_data, pwf_data, bus, dict_dgbt, dict_dglt)
+            _pwf2pm_bus!(pm_data, pwf_data, bus, dict_dgbt, dict_dglt, add_control_data = add_control_data)
         end
     end
 end
