@@ -119,7 +119,7 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict; add_c
 
         elseif constraint_type == "PHASE CONTROL" # phase control
             sub_data["control_data"]["control_type"] = "shift_control"
-            sub_data["control_data"]["constraint_type"] = "bounds"
+            sub_data["control_data"]["constraint_type"] = "setpoint"
             shift_type = branch_dctr[circuit]["CONTROL TYPE"]
             sub_data["control_data"]["shift_control_variable"] = shift_type == 'C' ? "current" : shift_type == 'P' ? "power" : "fixed"
             sub_data["control_data"]["shiftmin"] = branch_dctr[circuit]["MINIMUM PHASE"]
