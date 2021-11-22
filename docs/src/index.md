@@ -1,14 +1,14 @@
-# ParserPWF.jl
+# PWF.jl
 
 ```@meta
-CurrentModule = ParserPWF
+CurrentModule = PWF
 ```
 
 ---
 
-ParserPWF.jl is a Julia package for converting ANAREDE data format (".pwf") into a Julia dictionary.
+PWF.jl is a Julia package for converting ANAREDE data format (".pwf") into a Julia dictionary.
 
-Additionaly, ParserPWF provides parsing .pwf file directly to [PowerModels.jl](https://github.com/lanl-ansi/PowerModels.jl) network data dictionary.
+Additionaly, PWF provides parsing .pwf file directly to [PowerModels.jl](https://github.com/lanl-ansi/PowerModels.jl) network data dictionary.
 
 The implementations were made based on the ANAREDE user guide manual (v09).
 
@@ -17,7 +17,7 @@ The implementations were made based on the ANAREDE user guide manual (v09).
 Parsing a .pwf file to Julia dictionary is as simple as:
 
 ```julia
-using ParserPWF
+using PWF
 
 file = "3bus.pwf"
 pwf_dict = parse_pwf(file)
