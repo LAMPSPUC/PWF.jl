@@ -39,5 +39,6 @@ makedocs(
 # for more information.
 deploydocs(
         repo="github.com/LAMPSPUC/PWF.jl.git",
+        devbranch = "main",
         push_preview = true
     )
