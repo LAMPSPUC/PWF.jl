@@ -8,7 +8,6 @@ PowerModels = "c36e90e8-916a-50a6-bd94-075b64ef4655"
 [compat]
 PowerModels = "0.18"
 Ipopt = ">= 0.8"
-JuMP = "~0.22"
 julia = "1"
 
 [extras]
