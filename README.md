@@ -44,7 +44,7 @@ For more information about PowerModels.jl visit the PowerModels [documentation](
 The package parses all available sections into a julia dictionary. Each key represents a .pwf section as shown below:
 
 ```julia
-julia> PWF.parse_file(file)
+julia> parse_file(file)
 Dict{String, Any} with 6 entries:
   "DLIN" => Dict{String, Any}[Dict("AGGREGATOR 10"=>nothing, "AGGREGATOR 5"=>nothing, "AGGR"…
   "name" => "3bus"
@@ -89,7 +89,7 @@ Dict{String, Any} with 6 entries:
 The package also allow converting .pwf file directly into PowerModels.jl network data structure:
 
 ```julia
-julia> PWF.parse_file(file; pm = true)
+julia> parse_file(file; pm = true)
 Dict{String, Any} with 13 entries:
   "bus"            => Dict{String, Any}("1"=>Dict{String, Any}("zone"=>1, "bus_i"=>1, "bus_"…
   "source_type"    => "pwf"
@@ -133,10 +133,10 @@ julia> data = parse_file(file; pm = true, software = Organon)
 
 **Additional data inside PWF files**
 
-If parse_pwf_to_powermodels' argument add_control_data is set to true (default = false), additional information present on the PWF file that is not used by PowerModels will be stored inside each element in the field "control_data", such as the example below:
+If parse_file' argument add_control_data is set to true (default = false), additional information present on the PWF file that is not used by PowerModels will be stored inside each element in the field "control_data", such as the example below:
 
 ```julia
-julia> data = PWF.parse_pwf_to_powermodels(file, add_control_data = true);
+julia> data = parse_file(file, pm = true, add_control_data = true);
 
 julia> data["shunt"]["1"]["control_data"]
 Dict{String, Any} with 9 entries:
