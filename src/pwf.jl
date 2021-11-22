@@ -4,7 +4,7 @@ module PWF
 using PowerModels
 
 # include PWF parser file
-include("pwf.jl")
+include("pwf2dict.jl")
 
 # include PowerModels converter files
 include("pwf2pm/bus.jl")
