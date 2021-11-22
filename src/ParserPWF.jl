@@ -30,6 +30,6 @@ function parse_file(io::IO; validate::Bool=true, software = ANAREDE, pm::Bool = 
     pm ? parse_pwf_to_powermodels(io, validate = validate, software = software, add_control_data = add_control_data) : parse_pwf(filename)
 end
 
-export parse_file
+export parse_file, ANAREDE, Organon
 
 end # end module
