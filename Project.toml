@@ -1,11 +1,13 @@
 name = "PWF"
 uuid = "0f4c3beb-4231-4c4d-93e1-709cb40a89e6"
-version = "0.3.1"
+version = "0.0.1"
 
 [deps]
-Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-DocumenterTools = "35a29f4d-8980-5a13-9543-d66fff28ecb8"
 PowerModels = "c36e90e8-916a-50a6-bd94-075b64ef4655"
+
+[compat]
+PowerModels = "0.18"
+julia = "1"
 
 [extras]
 Ipopt = "b6b21f68-93f8-5de0-b562-5493be1d77c9"
