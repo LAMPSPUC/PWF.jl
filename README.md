@@ -20,13 +20,13 @@ Parsing a .pwf file to Julia dictionary is as simple as:
 using ParserPWF
 
 file = "3bus.pwf"
-pwf_dict = parse_pwf(file)
+pwf_dict = parse_file(file)
 ```
 
 Converting the .pwf file into PowerModels.jl network data dictionary:
 
 ```julia
-network_data = parse_pwf_to_powermodels(file)
+network_data = parse_file(file; pm = true)
 ```
 
 Then you are ready to use PowerModels!
@@ -44,7 +44,7 @@ For more information about PowerModels.jl visit the PowerModels [documentation](
 The package parses all available sections into a julia dictionary. Every key represents a .pwf section as shown below:
 
 ```julia
-julia> ParserPWF.parse_pwf(file)
+julia> ParserPWF.parse_file(file)
 Dict{String, Any} with 6 entries:
   "DLIN" => Dict{String, Any}[Dict("AGGREGATOR 10"=>nothing, "AGGREGATOR 5"=>nothing, "AGGR"…
   "name" => "3bus"
@@ -89,7 +89,7 @@ Dict{String, Any} with 6 entries:
 The package also allow converting .pwf file directly into PowerModels.jl network data structure:
 
 ```julia
-julia> ParserPWF.parse_pwf_to_powermodels(file)
+julia> ParserPWF.parse_file(file; pm = true)
 Dict{String, Any} with 13 entries:
   "bus"            => Dict{String, Any}("1"=>Dict{String, Any}("zone"=>1, "bus_i"=>1, "bus_"…
   "source_type"    => "pwf"
@@ -126,9 +126,9 @@ There are two main softwares used for parsing PWF files and each one does slight
 
 ```julia
 
-julia> data = parse_file(file; software = ANAREDE)
+julia> data = parse_file(file; pm = true, software = ANAREDE)
 
-julia> data = parse_file(file; software = Organon)
+julia> data = parse_file(file; pm = true, software = Organon)
 ```
 
 **Additional data inside PWF files**
