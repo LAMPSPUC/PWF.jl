@@ -2,11 +2,11 @@
     @testset "PowerModels Dict fields" begin
         @testset "PowerModels conversion" begin
             file = open(joinpath(@__DIR__,"data/pwf/test_system.pwf"))
-            pwf_data = ParserPWF._parse_pwf_data(file)
+            pwf_data = PWF._parse_pwf_data(file)
             pm_data = Dict{String, Any}()
 
             @testset "Bus" begin
-                ParserPWF._pwf2pm_bus!(pm_data, pwf_data, add_control_data = true)
+                PWF._pwf2pm_bus!(pm_data, pwf_data, add_control_data = true)
                 
                 @test haskey(pm_data, "bus")
                 @test length(pm_data["bus"]) == 9
@@ -45,8 +45,8 @@
             end
 
             @testset "Branch" begin
-                ParserPWF._pwf2pm_branch!(pm_data, pwf_data, add_control_data = true)
-                ParserPWF._pwf2pm_transformer!(pm_data, pwf_data, add_control_data = true)
+                PWF._pwf2pm_branch!(pm_data, pwf_data, add_control_data = true)
+                PWF._pwf2pm_transformer!(pm_data, pwf_data, add_control_data = true)
                 
                 @test haskey(pm_data, "branch")
                 @test length(pm_data["branch"]) == 7
@@ -93,7 +93,7 @@
 
             @testset "DCline" begin
                 pwf_dc = open(joinpath(@__DIR__,"data/pwf/300bus.pwf"))
-                pwf_data_dc = ParserPWF.parse_pwf_to_powermodels(pwf_dc)
+                pwf_data_dc = PWF.parse_pwf_to_powermodels(pwf_dc)
 
                 @test haskey(pwf_data_dc, "dcline")
                 @test length(pwf_data_dc["dcline"]) == 1
@@ -107,7 +107,7 @@
 
         @testset "Resulting Dict" begin
             file = open(joinpath(@__DIR__,"data/pwf/test_system.pwf"))
-            pm_data = ParserPWF.parse_pwf_to_powermodels(file; software = ParserPWF.Organon)
+            pm_data = PWF.parse_pwf_to_powermodels(file; software = PWF.Organon)
 
             @testset "PowerModels Dict" begin
                 @test isa(pm_data, Dict)
@@ -163,7 +163,7 @@
                 file_raw = joinpath(@__DIR__,"data/raw/$name.raw")
                 file_pwf = open(joinpath(@__DIR__,"data/pwf/$name.pwf"))
             
-                pwf_data = ParserPWF.parse_pwf_to_powermodels(file_pwf)
+                pwf_data = PWF.parse_pwf_to_powermodels(file_pwf)
                 raw_data = PowerModels.parse_file(file_raw)
                 
                 result_pwf = PowerModels.run_ac_pf(pwf_data, ipopt)
@@ -176,7 +176,7 @@
 
         @testset "PWF to PM corrections" begin
             file = open(joinpath(@__DIR__,"data/pwf/3bus_corrections.pwf"))
-            pm_data = ParserPWF.parse_pwf_to_powermodels(file; software = ParserPWF.Organon)
+            pm_data = PWF.parse_pwf_to_powermodels(file; software = PWF.Organon)
 
             parse_result = PowerModels.run_ac_pf(pm_data, ipopt);
 
@@ -192,7 +192,7 @@
     @testset "Control data fields" begin
         @testset "Shunt control_data" begin
             file = open(joinpath(@__DIR__,"data/pwf/3bus_shunt_fields.pwf"))
-            pm_data = ParserPWF.parse_pwf_to_powermodels(file, software = ParserPWF.ANAREDE, add_control_data = true)
+            pm_data = PWF.parse_pwf_to_powermodels(file, software = PWF.ANAREDE, add_control_data = true)
 
             @test length(pm_data["bus"]) == 3
             @test occursin("B s 1", pm_data["bus"]["1"]["name"])
@@ -231,7 +231,7 @@
 
         @testset "Line shunt" begin
             file = open(joinpath(@__DIR__,"data/pwf/test_line_shunt.pwf"))
-            pm_data = ParserPWF.parse_pwf_to_powermodels(file; software = ParserPWF.Organon)
+            pm_data = PWF.parse_pwf_to_powermodels(file; software = PWF.Organon)
 
             @test pm_data["branch"]["1"]["b_fr"] == 4.5
             @test pm_data["branch"]["1"]["b_to"] == 7.8
@@ -244,7 +244,7 @@
         end
 
         @testset "Transformer control fields" begin
-            data = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/9bus_transformer_fields.pwf"), add_control_data = true)
+            data = PWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/9bus_transformer_fields.pwf"), add_control_data = true)
 
             tap_automatic_control = findfirst(x -> x["f_bus"] == 1 && x["t_bus"] == 4, data["branch"])
             tap_variable_control = findfirst(x -> x["f_bus"] == 2 && x["t_bus"] == 7, data["branch"])
@@ -303,8 +303,8 @@
 
     @testset "Organon vs ANAREDE parser" begin
         @testset "DBSH" begin
-            data_anarede = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DBSH.pwf"), software = ParserPWF.ANAREDE)
-            data_organon = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DBSH.pwf"), software = ParserPWF.Organon)
+            data_anarede = PWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DBSH.pwf"), software = PWF.ANAREDE)
+            data_organon = PWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DBSH.pwf"), software = PWF.Organon)
 
             pm_anarede = PowerModels.instantiate_model(data_anarede, PowerModels.ACPPowerModel, PowerModels.build_pf);
             pm_organon = PowerModels.instantiate_model(data_organon, PowerModels.ACPPowerModel, PowerModels.build_pf);
@@ -331,8 +331,8 @@
         end
 
         @testset "DCER" begin
-            data_anarede = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DCER.pwf"), software = ParserPWF.ANAREDE)
-            data_organon = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DCER.pwf"), software = ParserPWF.Organon)
+            data_anarede = PWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DCER.pwf"), software = PWF.ANAREDE)
+            data_organon = PWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DCER.pwf"), software = PWF.Organon)
 
             pm_anarede = PowerModels.instantiate_model(data_anarede, PowerModels.ACPPowerModel, PowerModels.build_pf);
             pm_organon = PowerModels.instantiate_model(data_organon, PowerModels.ACPPowerModel, PowerModels.build_pf);
@@ -360,8 +360,8 @@
         end
 
         @testset "DSHL" begin
-            data_anarede = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DSHL.pwf"), software = ParserPWF.ANAREDE)
-            data_organon = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DSHL.pwf"), software = ParserPWF.Organon)
+            data_anarede = PWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DSHL.pwf"), software = PWF.ANAREDE)
+            data_organon = PWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DSHL.pwf"), software = PWF.Organon)
 
             pm_anarede = PowerModels.instantiate_model(data_anarede, PowerModels.ACPPowerModel, PowerModels.build_pf);
             pm_organon = PowerModels.instantiate_model(data_organon, PowerModels.ACPPowerModel, PowerModels.build_pf);
@@ -404,8 +404,8 @@
         end
 
         @testset "DCSC" begin
-            data_anarede = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DCSC.pwf"), software = ParserPWF.ANAREDE)
-            data_organon = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DCSC.pwf"), software = ParserPWF.Organon)
+            data_anarede = PWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DCSC.pwf"), software = PWF.ANAREDE)
+            data_organon = PWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DCSC.pwf"), software = PWF.Organon)
 
             pm_anarede = PowerModels.instantiate_model(data_anarede, PowerModels.ACPPowerModel, PowerModels.build_pf);
             pm_organon = PowerModels.instantiate_model(data_organon, PowerModels.ACPPowerModel, PowerModels.build_pf);
@@ -450,7 +450,7 @@
         end
 
         @testset "DC line" begin
-            data_anarede = ParserPWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DCline.pwf"), software = ParserPWF.ANAREDE)
+            data_anarede = PWF.parse_pwf_to_powermodels(joinpath(@__DIR__,"data/pwf/3bus_DCline.pwf"), software = PWF.ANAREDE)
             pm_anarede = PowerModels.instantiate_model(data_anarede, PowerModels.ACPPowerModel, PowerModels.build_pf);
             result_anarede = PowerModels.optimize_model!(pm_anarede, optimizer = ipopt)
             PowerModels.update_data!(data_anarede, result_anarede["solution"])

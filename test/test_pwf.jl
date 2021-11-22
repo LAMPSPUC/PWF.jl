@@ -2,28 +2,28 @@
     @testset "Intermediary functions" begin
         file = open(joinpath(@__DIR__,"data/pwf/test_system.pwf"))
 
-        sections = ParserPWF._split_sections(file)
+        sections = PWF._split_sections(file)
         @test isa(sections, Vector{Vector{String}})
         @test length(sections) == 5
         @test sections[1][1] == "TITU"
 
         data = Dict{String, Any}()
-        ParserPWF._parse_section!(data, sections[1])
+        PWF._parse_section!(data, sections[1])
         @test haskey(data, "TITU")
-        ParserPWF._parse_section!(data, sections[2])
+        PWF._parse_section!(data, sections[2])
         @test haskey(data, "DOPC IMPR")
-        ParserPWF._parse_section!(data, sections[3])
+        PWF._parse_section!(data, sections[3])
         @test haskey(data, "DCTE")
-        ParserPWF._parse_section!(data, sections[4])
+        PWF._parse_section!(data, sections[4])
         @test haskey(data, "DBAR")
-        ParserPWF._parse_section!(data, sections[5])
+        PWF._parse_section!(data, sections[5])
         @test haskey(data, "DLIN")
     end
 
 
     @testset "Resulting Dict" begin
         file = open(joinpath(@__DIR__,"data//pwf/test_system.pwf"))
-        dict = ParserPWF._parse_pwf_data(file)
+        dict = PWF._parse_pwf_data(file)
 
         @testset "Keys" begin
             @test haskey(dict, "TITU")
@@ -159,7 +159,7 @@
                                 "DCSC" => Dict("1" => Dict("FROM BUS" => 1, "OPERATION" => 'A', "TO BUS" => 2, "CIRCUIT" => 0, "STATUS" => 'L', "OWNER" => 'F', "BYPASS" => 'D', "MINIMUM VALUE" => -9999.0, "MAXIMUM VALUE" => 0.0, "INITIAL VALUE" => 0.0, "CONTROL MODE" => 'X', "SPECIFIED VALUE" => nothing, "MEASUREMENT EXTREMITY" => 1, "NUMBER OF STAGES" => nothing, "NORMAL CAPACITY" => Inf, "EMERGENCY CAPACITY" => Inf, "EQUIPAMENT CAPACITY" => Inf, "AGGREGATOR 1" => nothing, "AGGREGATOR 2" => nothing, "AGGREGATOR 3" => nothing, "AGGREGATOR 4" => nothing, "AGGREGATOR 5" => nothing, "AGGREGATOR 6" => nothing, "AGGREGATOR 7" => nothing, "AGGREGATOR 8" => nothing, "AGGREGATOR 9" => nothing, "AGGREGATOR 10" => nothing)),
                                 "DCAI" => Dict("1" => Dict("BUS" => 1, "OPERATION" => 'A', "GROUP" => nothing, "STATUS" => 'L', "UNITIES" => 2, "OPERATING UNITIES" => 2, "ACTIVE CHARGE" => 0.0, "REACTIVE CHARGE" => 0.0, "PARAMETER A" => nothing, "PARAMETER B" => nothing, "PARAMETER C" => nothing, "PARAMETER D" => nothing, "VOLTAGE" => 70.0, "CHARGE DEFINITION VOLTAGE" => 1.0)),
                                 "DGEI" => Dict("1" => Dict("BUS" => 1, "OPERATION" => 'A', "AUTOMATIC MODE" => 'N', "GROUP" => nothing, "STATUS" => 'L', "UNITIES" => 2, "OPERATING UNITIES" => 2, "MINIMUM OPERATING UNITIES" => 1, "ACTIVE GENERATION" => 0.0, "REACTIVE GENERATION" => 0.0, "MINIMUM REACTIVE GENERATION" => -9999.0, "MAXIMUM REACTIVE GENERATION" => 99999.0, "ELEVATOR TRANSFORMER REACTANCE" => nothing, "XD" => 0.0, "XQ" => 0.0, "XL" => 0.0, "POWER FACTOR" => 1.0, "APPARENT POWER" => 99999.0, "MECHANICAL LIMIT" => 99999.0)))
-        parsed_pwf = ParserPWF.parse_file(joinpath(@__DIR__,"data/pwf/test_defaults.pwf"), pm = false)
+        parsed_pwf = PWF.parse_file(joinpath(@__DIR__,"data/pwf/test_defaults.pwf"), pm = false)
 
         @test parsed_pwf == pwf
     end

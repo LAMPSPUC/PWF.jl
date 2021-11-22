@@ -1,10 +1,10 @@
 using Documenter
-using ParserPWF
+using PWF
 
 makedocs(
-    modules = [ParserPWF],
+    modules = [PWF],
     format = Documenter.HTML(analytics = "UA-367975-10", mathengine = Documenter.MathJax()),
-    sitename = "ParserPWF",
+    sitename = "PWF",
     authors = "Iago Chávarry and Pedro Hamacher",
     pages = [
         "Home" => "index.md",
