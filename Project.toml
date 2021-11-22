@@ -1,6 +1,6 @@
 name = "PWF"
 uuid = "0f4c3beb-4231-4c4d-93e1-709cb40a89e6"
-version = "0.3.1"
+version = "0.0.1"
 
 [deps]
 PowerModels = "c36e90e8-916a-50a6-bd94-075b64ef4655"
