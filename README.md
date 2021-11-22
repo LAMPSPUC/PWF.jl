@@ -41,7 +41,7 @@ For more information about PowerModels.jl visit the PowerModels [documentation](
 
 ## Parser
 
-The package parses all available sections into a julia dictionary. Every key represents a .pwf section as shown below:
+The package parses all available sections into a julia dictionary. Each key represents a .pwf section as shown below:
 
 ```julia
 julia> ParserPWF.parse_file(file)
@@ -57,7 +57,7 @@ Dict{String, Any} with 6 entries:
 **PWF Sections Available:**
 
 - DBAR
-- DBSH (fban)
+- DBSH
 - DCBA
 - DCCV
 - DCER
@@ -72,9 +72,6 @@ Dict{String, Any} with 6 entries:
 - DLIN
 - DOPC
 - DSHL
-
-  **Incoming Sections:**
-
 - DARE
 - DCAI
 - DCAR
@@ -83,6 +80,9 @@ Dict{String, Any} with 6 entries:
 - DMFL
 - DMOT
 - DMTE
+- DAGR
+- DCMT
+- DTPF
 
 ## PowerModels.jl converter
 
@@ -133,9 +133,11 @@ julia> data = parse_file(file; pm = true, software = Organon)
 
 **Additional data inside PWF files**
 
-Additional information existing in a PWF file that is not used by PowerModels is stored inside each element in the field "control_data", such as the example below:
+If parse_pwf_to_powermodels' argument add_control_data is set to true (default = false), additional information present on the PWF file that is not used by PowerModels will be stored inside each element in the field "control_data", such as the example below:
 
 ```julia
+julia> data = ParserPWF.parse_pwf_to_powermodels(file, add_control_data = true);
+
 julia> data["shunt"]["1"]["control_data"]
 Dict{String, Any} with 9 entries:
   "vmmax"              => 1.029
