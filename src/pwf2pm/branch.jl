@@ -25,6 +25,21 @@ function _create_dict_dshl(data::Dict)
     return dshl_dict
 end
 
+function _handle_br_status!(pm_data::Dict, sub_data::Dict, branch::Dict)
+    f_bus = sub_data["f_bus"]
+    t_bus = sub_data["t_bus"]
+
+    if pm_data["bus"]["$f_bus"]["bus_type"] != 4 && pm_data["bus"]["$t_bus"]["bus_type"] != 4
+        if branch["STATUS"] == branch["OPENING FROM BUS"] == branch["OPENING TO BUS"] == 'L'
+            sub_data["br_status"] = 1
+        end
+    else
+        sub_data["br_status"] = 0
+    end
+    
+    return sub_data
+end
+
 function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict; add_control_data::Bool=false)
     sub_data = Dict{String,Any}()
 
@@ -46,11 +61,7 @@ function _pwf2pm_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict; add_contro
     sub_data["angmax"] = 60.0 # PowerModels.jl standard
     sub_data["transformer"] = false
 
-    if branch["STATUS"] == branch["OPENING FROM BUS"] == branch["OPENING TO BUS"] == 'L'
-        sub_data["br_status"] = 1
-    else
-        sub_data["br_status"] = 0
-    end
+    _handle_br_status!(pm_data, sub_data, branch)
 
     if add_control_data
         sub_data["control_data"] = Dict{String,Any}()

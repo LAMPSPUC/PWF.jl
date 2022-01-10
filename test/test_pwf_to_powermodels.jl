@@ -147,14 +147,21 @@
                     @test solution["multiinfrastructure"] == false
                     @test solution["multinetwork"]        == false
                     @test solution["per_unit"]            == true
-                    @test length(solution["bus"])         == 9
+                    @test length(solution["bus"])         == 8
                 end
 
             end
 
         end
 
+        @testset "Bus Disconnected - Branch Status" begin
+            # If a branch whose extremity is in a disconnected bus (bus_type = 4)
+            # the branch status must be off
 
+            file = open(joinpath(@__DIR__,"data/pwf/test_system.pwf"))
+            pm_data = PWF.parse_pwf_to_powermodels(file)
+            @test pm_data["branch"]["5"]["br_status"] == 0
+        end
 
         @testset "Power Flow results" begin
             filenames = ["3bus", "9bus"]

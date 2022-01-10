@@ -54,11 +54,7 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict; add_c
     sub_data["angmax"] = 60.0 # PowerModels.jl standard
     sub_data["transformer"] = true
 
-    if branch["STATUS"] == branch["OPENING FROM BUS"] == branch["OPENING TO BUS"] == 'L'
-        sub_data["br_status"] = 1
-    else
-        sub_data["br_status"] = 0
-    end
+    _handle_br_status!(pm_data, sub_data, branch)
 
     n = 0 # count(x -> x["f_bus"] == sub_data["f_bus"] && x["t_bus"] == sub_data["t_bus"], values(pm_data["branch"])) 
     sub_data["source_id"] = ["transformer", sub_data["f_bus"], sub_data["t_bus"], 0, "0$(n + 1)", 0]
