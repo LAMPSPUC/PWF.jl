@@ -32,6 +32,8 @@ function _handle_br_status!(pm_data::Dict, sub_data::Dict, branch::Dict)
     if pm_data["bus"]["$f_bus"]["bus_type"] != 4 && pm_data["bus"]["$t_bus"]["bus_type"] != 4
         if branch["STATUS"] == branch["OPENING FROM BUS"] == branch["OPENING TO BUS"] == 'L'
             sub_data["br_status"] = 1
+        else
+            sub_data["br_status"] = 0
         end
     else
         sub_data["br_status"] = 0
