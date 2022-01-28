@@ -6,7 +6,7 @@
 
 # This parser was develop using ANAREDE v09 user manual
 
-const _fban_1_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
+const _fban_1_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Char, 7),
     ("TO BUS", Int64, 9:13), ("CIRCUIT", Int64, 15:16), ("CONTROL MODE", Char, 18),
     ("MINIMUM VOLTAGE", Float64, 20:23, 20), ("MAXIMUM VOLTAGE", Float64, 25:28, 25),
     ("CONTROLLED BUS", Int64, 30:34), ("INITIAL REACTIVE INJECTION", Float64, 36:41),
@@ -34,7 +34,7 @@ const _divided_sections = Dict("DBSH" => _dbsh_dtypes,
 """
 A list of data file sections in the order that they appear in a PWF file
 """
-const _dbar_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Int64, 6), 
+const _dbar_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Char, 6), 
     ("STATUS", Char, 7), ("TYPE", Int64, 8), ("BASE VOLTAGE GROUP", String, 9:10),
     ("NAME", String, 11:22), ("VOLTAGE LIMIT GROUP", String, 23:24),
     ("VOLTAGE", Float64, 25:28, 25), ("ANGLE", Float64, 29:32),
@@ -51,7 +51,7 @@ const _dbar_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Int64, 6),
     ("AGGREGATOR 9", Int64, 106:108), ("AGGREGATOR 10", Int64, 109:111)]
 
 const _dlin_dtypes = [("FROM BUS", Int64, 1:5), ("OPENING FROM BUS", Char, 6),
-    ("OPERATION", Int64, 8), ("OPENING TO BUS", Char, 10), ("TO BUS", Int64, 11:15),
+    ("OPERATION", Char, 8), ("OPENING TO BUS", Char, 10), ("TO BUS", Int64, 11:15),
     ("CIRCUIT", Int64, 16:17), ("STATUS", Char, 18), ("OWNER", Char, 19),
     ("RESISTANCE", Float64, 21:26, 24), ("REACTANCE", Float64, 27:32, 30),
     ("SHUNT SUSCEPTANCE", Float64, 33:38, 35), ("TAP", Float64, 39:43, 40),
@@ -80,26 +80,26 @@ const _dger_dtypes = [("NUMBER", Int, 1:5), ("OPERATION", Char, 7),
     ("ROTOR SERVICE FACTOR", Float64, 46:49), ("CHARGE ANGLE", Float64, 51:54),
     ("MACHINE REACTANCE", Float64, 56:60), ("NOMINAL APPARENT POWER", Float64, 62:66)]
 
-const _dshl_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
+const _dshl_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Char, 7),
     ("TO BUS", Int64, 10:14), ("CIRCUIT", Int64, 15:16), ("SHUNT FROM", Float64, 18:23),
     ("SHUNT TO", Float64, 24:29), ("STATUS FROM", String, 31:32), ("STATUS TO", String, 34:35)]
 
-const _dcba_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("TYPE", Int64, 8),
+const _dcba_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Char, 6), ("TYPE", Int64, 8),
     ("POLARITY", Char, 9), ("NAME", String, 10:21), ("VOLTAGE LIMIT GROUP", String, 22:23),
     ("VOLTAGE", Float64, 24:28), ("GROUND ELECTRODE", Float64, 67:71), ("DC LINK", Int64, 72:75)]
 
-const _dcli_dtypes = [("FROM BUS", Int64, 1:4), ("OPERATION", Int64, 6), ("TO BUS", Int64, 9:12),
+const _dcli_dtypes = [("FROM BUS", Int64, 1:4), ("OPERATION", Char, 6), ("TO BUS", Int64, 9:12),
     ("CIRCUIT", Int64, 13:14), ("OWNER", Char, 16), ("RESISTANCE", Float64, 18:23),
     ("INDUCTANCE", Float64, 24:29), ("CAPACITY", Float64, 61:64)]
 
-const _dcnv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("AC BUS", Int64, 8:12),
+const _dcnv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Char, 6), ("AC BUS", Int64, 8:12),
     ("DC BUS", Int64, 14:17), ("NEUTRAL BUS", Int64, 19:22), ("OPERATION MODE", Char, 24),
     ("BRIDGES", Int64, 26), ("CURRENT", Float64, 28:32), ("COMMUTATION REACTANCE", Float64, 34:38),
     ("SECONDARY VOLTAGE", Float64, 40:44), ("TRANSFORMER POWER", Float64, 46:50),
     ("REACTOR RESISTANCE", Float64, 52:56), ("REACTOR INDUCTANCE", Float64, 58:62),
     ("CAPACITANCE", Float64, 64:68), ("FREQUENCY", Float64, 70:71)]
 
-const _dccv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("LOOSENESS", Char, 8),
+const _dccv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Char, 6), ("LOOSENESS", Char, 8),
     ("INVERTER CONTROL MODE", Char, 9), ("CONVERTER CONTROL TYPE", Char, 10),
     ("SPECIFIED VALUE", Float64, 12:16), ("CURRENT MARGIN", Float64,18:22),
     ("MAXIMUM OVERCURRENT", Float64, 24:28), ("CONVERTER ANGLE", Float64, 30:34),
@@ -109,7 +109,7 @@ const _dccv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("LOOSENE
     ("MINIMUM DC VOLTAGE FOR POWER CONTROL", Float64, 63:66, 63),
     ("TAP HI MVAR MODE", Float64, 68:72), ("TAP REDUCED VOLTAGE MODE", Float64, 74:78)]
 
-const _delo_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("VOLTAGE", Float64, 8:12),
+const _delo_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Char, 6), ("VOLTAGE", Float64, 8:12),
     ("BASE", Float64, 14:18), ("NAME", String, 20:39), ("HI MVAR MODE", Char, 41), ("STATUS", Char, 43)]
 
 const _dcer_dtypes = [("BUS", Int, 1:5), ("OPERATION", Char, 7), ("GROUP", Int64, 9:10),
