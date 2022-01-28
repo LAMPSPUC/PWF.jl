@@ -498,7 +498,7 @@ function _parse_line_element!(data::Dict{String, Any}, line::String, section::Ab
             end
         catch
             if !_needs_default(element)
-                @warn "Could not parse $element to $dtype inside $section section, setting it as a String"
+                Memento.warn(_LOGGER, "Could not parse $element to $dtype inside $section section, setting it as a String")
             end
             data[field] = element
         end
@@ -521,7 +521,7 @@ function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, se
                         data[line[k]] = parse(mn_type, line[v])
                     catch
                         if !_needs_default(line[v])
-                            @warn "Could not parse $(line[v]) to $mn_type, setting it as a String"
+                            Memento.warn(_LOGGER, "Could not parse $(line[v]) to $mn_type, setting it as a String")
                         end
                         !_needs_default(line[k]) ? data[line[k]] = line[v] : nothing
                     end
@@ -606,7 +606,7 @@ function _parse_section!(data::Dict{String, Any}, section_lines::Vector{String})
         _parse_divided_section!(section_data, section_lines, section)
 
     else
-        @warn "Currently there is no support for $section parsing"
+        Memento.warn(_LOGGER, "Currently there is no support for $section parsing")
         section_data = nothing
     end
     data[section] = section_data
@@ -617,11 +617,11 @@ _needs_default(ch::Char) = ch == ' '
 
 function _populate_defaults!(pwf_data::Dict{String, Any})
 
-    @warn "Populating defaults"
+    Memento.info(_LOGGER, "Populating defaults")
 
     for (section, section_data) in pwf_data
         if !haskey(_pwf_defaults, section)
-            @warn "Parser doesn't have default values for section $(section)."
+            Memento.warn(_LOGGER, "Parser doesn't have default values for section $(section)")
         else
             if section in keys(_pwf_dtypes)
                 _populate_section_defaults!(pwf_data, section, section_data)

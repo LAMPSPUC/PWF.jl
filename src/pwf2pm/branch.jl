@@ -171,7 +171,7 @@ function _pwf2pm_DCSC_branch!(pm_data::Dict, pwf_data::Dict, branch::Dict; add_c
 
     rep = findall(x -> x["f_bus"] == sub_data["f_bus"] && x["t_bus"] == sub_data["t_bus"] && x["circuit"] == sub_data["circuit"], pm_data["branch"])
     if length(rep) > 0
-        @warn "Branch from $(sub_data["f_bus"]) to $(sub_data["t_bus"]) in circuit $(sub_data["circuit"]) is duplicated"
+        Memento.warn(_LOGGER,  "Branch from $(sub_data["f_bus"]) to $(sub_data["t_bus"]) in circuit $(sub_data["circuit"]) is duplicated")
     end
     idx = string(sub_data["index"])
     pm_data["branch"][idx] = sub_data
