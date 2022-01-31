@@ -496,9 +496,9 @@ function _parse_line_element!(data::Dict{String, Any}, line::String, section::Ab
             else
                 data[field] = element
             end
-        catch
+        catch message
             if !_needs_default(element)
-                Memento.warn(_LOGGER, "Could not parse $element to $dtype inside $section section, setting it as a String")
+                throw(Memento.error(_LOGGER, "Parsing error at section $section: $field should be of type $dtype, received $element"))
             end
             data[field] = element
         end
@@ -519,9 +519,9 @@ function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, se
                 if mn_type != String && mn_type != Char
                     try
                         data[line[k]] = parse(mn_type, line[v])
-                    catch
+                    catch message
                         if !_needs_default(line[v])
-                            Memento.warn(_LOGGER, "Could not parse $(line[v]) to $mn_type, setting it as a String")
+                            throw(Memento.error(_LOGGER, "Parsing error at section $section: $field should be of type $dtype, received $element"))
                         end
                         !_needs_default(line[k]) ? data[line[k]] = line[v] : nothing
                     end
