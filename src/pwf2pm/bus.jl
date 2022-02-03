@@ -108,9 +108,9 @@ end
 function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict; add_control_data::Bool=false)
 
     dict_dglt = haskey(pwf_data, "DGLT") ? _create_dict_dglt(pwf_data["DGLT"]) : nothing
-    isa(dict_dglt, Dict) && length(dict_dglt) == 1 ? @warn("Only one limit voltage group definded, each bus will be considered as part of the group $(pwf_data["DGLT"]["1"]["GROUP"]), regardless of its defined group") : nothing
+    isa(dict_dglt, Dict) && length(dict_dglt) == 1 ? Memento.warn(_LOGGER, "Only one limit voltage group definded, each bus will be considered as part of the group $(pwf_data["DGLT"]["1"]["GROUP"]), regardless of its defined group") : nothing
     dict_dgbt = haskey(pwf_data, "DGBT") ? _create_dict_dgbt(pwf_data["DGBT"]) : nothing
-    isa(dict_dgbt, Dict) && length(dict_dgbt) == 1 ? @warn("Only one base voltage group definded, each bus will be considered as part of the group $(pwf_data["DGBT"]["1"]["GROUP"]), regardless of its defined group") : nothing
+    isa(dict_dgbt, Dict) && length(dict_dgbt) == 1 ? Memento.warn(_LOGGER, "Only one base voltage group definded, each bus will be considered as part of the group $(pwf_data["DGBT"]["1"]["GROUP"]), regardless of its defined group") : nothing
 
     pm_data["bus"] = Dict{String, Any}()
     if haskey(pwf_data, "DBAR")

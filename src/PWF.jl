@@ -2,6 +2,21 @@ module PWF
 
 # using packages
 using PowerModels
+using Memento
+
+# setting up Memento
+const _LOGGER = Memento.getlogger(@__MODULE__)
+
+__init__() = Memento.register(_LOGGER)
+
+function silence()
+    Memento.info(_LOGGER, "Suppressing information and warning messages for the rest of this session.  Use the Memento package for more fine-grained control of logging.")
+    Memento.setlevel!(Memento.getlogger(PWF), "error")
+end
+
+function logger_config!(level)
+    Memento.config!(Memento.getlogger("PWF"), level)
+end
 
 # include PWF parser file
 include("pwf2dict.jl")

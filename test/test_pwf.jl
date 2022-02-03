@@ -2,21 +2,21 @@
     @testset "Intermediary functions" begin
         file = open(joinpath(@__DIR__,"data/pwf/test_system.pwf"))
 
-        sections = PWF._split_sections(file)
-        @test isa(sections, Vector{Vector{String}})
+        file_lines, sections = PWF._split_sections(file)
+        @test isa(file_lines, Vector{String})
+        @test isa(sections, Dict{String, Vector{Int64}})
         @test length(sections) == 5
-        @test sections[1][1] == "TITU"
 
         data = Dict{String, Any}()
-        PWF._parse_section!(data, sections[1])
+        PWF._parse_section!(data, "TITU", sections["TITU"], file_lines)
         @test haskey(data, "TITU")
-        PWF._parse_section!(data, sections[2])
+        PWF._parse_section!(data, "DOPC IMPR", sections["DOPC IMPR"], file_lines)
         @test haskey(data, "DOPC IMPR")
-        PWF._parse_section!(data, sections[3])
+        PWF._parse_section!(data, "DCTE", sections["DCTE"], file_lines)
         @test haskey(data, "DCTE")
-        PWF._parse_section!(data, sections[4])
+        PWF._parse_section!(data, "DBAR", sections["DBAR"], file_lines)
         @test haskey(data, "DBAR")
-        PWF._parse_section!(data, sections[5])
+        PWF._parse_section!(data, "DLIN", sections["DLIN"], file_lines)
         @test haskey(data, "DLIN")
     end
 

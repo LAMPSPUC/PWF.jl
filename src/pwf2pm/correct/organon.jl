@@ -12,7 +12,7 @@ function _pwf2pm_corrections_PV!(pm_data::Dict, pwf_data::Dict, software::Organo
                 if isempty(load_from_bus(pm_data, parse(Int, i))) 
                     _pwf2pm_load!(pm_data, pwf_data, parse(Int,i))
                 end
-                @warn "Active generator with QMIN = QMAX found in a PV bus number $i. Changing bus type from PV to PQ."
+                Memento.warn(_LOGGER,  "Active generator with QMIN = QMAX found in a PV bus number $i. Changing bus type from PV to PQ")
             end
         end
     end
@@ -32,7 +32,7 @@ function _pwf2pm_corrections_PQ!(pm_data::Dict, software::Organon)
             if !isempty(gen_keys_case1)
                 # change bus type to PV
                 bus["bus_type"] = bus_type_str_to_num["PV"]
-                @warn "Active generator with QMIN < QMAX found in a PQ bus. Changing bus $i type to PV."
+                Memento.warn(_LOGGER,  "Active generator with QMIN < QMAX found in a PQ bus. Changing bus $i type to PV")
             elseif !isempty(gen_keys_case2)
                 # change generator status to off and sum load power with gen power
                 Pg, Qg = sum_generators_power_and_turn_off(pm_data, gen_keys_case2)
@@ -41,8 +41,8 @@ function _pwf2pm_corrections_PQ!(pm_data::Dict, software::Organon)
                 # sum load power with the negative of generator power
                 pm_data["load"][load_key[1]]["pd"] += - Pg
                 pm_data["load"][load_key[1]]["qd"] += - Qg                 
-                @warn "Active generator with QMIN = QMAX found in PQ bus $i. Adding generator power " *
-                    "to load power and changing generator status to off."
+                Memento.warn(_LOGGER,  "Active generator with QMIN = QMAX found in PQ bus $i. Adding generator power " *
+                    "to load power and changing generator status to off")
             end
         end
     end

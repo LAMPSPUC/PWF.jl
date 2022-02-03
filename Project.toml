@@ -4,6 +4,7 @@ version = "0.0.1"
 
 [deps]
 PowerModels = "c36e90e8-916a-50a6-bd94-075b64ef4655"
+Memento = "f28f55f0-a522-5efc-85c2-fe41dfb9b2d9"
 
 [compat]
 PowerModels = "0.18"

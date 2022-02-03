@@ -52,8 +52,8 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict, link::Dict)
     # pf = mdc == 'P' ? abs(setvl[1]) : mdc == 'C' ? - abs(setvl[1] / vschd[1] / 1000) : 0
     # pt = mdc == 'P' ? - abs(setvl[2]) : mdc == 'C' ? abs(setvl[2] / vschd[2] / 1000) : 0
 
-    pf = mdc == 'P' ? abs(setvl) : @error("The formulation is prepared only for power control")
-    pt = mdc == 'P' ? - abs(setvl) + loss : @error("The formulation is prepared only for power control")
+    pf = mdc == 'P' ? abs(setvl) : Memento.error(_LOGGER, "The formulation is prepared only for power control")
+    pt = mdc == 'P' ? - abs(setvl) + loss : Memento.error(_LOGGER, "The formulation is prepared only for power control")
 
     sub_data["f_bus"] = dict_dcnv[rect]["AC BUS"]
     sub_data["t_bus"] = dict_dcnv[inv]["AC BUS"]
@@ -83,7 +83,7 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict, link::Dict)
             push!(anmn, angle)
         else
             push!(anmn, 0)
-            @warn("$key outside reasonable limits, setting to 0 degress")
+            Memento.warn(_LOGGER, "$key outside reasonable limits, setting to 0 degress")
         end
     end
 
@@ -114,7 +114,7 @@ function _pwf2pm_dcline!(pm_data::Dict, pwf_data::Dict)
     pm_data["dcline"] = Dict{String, Any}()
 
     if !(haskey(pwf_data, "DCBA") && haskey(pwf_data, "DCLI") && haskey(pwf_data, "DCNV") && haskey(pwf_data, "DCCV") && haskey(pwf_data, "DELO"))
-        @warn("DC line will not be parsed due to the absence of at least one those sections: DCBA, DCLI, DCNV, DCCV, DELO")
+        Memento.warn(_LOGGER, "DC line will not be parsed due to the absence of at least one those sections: DCBA, DCLI, DCNV, DCCV, DELO")
         return
     end
     @assert length(pwf_data["DCBA"]) == 4*length(pwf_data["DCLI"]) == 2*length(pwf_data["DCNV"]) == 2*length(pwf_data["DCCV"]) == 4*length(pwf_data["DELO"])

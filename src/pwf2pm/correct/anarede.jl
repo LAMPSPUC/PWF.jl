@@ -82,8 +82,8 @@ function _pwf2pm_corrections_PQ!(pm_data::Dict, software::ANAREDE)
                 # sum load power with the negative of generator power
                 pm_data["load"][load_key[1]]["pd"] += - Pg
                 pm_data["load"][load_key[1]]["qd"] += - Qg                 
-                @warn "Active generator with QMIN = QMAX = 0 found in PQ bus $i. Adding generator power " *
-                            "to load power and changing generator status to off."
+                Memento.warn(_LOGGER, "Active generator with QMIN = QMAX = 0 found in PQ bus $i. Adding generator power " *
+                            "to load power and changing generator status to off")
             end
         end
     end
