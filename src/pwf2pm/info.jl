@@ -1,3 +1,15 @@
+"Needed due to Dict{String, Any} error in instantiate_model when parsing a JSON with info section"
+function _handle_info_dict_type!(data::Dict)
+    if haskey(data, "info")
+        info = Dict{Any, Any}(
+            "parameters" => data["info"]["parameters"],
+            "actions"    => data["info"]["actions"]
+        )
+        data["info"] = info
+    end
+    return 
+end
+
 function _pwf2pm_info!(pm_data::Dict, pwf_data::Dict, option::String, status::Char, section::String)
     key = lowercase(option)
     value = status == 'L' ? true : status == 'D' ? false : error("Execution option $key status not defined")
