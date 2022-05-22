@@ -112,7 +112,7 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict; add_c
 
                 # Add tap control information in controlled bus
                 pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["control_type"] = "tap_control"
-                if isnothing(pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["constraint_type"]) # setpoint is more restrict than bounds
+                if isnothing(pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["tap_constraint_type"]) # setpoint is more restrict than bounds
                     pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["tap_constraint_type"] = "bounds"
                 end
         
