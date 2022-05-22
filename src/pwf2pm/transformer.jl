@@ -103,14 +103,24 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict; add_c
             sub_data["control_data"]["shift_control_variable"] = nothing
             sub_data["control_data"]["shiftmin"] = nothing
             sub_data["control_data"]["shiftmax"] = nothing
+
             if constraint_type == "VOLTAGE CONTROL"
+
                 sub_data["control_data"]["constraint_type"] = "bounds"
                 sub_data["control_data"]["valsp"] = branch_dctr[circuit]["SPECIFIED VALUE"]
                 sub_data["control_data"]["controlled_bus"] = branch_dctr[circuit]["MEASUREMENT EXTREMITY"]
+
+                pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["control_type"] = "tap_control"
+                if isnothing(pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["constraint_type"]) # setpoint is more restrict than bounds
+                    pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["constraint_type"] = "bounds"
+                end
         
             else
+                pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["control_type"] = "tap_control"
+
                 sub_data["control_data"]["constraint_type"] = "setpoint"
                 sub_data["control_data"]["valsp"] = nothing
+                pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["constraint_type"] = "setpoint"
             end
 
         elseif constraint_type == "PHASE CONTROL" # phase control
