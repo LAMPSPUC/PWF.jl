@@ -62,6 +62,17 @@ function _pwf2pm_DBSH_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict; add_con
         sub_data["control_data"]["bsmax"] = bs_bounds[2]
         @assert sub_data["control_data"]["bsmin"] <= sub_data["control_data"]["bsmax"]
         sub_data["control_data"]["inclination"] = nothing
+
+        controlled_bus = sub_data["control_data"]["controlled_bus"]
+        if sub_data["control_data"]["shunt_control_type"] in [2,3]
+            pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_control"] = true
+            shunt_section = pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_section"] 
+            if isnothing(shunt_section)
+                pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_section"] = "DBSH"
+            else
+                # don't overwrite
+            end
+        end
     end
 
     sub_data["source_id"] = ["switched shunt", sub_data["shunt_bus"], "0$(n+1)"]
@@ -115,6 +126,17 @@ function _pwf2pm_DCER_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict; add_con
         sub_data["control_data"]["vmmax"] = ctrl_bus["vm"]
         sub_data["control_data"]["controlled_bus"] = shunt["CONTROLLED BUS"]
         sub_data["control_data"]["inclination"] = shunt["INCLINATION"]
+
+        controlled_bus = sub_data["control_data"]["controlled_bus"]
+        if sub_data["control_data"]["shunt_control_type"] in [2,3]
+            pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_control"] = true
+            shunt_section = pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_section"] 
+            if isnothing(shunt_section)
+                pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_section"] = "DCER"
+            else
+                pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_section"] = "DCER" # DCER always overwrites
+            end
+        end
     end
 
     sub_data["source_id"] = ["switched shunt", sub_data["shunt_bus"], "0$(n+1)"]
