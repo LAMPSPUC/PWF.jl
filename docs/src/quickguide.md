@@ -1,27 +1,15 @@
 # Quick Start Guide
 
-Parsing a .pwf file to Julia dictionary is as simple as:
+All functionalities of the PWF.jl package can be used by the following function
 
 ```julia
 using PWF
 
 file = "3bus.pwf"
-pwf_dict = parse_pwf(file)
+pwf_dict = parse_file(file; pm = true, add_control_data = false)
 ```
 
-Converting the .pwf file into PowerModels.jl network data dictionary:
-
-```julia
-network_data = parse_pwf_to_powermodels(file)
-```
-
-Then you are ready to use PowerModels!
-
-```julia
-using PowerModels, Ipopt
-
-run_ac_pf(network_data, Ipopt.Optimizer)
-```
+The parameter `pm` indicates if the data should be converted to the PowerModels.jl format. `add_control_data` is used to inform if additional information regarding control actions should be included in the PowerModels.jl data. For more information about Control Actions visit the ControlPowerFlow.jl [documentation](https://github.com/LAMPSPUC/ControlPowerFlow.jl)
 
 For more information about PowerModels.jl visit the PowerModels [documentation](https://lanl-ansi.github.io/PowerModels.jl/stable/)
 
