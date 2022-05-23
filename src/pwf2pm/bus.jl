@@ -100,7 +100,9 @@ function _pwf2pm_bus!(pm_data::Dict, pwf_data::Dict, bus::Dict, dict_dgbt, dict_
         sub_data["control_data"]["vmmin"] = sub_data["vmin"]
         sub_data["control_data"]["vmmax"] = sub_data["vmax"]
         sub_data["control_data"]["tap_control"] = nothing
-        sub_data["control_data"]["constraint_type"] = nothing
+        sub_data["control_data"]["tap_constraint_type"] = nothing
+        sub_data["control_data"]["shunt_control"] = nothing
+        sub_data["control_data"]["shunt_section"] = nothing
     end
 
     idx = string(sub_data["index"])

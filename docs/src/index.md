@@ -61,20 +61,6 @@ The package parses all available sections into a julia dictionary. Every key rep
 - DOPC
 - DCTE
 
-**Incoming Sections:**
-
-- DARE
-- DCAI
-- DCAR
-- DCSC
-- DGEI
-- DGLT
-- DINJ
-- DMFL
-- DMOT
-- DMTE
-- TITU
-
 ## PowerModels.jl converter
 
 The package also allow converting .pwf file directly into PowerModels.jl network data structure:
