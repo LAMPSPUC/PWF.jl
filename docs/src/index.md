@@ -14,27 +14,36 @@ The implementations were made based on the ANAREDE user guide manual (v09).
 
 **Quickguide**
 
-Parsing a .pwf file to Julia dictionary is as simple as:
+Until the creating of PWF.jl, '.pwf' files could only be parsed through Brazilian commercial softwares, such as ANAREDE and Organon. Therefore, the Brazilian Power System community was compelled to use one of the two solutions to run Power Flow analysis.
+
+PWF.jl unlocks the power of open-source to the Power System community. Therefore, now, anyone can read the standard Brazilian file ('.pwf') and run steady-state electrical analysis with state-of-the-art methodologies. For the Power Flow algorithm, we encourage the usage of the package PowerModels.jl, which already have integration with the PWF.jl package.
+
+To perform Power Flow analysis using PWF.jl in Julia, follow the steps bellow:
+
+1. First of all, make sure you have [Visual Studio Code](https://code.visualstudio.com/) and [Julia Language](https://julialang.org/downloads/) Long-term support (LTS) 1.6.6 configured correctly;
+
+2. Then, add PWF.jl and PowerModels.jl to known packages;
 
 ```julia
-using PWF
+using Pkg
 
-file = "3bus.pwf"
-pwf_dict = parse_pwf(file)
+Pkg.add("PWF")
+Pkg.add("PowerModels")
 ```
 
-Converting the .pwf file into PowerModels.jl network data dictionary:
+3. Finally, you are ready to perform power flow analysis
 
 ```julia
-network_data = parse_pwf_to_powermodels(file)
-```
+using PWF, PowerModels
 
-Then you are ready to use PowerModels!
+network_path = "network.pwf"
 
-```julia
-using PowerModels, Ipopt
+network = PWF.parse_file(network_path)
 
-run_ac_pf(network_data, Ipopt.Optimizer)
+results = PowerModels.run_ac_pf(network)
+
+results["solution"]["bus"]["1"]["vm"] # folution for voltage magniture of bus 1
+results["solution"]["bus"]["1"]["va"] # solution for voltage angle     of bus 1
 ```
 
 For more information about PowerModels.jl visit the PowerModels [documentation](https://lanl-ansi.github.io/PowerModels.jl/stable/)
