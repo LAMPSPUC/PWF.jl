@@ -22,7 +22,7 @@ To perform Power Flow analysis using PWF.jl in Julia, follow the steps bellow:
 
 1. First of all, make sure you have [Visual Studio Code](https://code.visualstudio.com/) and [Julia Language](https://julialang.org/downloads/) Long-term support (LTS) 1.6.6 configured correctly;
 
-2. Then, add PWF.jl and PowerModels.jl to known packages;
+2. Then, add PWF.jl and PowerModels.jl to the known packages;
 
 ```julia
 using Pkg
@@ -50,10 +50,10 @@ For more information about PowerModels.jl visit the PowerModels [documentation](
 
 ## Parser
 
-The package parses all available sections into a julia dictionary. Each key represents a .pwf section as shown below:
+The package can parse all available sections into a julia dictionary withou any modifications. Each key represents a .pwf section as shown below:
 
 ```julia
-julia> parse_file(file)
+julia> parse_file(file; pm = false)
 Dict{String, Any} with 6 entries:
   "DLIN" => Dict{String, Any}[Dict("AGGREGATOR 10"=>nothing, "AGGREGATOR 5"=>nothing, "AGGR"…
   "name" => "3bus"
@@ -98,7 +98,7 @@ Dict{String, Any} with 6 entries:
 The package also allow converting .pwf file directly into PowerModels.jl network data structure:
 
 ```julia
-julia> parse_file(file; pm = true)
+julia> parse_file(file; pm = true) # default
 Dict{String, Any} with 13 entries:
   "bus"            => Dict{String, Any}("1"=>Dict{String, Any}("zone"=>1, "bus_i"=>1, "bus_"…
   "source_type"    => "pwf"
@@ -135,7 +135,7 @@ There are two main softwares used for parsing PWF files and each one does slight
 
 ```julia
 
-julia> data = parse_file(file; pm = true, software = ANAREDE)
+julia> data = parse_file(file; pm = true, software = ANAREDE) # default
 
 julia> data = parse_file(file; pm = true, software = Organon)
 ```

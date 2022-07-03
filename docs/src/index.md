@@ -22,7 +22,7 @@ To perform Power Flow analysis using PWF.jl in Julia, follow the steps bellow:
 
 1. First of all, make sure you have [Visual Studio Code](https://code.visualstudio.com/) and [Julia Language](https://julialang.org/downloads/) Long-term support (LTS) 1.6.6 configured correctly;
 
-2. Then, add PWF.jl and PowerModels.jl to known packages;
+2. Then, add PWF.jl and PowerModels.jl to the known packages;
 
 ```julia
 using Pkg
