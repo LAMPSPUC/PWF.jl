@@ -6,7 +6,7 @@
 
 # This parser was develop using ANAREDE v09 user manual
 
-const _fban_1_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
+const _fban_1_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Char, 7),
     ("TO BUS", Int64, 9:13), ("CIRCUIT", Int64, 15:16), ("CONTROL MODE", Char, 18),
     ("MINIMUM VOLTAGE", Float64, 20:23, 20), ("MAXIMUM VOLTAGE", Float64, 25:28, 25),
     ("CONTROLLED BUS", Int64, 30:34), ("INITIAL REACTIVE INJECTION", Float64, 36:41),
@@ -34,7 +34,7 @@ const _divided_sections = Dict("DBSH" => _dbsh_dtypes,
 """
 A list of data file sections in the order that they appear in a PWF file
 """
-const _dbar_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Int64, 6), 
+const _dbar_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Char, 6), 
     ("STATUS", Char, 7), ("TYPE", Int64, 8), ("BASE VOLTAGE GROUP", String, 9:10),
     ("NAME", String, 11:22), ("VOLTAGE LIMIT GROUP", String, 23:24),
     ("VOLTAGE", Float64, 25:28, 25), ("ANGLE", Float64, 29:32),
@@ -51,7 +51,7 @@ const _dbar_dtypes = [("NUMBER", Int64, 1:5), ("OPERATION", Int64, 6),
     ("AGGREGATOR 9", Int64, 106:108), ("AGGREGATOR 10", Int64, 109:111)]
 
 const _dlin_dtypes = [("FROM BUS", Int64, 1:5), ("OPENING FROM BUS", Char, 6),
-    ("OPERATION", Int64, 8), ("OPENING TO BUS", Char, 10), ("TO BUS", Int64, 11:15),
+    ("OPERATION", Char, 8), ("OPENING TO BUS", Char, 10), ("TO BUS", Int64, 11:15),
     ("CIRCUIT", Int64, 16:17), ("STATUS", Char, 18), ("OWNER", Char, 19),
     ("RESISTANCE", Float64, 21:26, 24), ("REACTANCE", Float64, 27:32, 30),
     ("SHUNT SUSCEPTANCE", Float64, 33:38, 35), ("TAP", Float64, 39:43, 40),
@@ -80,26 +80,26 @@ const _dger_dtypes = [("NUMBER", Int, 1:5), ("OPERATION", Char, 7),
     ("ROTOR SERVICE FACTOR", Float64, 46:49), ("CHARGE ANGLE", Float64, 51:54),
     ("MACHINE REACTANCE", Float64, 56:60), ("NOMINAL APPARENT POWER", Float64, 62:66)]
 
-const _dshl_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Int64, 7),
+const _dshl_dtypes = [("FROM BUS", Int64, 1:5), ("OPERATION", Char, 7),
     ("TO BUS", Int64, 10:14), ("CIRCUIT", Int64, 15:16), ("SHUNT FROM", Float64, 18:23),
     ("SHUNT TO", Float64, 24:29), ("STATUS FROM", String, 31:32), ("STATUS TO", String, 34:35)]
 
-const _dcba_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("TYPE", Int64, 8),
+const _dcba_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Char, 6), ("TYPE", Int64, 8),
     ("POLARITY", Char, 9), ("NAME", String, 10:21), ("VOLTAGE LIMIT GROUP", String, 22:23),
     ("VOLTAGE", Float64, 24:28), ("GROUND ELECTRODE", Float64, 67:71), ("DC LINK", Int64, 72:75)]
 
-const _dcli_dtypes = [("FROM BUS", Int64, 1:4), ("OPERATION", Int64, 6), ("TO BUS", Int64, 9:12),
+const _dcli_dtypes = [("FROM BUS", Int64, 1:4), ("OPERATION", Char, 6), ("TO BUS", Int64, 9:12),
     ("CIRCUIT", Int64, 13:14), ("OWNER", Char, 16), ("RESISTANCE", Float64, 18:23),
     ("INDUCTANCE", Float64, 24:29), ("CAPACITY", Float64, 61:64)]
 
-const _dcnv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("AC BUS", Int64, 8:12),
+const _dcnv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Char, 6), ("AC BUS", Int64, 8:12),
     ("DC BUS", Int64, 14:17), ("NEUTRAL BUS", Int64, 19:22), ("OPERATION MODE", Char, 24),
     ("BRIDGES", Int64, 26), ("CURRENT", Float64, 28:32), ("COMMUTATION REACTANCE", Float64, 34:38),
     ("SECONDARY VOLTAGE", Float64, 40:44), ("TRANSFORMER POWER", Float64, 46:50),
     ("REACTOR RESISTANCE", Float64, 52:56), ("REACTOR INDUCTANCE", Float64, 58:62),
     ("CAPACITANCE", Float64, 64:68), ("FREQUENCY", Float64, 70:71)]
 
-const _dccv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("LOOSENESS", Char, 8),
+const _dccv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Char, 6), ("LOOSENESS", Char, 8),
     ("INVERTER CONTROL MODE", Char, 9), ("CONVERTER CONTROL TYPE", Char, 10),
     ("SPECIFIED VALUE", Float64, 12:16), ("CURRENT MARGIN", Float64,18:22),
     ("MAXIMUM OVERCURRENT", Float64, 24:28), ("CONVERTER ANGLE", Float64, 30:34),
@@ -109,7 +109,7 @@ const _dccv_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("LOOSENE
     ("MINIMUM DC VOLTAGE FOR POWER CONTROL", Float64, 63:66, 63),
     ("TAP HI MVAR MODE", Float64, 68:72), ("TAP REDUCED VOLTAGE MODE", Float64, 74:78)]
 
-const _delo_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Int64, 6), ("VOLTAGE", Float64, 8:12),
+const _delo_dtypes = [("NUMBER", Int64, 1:4), ("OPERATION", Char, 6), ("VOLTAGE", Float64, 8:12),
     ("BASE", Float64, 14:18), ("NAME", String, 20:39), ("HI MVAR MODE", Char, 41), ("STATUS", Char, 43)]
 
 const _dcer_dtypes = [("BUS", Int, 1:5), ("OPERATION", Char, 7), ("GROUP", Int64, 9:10),
@@ -406,12 +406,16 @@ const _pwf_defaults = Dict("DBAR" => _default_dbar, "DLIN" => _default_dlin, "DC
 
 const title_identifier = "TITU"
 const end_section_identifier = "99999"
+const commented_line_identifier = '('
 
-function _remove_titles_from_file_lines(file_lines::Vector{String}, section_titles_idx::Vector{Int64})
-    remove_titles_idx = vcat(section_titles_idx, section_titles_idx .+ 1)
-    file_lines_without_titles_idx = setdiff(1:length(file_lines), remove_titles_idx)
-    file_lines = file_lines[file_lines_without_titles_idx]
-    return file_lines
+function _is_valid_line(line_number::Int64, file_lines::Vector{String})
+    line = file_lines[line_number]
+    if line_number == 1
+        return !isempty(line) && !startswith(line, commented_line_identifier) && line != title_identifier
+    else
+        previous_line = file_lines[line_number - 1]
+        return !isempty(line) && !startswith(line, commented_line_identifier) && line != title_identifier && previous_line != title_identifier
+    end
 end
 
 """
@@ -422,19 +426,13 @@ element corresponds to a section, divided by the delimiter 99999.
 """
 function _split_sections(io::IO)
     file_lines = readlines(io)
-    filter!(x -> x != "" && x[1] != '(', file_lines) # Ignore commented and empty lines
     file_lines = replace.(file_lines, repeat([Char(65533) => ' '], length(file_lines)))
-    sections = Vector{String}[]
+    sections = Dict{String, Vector{Int64}}()
 
     section_titles_idx = findall(line -> line == title_identifier, file_lines)
     if !isempty(section_titles_idx)
-        last_section_title_idx = section_titles_idx[end]:section_titles_idx[end] + 1
-        push!(sections, file_lines[last_section_title_idx])
+        sections[title_identifier] = [section_titles_idx[end] + 1]
     end
-
-    file_lines = _remove_titles_from_file_lines(
-        file_lines, section_titles_idx
-    )
 
     section_delim = vcat(
         0, 
@@ -442,23 +440,23 @@ function _split_sections(io::IO)
     )
 
     num_sections = length(section_delim) - 1
+    num_lines = length(file_lines)
 
     for i in 1:num_sections
-        section_begin_idx = section_delim[i] + 1
+        section_name_idx = filter(idx -> _is_valid_line(idx, file_lines), section_delim[i] + 1:num_lines)[1]
+        section_name = file_lines[section_name_idx]
+
+        section_begin_idx = section_name_idx + 1
         section_end_idx   = section_delim[i + 1] - 1
 
-        # Account for multiple sections in the same pwf
-        section_i = findall(x -> x[1] == file_lines[section_begin_idx], sections)
-        @assert length(section_i) < 2
-        if length(section_i) == 0
-            push!(sections, file_lines[section_begin_idx:section_end_idx])
-        else
-            section_i = section_i[1]
-            sections[section_i] = vcat(sections[section_i], file_lines[section_begin_idx + 1:section_end_idx])
-        end
+        section_range = collect(section_begin_idx:section_end_idx)
+        filter!(idx -> _is_valid_line(idx, file_lines), section_range)
+
+        current = get(sections, section_name, Int64[])
+        sections[section_name] = vcat(current, section_range)
     end
 
-    return sections
+    return file_lines, sections
 end
 
 function _handle_implicit_decimal_point!(
@@ -475,8 +473,9 @@ end
 Internal function. Parses a single line of data elements from a PWF file
 and saves it into `data::Dict`.
 """
-function _parse_line_element!(data::Dict{String, Any}, line::String, section::AbstractString)
-
+function _parse_line_element!(data::Dict{String, Any}, line_number::Int64, section::AbstractString, file_lines::Vector{String})
+    line = file_lines[line_number]
+    
     line_length = _pwf_dtypes[section][end][3][end]
     if length(line) < line_length
         extra_characters_needed = line_length - length(line)
@@ -496,9 +495,10 @@ function _parse_line_element!(data::Dict{String, Any}, line::String, section::Ab
             else
                 data[field] = element
             end
-        catch
+        catch message
             if !_needs_default(element)
-                @warn "Could not parse $element to $dtype inside $section section, setting it as a String"
+                throw(Memento.error(_LOGGER, "Parsing error in line $line_number at section $section: 
+                                    $field should be of type $dtype, received $element"))
             end
             data[field] = element
         end
@@ -507,11 +507,12 @@ function _parse_line_element!(data::Dict{String, Any}, line::String, section::Ab
 
 end
 
-function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, section::AbstractString)
+function _parse_line_element!(data::Dict{String, Any}, lines_idx::Vector{Int64}, section::AbstractString, file_lines::Vector{String})
 
     mn_keys, mn_values, mn_type = _mnemonic_pairs[section]
 
-    for line in lines
+    for line_number in lines_idx
+        line = file_lines[line_number]
         for i in 1:length(mn_keys)
             k, v = mn_keys[i], mn_values[i]
             if v[end] <= length(line)
@@ -519,10 +520,11 @@ function _parse_line_element!(data::Dict{String, Any}, lines::Vector{String}, se
                 if mn_type != String && mn_type != Char
                     try
                         data[line[k]] = parse(mn_type, line[v])
-                    catch
+                    catch message
                         if !_needs_default(line[v])
-                            @warn "Could not parse $(line[v]) to $mn_type, setting it as a String"
-                        end
+                            throw(Memento.error(_LOGGER, "Parsing error in line $line_number at section $section: 
+                                                $field should be of type $dtype, received $element"))
+                end
                         !_needs_default(line[k]) ? data[line[k]] = line[v] : nothing
                     end
                 else
@@ -539,23 +541,23 @@ end
 Internal function. Parses a section containing a system component.
 Returns a Vector of Dict, where each entry corresponds to a single element.
 """
-function _parse_section_element!(data::Dict{String, Any}, section_lines::Vector{String}, section::AbstractString, idx::Int64=1)
+function _parse_section_element!(data::Dict{String, Any}, section_lines_idx::Vector{Int64}, section::AbstractString, file_lines::Vector{String}, idx::Int64 = 1)
 
     if section == "DBAR"
-        for line in section_lines[2:end]
+        for line_number in section_lines_idx
 
             line_data = Dict{String, Any}()
-            _parse_line_element!(line_data, line, section)
+            _parse_line_element!(line_data, line_number, section, file_lines)
 
             bus_i = line_data["NUMBER"]
             data["$bus_i"] = line_data
         end
 
     else
-        for line in section_lines[2:end]
+        for line_number in section_lines_idx
 
             line_data = Dict{String, Any}()
-            _parse_line_element!(line_data, line, section)
+            _parse_line_element!(line_data, line_number, section, file_lines)
 
             data["$idx"] = line_data            
             idx += 1
@@ -563,18 +565,19 @@ function _parse_section_element!(data::Dict{String, Any}, section_lines::Vector{
     end
 end
 
-function _parse_divided_section!(data::Dict{String, Any}, section_lines::Vector{String}, section::String)
+function _parse_divided_section!(data::Dict{String, Any}, section_lines_idx::Vector{Int64}, section::String, file_lines::Vector{String})
+    section_lines = file_lines[section_lines_idx]
 
     separator = _divided_sections[section]["separator"]
-    sub_titles_idx = vcat(1, findall(x -> x == separator, section_lines))
+    sub_titles_idx = vcat(0, findall(x -> x == separator, section_lines))
     for (i, idx) in enumerate(sub_titles_idx)
 
         if idx != sub_titles_idx[end]
             next_idx = sub_titles_idx[i + 1]
-            _parse_section_element!(data, section_lines[idx:idx + 1], _divided_sections[section]["first name"], i)
+            _parse_section_element!(data, [section_lines_idx[idx + 1]], _divided_sections[section]["first name"], file_lines, i)
 
             rc = Dict{String, Any}()
-            _parse_section_element!(rc, section_lines[idx + 1:next_idx - 1], _divided_sections[section]["second name"], i)
+            _parse_section_element!(rc, section_lines_idx[idx + 2:next_idx - 1], _divided_sections[section]["second name"], file_lines, i)
 
             group = _divided_sections[section]["subgroup"]
             data["$i"][group] = rc
@@ -589,24 +592,24 @@ end
 Internal function. Receives an array of lines corresponding to a PWF section,
 transforms it into a Dict and saves it into `data::Dict`.
 """
-function _parse_section!(data::Dict{String, Any}, section_lines::Vector{String})
-    section = section_lines[1]
+function _parse_section!(data::Dict{String, Any}, section::String, section_lines_idx::Vector{Int64}, file_lines::Vector{String})
     section_data = Dict{String, Any}()
 
     if section == title_identifier
-        section_data = section_lines[end]
+        @assert length(section_lines_idx) == 1
+        section_data = file_lines[section_lines_idx[1]]
 
     elseif section in keys(_mnemonic_pairs)
-        _parse_line_element!(section_data, section_lines[2:end], section)
+        _parse_line_element!(section_data, section_lines_idx, section, file_lines)
 
     elseif section in keys(_pwf_dtypes)
-        _parse_section_element!(section_data, section_lines, section)
+        _parse_section_element!(section_data, section_lines_idx, section, file_lines)
 
     elseif section in keys(_divided_sections)
-        _parse_divided_section!(section_data, section_lines, section)
+        _parse_divided_section!(section_data, section_lines_idx, section, file_lines)
 
     else
-        @warn "Currently there is no support for $section parsing"
+        Memento.warn(_LOGGER, "Currently there is no support for $section parsing")
         section_data = nothing
     end
     data[section] = section_data
@@ -617,11 +620,11 @@ _needs_default(ch::Char) = ch == ' '
 
 function _populate_defaults!(pwf_data::Dict{String, Any})
 
-    @warn "Populating defaults"
+    Memento.info(_LOGGER, "Populating defaults")
 
     for (section, section_data) in pwf_data
         if !haskey(_pwf_defaults, section)
-            @warn "Parser doesn't have default values for section $(section)."
+            Memento.warn(_LOGGER, "Parser doesn't have default values for section $(section)")
         else
             if section in keys(_pwf_dtypes)
                 _populate_section_defaults!(pwf_data, section, section_data)
@@ -820,11 +823,11 @@ Internal function. Receives a pwf file as an IOStream and parses into a Dict.
 """
 function _parse_pwf_data(data_io::IO)
 
-    sections = _split_sections(data_io)
+    file_lines, sections = _split_sections(data_io)
     pwf_data = Dict{String, Any}()
     pwf_data["name"] = match(r"^\<file\s[\/\\]*(?:.*[\/\\])*(.*)\.pwf\>$", lowercase(data_io.name)).captures[1]
-    for section in sections
-        _parse_section!(pwf_data, section)
+    for (section_name, section) in sections
+        _parse_section!(pwf_data, section_name, section, file_lines)
     end
     _populate_defaults!(pwf_data)
     

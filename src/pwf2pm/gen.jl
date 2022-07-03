@@ -60,7 +60,7 @@ end
 function _pwf2pm_generator!(pm_data::Dict, pwf_data::Dict)
 
     if !haskey(pwf_data, "DGER")
-        @warn("DGER not found, setting pmin as 0.0 MW and pmax as 99999.0 MW")
+        Memento.warn(_LOGGER, "DGER not found, setting pmin as 0.0 MW and pmax as 99999.0 MW")
     end
 
     pm_data["gen"] = Dict{String, Any}()

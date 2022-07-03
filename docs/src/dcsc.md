@@ -1,23 +1,29 @@
 # DCSC
+
 ## Description
+
 Controllable series compensator data
+
 ## Usage
-Column   |   Description
----   |   ---
-From bus   |   Bus number, as defined on DBAR, from on of the compensator ends
-Operation   |   Compensator data addition, removal or modification
-To bus   |   Bus number, as defined on DBAR, from the other compensator end
-Circuit   |   AC circuit identification number
-Status   |   Circuit status
-Owner   |   F if the circuit belongs to the area from the bus in From bus, T if it belongs to To bus area
-Bypass   |   L if bypass is on, D if it is off
-Minimum value   |   Compensator reactance minimum value (%)
-Maximum value   |   Compensator reactance maximum value (%)
-Initial value   |   Compensator reactance initial value (%)
-Control mode   |   P for constant power, where active power flow specified value is kept while compensator reactance values are kept in bounds; I for constant current, where the current module specified value is kept while compensator reactance values are kept in bounds; X for constant reactance, where the compensator is not used and reactance is fixed at the specified value
-Specified value | If control mode is constant power, active power flow in the compensator (MW); If control mode is constant current, compensator current module (p.u.); If control mode is constant reactance, compensator reactance (%)
-Measuring extremity   |   Bus number from the compensator end where power or current is measured
-Number of stages   |   Number of stages for discrete compensators (Thyristor Switched Series Capacitor); Default value for continuous compensators (Thyristor Controlled Series Capacitor)
-Aggregator 1-6   |   Additional information
- ## Example
-![Alt text](assets/DCSC.png)
+
+| Column              | Description                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| From bus            | Bus number, as defined on DBAR, from on of the compensator ends                                                                                                                                                                                                                                                                                                        |
+| Operation           | Compensator data addition, removal or modification                                                                                                                                                                                                                                                                                                                     |
+| To bus              | Bus number, as defined on DBAR, from the other compensator end                                                                                                                                                                                                                                                                                                         |
+| Circuit             | AC circuit identification number                                                                                                                                                                                                                                                                                                                                       |
+| Status              | Circuit status                                                                                                                                                                                                                                                                                                                                                         |
+| Owner               | F if the circuit belongs to the area from the bus in From bus, T if it belongs to To bus area                                                                                                                                                                                                                                                                          |
+| Bypass              | L if bypass is on, D if it is off                                                                                                                                                                                                                                                                                                                                      |
+| Minimum value       | Compensator reactance minimum value (%)                                                                                                                                                                                                                                                                                                                                |
+| Maximum value       | Compensator reactance maximum value (%)                                                                                                                                                                                                                                                                                                                                |
+| Initial value       | Compensator reactance initial value (%)                                                                                                                                                                                                                                                                                                                                |
+| Control mode        | P for constant power, where active power flow specified value is kept while compensator reactance values are kept in bounds; I for constant current, where the current module specified value is kept while compensator reactance values are kept in bounds; X for constant reactance, where the compensator is not used and reactance is fixed at the specified value |
+| Specified value     | If control mode is constant power, active power flow in the compensator (MW); If control mode is constant current, compensator current module (p.u.); If control mode is constant reactance, compensator reactance (%)                                                                                                                                                 |
+| Measuring extremity | Bus number from the compensator end where power or current is measured                                                                                                                                                                                                                                                                                                 |
+| Number of stages    | Number of stages for discrete compensators (Thyristor Switched Series Capacitor); Default value for continuous compensators (Thyristor Controlled Series Capacitor)                                                                                                                                                                                                    |
+| Aggregator 1-6      | Additional information                                                                                                                                                                                                                                                                                                                                                 |
+
+## Example
+
+![Alt text](docs/assets/DCSC.png)

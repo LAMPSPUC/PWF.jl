@@ -1,12 +1,3 @@
-function _create_new_shunt(sub_data::Dict, pm_data::Dict)
-    for (idx, value) in pm_data["shunt"]
-        if value["shunt_bus"] == sub_data["shunt_bus"] && value["source_id"][1] == sub_data["source_id"][1]
-            return false, idx
-        end
-    end
-    return true    
-end
-
 function _handle_bs_bounds(shunt::Dict{String, Any})
     bsmin, bsmax = 0.0, 0.0
     for (i,el) in shunt["REACTANCE GROUPS"]
@@ -71,23 +62,24 @@ function _pwf2pm_DBSH_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict; add_con
         sub_data["control_data"]["bsmax"] = bs_bounds[2]
         @assert sub_data["control_data"]["bsmin"] <= sub_data["control_data"]["bsmax"]
         sub_data["control_data"]["inclination"] = nothing
+
+        controlled_bus = sub_data["control_data"]["controlled_bus"]
+        if sub_data["control_data"]["shunt_control_type"] in [2,3]
+            pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_control"] = true
+            shunt_section = pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_section"] 
+            if isnothing(shunt_section)
+                pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_section"] = "DBSH"
+            else
+                # don't overwrite
+            end
+        end
     end
 
     sub_data["source_id"] = ["switched shunt", sub_data["shunt_bus"], "0$(n+1)"]
     sub_data["index"] = length(pm_data["shunt"]) + 1
 
-    if _create_new_shunt(sub_data, pm_data)[1]
-        idx = string(sub_data["index"])
-        pm_data["shunt"][idx] = sub_data
-    else
-        idx = _create_new_shunt(sub_data, pm_data)[2]
-        pm_data["shunt"][idx]["gs"] += sub_data["gs"]
-        pm_data["shunt"][idx]["bs"] += sub_data["bs"]
-        if add_control_data
-            pm_data["shunt"][idx]["control_data"]["bsmin"] += sub_data["control_data"]["bsmin"]
-            pm_data["shunt"][idx]["control_data"]["bsmax"] += sub_data["control_data"]["bsmax"]
-        end
-    end
+    idx = string(sub_data["index"])
+    pm_data["shunt"][idx] = sub_data
 end
 
 function _pwf2pm_DBSH_shunt!(pm_data::Dict, pwf_data::Dict; add_control_data::Bool=false)
@@ -134,23 +126,24 @@ function _pwf2pm_DCER_shunt!(pm_data::Dict, pwf_data::Dict, shunt::Dict; add_con
         sub_data["control_data"]["vmmax"] = ctrl_bus["vm"]
         sub_data["control_data"]["controlled_bus"] = shunt["CONTROLLED BUS"]
         sub_data["control_data"]["inclination"] = shunt["INCLINATION"]
+
+        controlled_bus = sub_data["control_data"]["controlled_bus"]
+        if sub_data["control_data"]["shunt_control_type"] in [2,3]
+            pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_control"] = true
+            shunt_section = pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_section"] 
+            if isnothing(shunt_section)
+                pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_section"] = "DCER"
+            else
+                pm_data["bus"]["$controlled_bus"]["control_data"]["shunt_section"] = "DCER" # DCER always overwrites
+            end
+        end
     end
 
     sub_data["source_id"] = ["switched shunt", sub_data["shunt_bus"], "0$(n+1)"]
     sub_data["index"]     = length(pm_data["shunt"]) + 1
 
-    if _create_new_shunt(sub_data, pm_data)[1]
-        idx = string(sub_data["index"])
-        pm_data["shunt"][idx] = sub_data
-    else
-        idx = _create_new_shunt(sub_data, pm_data)[2]
-        pm_data["shunt"][idx]["gs"] += sub_data["gs"]
-        pm_data["shunt"][idx]["bs"] += sub_data["bs"]
-        if add_control_data
-            pm_data["shunt"][idx]["control_data"]["bsmin"] += sub_data["control_data"]["bsmin"]
-            pm_data["shunt"][idx]["control_data"]["bsmax"] += sub_data["control_data"]["bsmax"]
-        end
-    end
+    idx = string(sub_data["index"])
+    pm_data["shunt"][idx] = sub_data
 end
 
 function _pwf2pm_DCER_shunt!(pm_data::Dict, pwf_data::Dict; add_control_data::Bool=false)
@@ -212,8 +205,6 @@ function _pwf2pm_DBAR_shunt!(pm_data::Dict, pwf_data::Dict; add_control_data::Bo
      end 
 end
 
-# Assumption - if there are more than one shunt for the same bus we sum their values into one shunt (source: Organon)
-# CAUTION: this might be an Organon error
 function _pwf2pm_shunt!(pm_data::Dict, pwf_data::Dict; add_control_data::Bool=false)
     pm_data["shunt"] = Dict{String, Any}()
 

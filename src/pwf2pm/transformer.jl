@@ -54,11 +54,7 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict; add_c
     sub_data["angmax"] = 60.0 # PowerModels.jl standard
     sub_data["transformer"] = true
 
-    if branch["STATUS"] == branch["OPENING FROM BUS"] == branch["OPENING TO BUS"] == 'L'
-        sub_data["br_status"] = 1
-    else
-        sub_data["br_status"] = 0
-    end
+    _handle_br_status!(pm_data, sub_data, branch)
 
     n = 0 # count(x -> x["f_bus"] == sub_data["f_bus"] && x["t_bus"] == sub_data["t_bus"], values(pm_data["branch"])) 
     sub_data["source_id"] = ["transformer", sub_data["f_bus"], sub_data["t_bus"], 0, "0$(n + 1)", 0]
@@ -107,14 +103,25 @@ function _pwf2pm_transformer!(pm_data::Dict, pwf_data::Dict, branch::Dict; add_c
             sub_data["control_data"]["shift_control_variable"] = nothing
             sub_data["control_data"]["shiftmin"] = nothing
             sub_data["control_data"]["shiftmax"] = nothing
+
             if constraint_type == "VOLTAGE CONTROL"
+
                 sub_data["control_data"]["constraint_type"] = "bounds"
                 sub_data["control_data"]["valsp"] = branch_dctr[circuit]["SPECIFIED VALUE"]
                 sub_data["control_data"]["controlled_bus"] = branch_dctr[circuit]["MEASUREMENT EXTREMITY"]
+
+                # Add tap control information in controlled bus
+                pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["tap_control"] = true
+                if isnothing(pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["tap_constraint_type"]) # setpoint is more restrict than bounds
+                    pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["tap_constraint_type"] = "bounds"
+                end
         
             else
+                pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["tap_control"] = true
+
                 sub_data["control_data"]["constraint_type"] = "setpoint"
                 sub_data["control_data"]["valsp"] = nothing
+                pm_data["bus"]["$(sub_data["control_data"]["controlled_bus"])"]["control_data"]["tap_constraint_type"] = "setpoint"
             end
 
         elseif constraint_type == "PHASE CONTROL" # phase control
