@@ -63,36 +63,6 @@ Dict{String, Any} with 6 entries:
   "DOPC" => Dict{String, Any}("CONT"=>'L', "CELO"=>'L' "MOST"=>'L', "MOSF"=>'L', "RCVG"=>'…
 ```
 
-**PWF Sections Available:**
-
-- DBAR
-- DBSH
-- DCBA
-- DCCV
-- DCER
-- DCLI
-- DCNV
-- DCSC
-- DCTE
-- DELO
-- DGBT
-- DGER
-- DGLT
-- DLIN
-- DOPC
-- DSHL
-- DARE
-- DCAI
-- DCAR
-- DGEI
-- DINJ
-- DMFL
-- DMOT
-- DMTE
-- DAGR
-- DCMT
-- DTPF
-
 ## PowerModels.jl converter
 
 The package also allow converting .pwf file directly into PowerModels.jl network data structure:
@@ -159,6 +129,36 @@ Dict{String, Any} with 9 entries:
   "vmmin"              => 1.029
   "controlled_bus"     => 1
 ```
+
+**PWF Sections Available:**
+
+- DBAR
+- DBSH
+- DCBA
+- DCCV
+- DCER
+- DCLI
+- DCNV
+- DCSC
+- DCTE
+- DELO
+- DGBT
+- DGER
+- DGLT
+- DLIN
+- DOPC
+- DSHL
+- DARE
+- DCAI
+- DCAR
+- DGEI
+- DINJ
+- DMFL
+- DMOT
+- DMTE
+- DAGR
+- DCMT
+- DTPF
 
 ## Contributing
 
